@@ -1,0 +1,176 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Скалодром «Зацеп» — лазание для всех уровней</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --wall:#D7DBDF; --graphite:#22262A; --mid:#5A6168; --white:#FFFFFF;
+    --g1:#F2C94C; --g2:#27AE60; --g3:#2F80ED; --g4:#EB5A3C; --g5:#9B51E0; --g6:#22262A;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Rubik",system-ui,sans-serif;background:var(--wall);color:var(--graphite);line-height:1.55;font-size:17px}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--g3);outline-offset:3px}
+  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+
+  header{display:flex;justify-content:space-between;align-items:center;padding:22px 0;position:relative;z-index:2}
+  .logo{font-weight:900;font-size:1.5rem;text-decoration:none}
+  nav{display:flex;gap:22px}
+  nav a{text-decoration:none;font-weight:500;color:var(--mid)}
+  nav a:hover{color:var(--graphite)}
+
+  /* Герой: стена с зацепами. Наведи/нажми на зацеп — он «хватается» */
+  .hero{position:relative;min-height:78vh;display:flex;align-items:flex-end;padding-bottom:64px;
+    background-image:radial-gradient(circle,#C3C8CD 2px,transparent 2.5px);background-size:48px 48px}
+  .holds{position:absolute;inset:0}
+  .hold{position:absolute;border:0;cursor:pointer;border-radius:46% 54% 60% 40% / 52% 40% 60% 48%;
+    box-shadow:inset -6px -8px 0 rgba(0,0,0,.18);transition:transform .2s}
+  .hold:hover,.hold.grab{transform:scale(1.15) rotate(-8deg)}
+  .hero-text{position:relative;z-index:1;background:var(--wall);padding:28px 32px 28px 0;max-width:720px}
+  .hero h1{font-size:clamp(3rem,9vw,7rem);font-weight:900;line-height:.92;letter-spacing:-.03em}
+  .hero p{margin-top:20px;font-size:1.2rem;color:var(--mid);max-width:38ch}
+  .btn{display:inline-block;margin-top:28px;background:var(--graphite);color:var(--white);padding:16px 28px;border-radius:10px;text-decoration:none;font-weight:700}
+  .btn:hover{background:var(--g3)}
+
+  section{padding:80px 0}
+  h2{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-.02em;margin-bottom:12px}
+  .lead{color:var(--mid);max-width:54ch;margin-bottom:40px}
+
+  /* Шкала сложности: цвет трассы = уровень */
+  .grades{display:grid;grid-template-columns:repeat(6,1fr);border-radius:14px;overflow:hidden}
+  .grade{padding:22px 16px 20px;color:var(--white);min-height:150px;display:flex;flex-direction:column;justify-content:space-between}
+  .grade b{font-size:1.8rem;font-weight:900}
+  .grade span{font-size:.95rem;opacity:.92}
+  .grade:nth-child(1){background:var(--g1);color:var(--graphite)}
+  .grade:nth-child(2){background:var(--g2)}
+  .grade:nth-child(3){background:var(--g3)}
+  .grade:nth-child(4){background:var(--g4)}
+  .grade:nth-child(5){background:var(--g5)}
+  .grade:nth-child(6){background:var(--g6)}
+
+  .white{background:var(--white)}
+  .prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0}
+  .price{padding:28px 24px;border-left:1px solid #E3E6E9}
+  .price:first-child{border-left:0;padding-left:0}
+  .price h3{font-size:1.1rem;font-weight:500;color:var(--mid)}
+  .price .sum{font-size:2.4rem;font-weight:900;margin:6px 0}
+  .price p{color:var(--mid);font-size:.95rem}
+  .price.best .sum{color:var(--g3)}
+
+  table{width:100%;border-collapse:collapse;font-size:1rem}
+  th,td{text-align:left;padding:16px 12px;border-bottom:1px solid #BFC5CB}
+  th{font-weight:700;color:var(--mid)}
+  td .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
+  .scroll{overflow-x:auto}
+
+  .cta{background:var(--graphite);color:var(--white);border-radius:20px;padding:56px 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px;margin-bottom:80px}
+  .cta p{color:#AEB5BC;margin-top:8px}
+  .cta .btn{background:var(--g1);color:var(--graphite);margin:0}
+  .cta .btn:hover{background:var(--white)}
+  footer{padding:0 0 40px;color:var(--mid);font-size:.9rem}
+
+  @media (max-width:800px){
+    nav{display:none}
+    .grades{grid-template-columns:repeat(3,1fr)}
+    .price{border-left:0;padding-left:0;border-top:1px solid #E3E6E9}
+    .hero-text{padding-right:16px}
+  }
+  @media (prefers-reduced-motion:reduce){ .hold{transition:none} html{scroll-behavior:auto} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <a class="logo" href="#">Зацеп</a>
+    <nav><a href="#grades">Трассы</a><a href="#prices">Цены</a><a href="#schedule">Группы</a></nav>
+  </header>
+
+  <div class="hero">
+    <div class="holds" id="holds" aria-hidden="true"></div>
+    <div class="hero-text">
+      <h1>Залезь выше, чем вчера</h1>
+      <p>120 трасс для новичков и опытных. Инструктор проведёт первое занятие, обувь выдадим на месте.</p>
+      <a class="btn" href="#prices">Прийти на первое занятие</a>
+    </div>
+  </div>
+</div>
+
+<div class="wrap">
+  <section id="grades">
+    <h2>Цвет трассы — её сложность</h2>
+    <p class="lead">Все зацепы одной трассы одного цвета. Начните с жёлтых, а когда пройдёте пять подряд — переходите к зелёным.</p>
+    <div class="grades">
+      <div class="grade"><b>5</b><span>Первый раз на стене</span></div>
+      <div class="grade"><b>6a</b><span>Пара занятий позади</span></div>
+      <div class="grade"><b>6b</b><span>Лазаете регулярно</span></div>
+      <div class="grade"><b>6c</b><span>Нужна техника</span></div>
+      <div class="grade"><b>7a</b><span>Сильный любитель</span></div>
+      <div class="grade"><b>7b+</b><span>Соревновательный уровень</span></div>
+    </div>
+  </section>
+</div>
+
+<div class="white">
+  <div class="wrap">
+    <section id="prices">
+      <h2>Цены</h2>
+      <p class="lead">Первое посещение с инструктором — по цене разового.</p>
+      <div class="prices">
+        <div class="price"><h3>Разовое посещение</h3><div class="sum">700 ₽</div><p>Весь день, любые трассы</p></div>
+        <div class="price"><h3>8 посещений</h3><div class="sum">4 800 ₽</div><p>Действует 2 месяца</p></div>
+        <div class="price best"><h3>Безлимит на месяц</h3><div class="sum">7 500 ₽</div><p>Выгоднее, если ходите от 3 раз в неделю</p></div>
+        <div class="price"><h3>Прокат обуви</h3><div class="sum">200 ₽</div><p>Магнезия бесплатно</p></div>
+      </div>
+    </section>
+  </div>
+</div>
+
+<div class="wrap">
+  <section id="schedule">
+    <h2>Групповые занятия</h2>
+    <p class="lead">До 8 человек в группе. Запишитесь заранее — места заканчиваются.</p>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>День</th><th>Время</th><th>Группа</th><th>Уровень</th></tr></thead>
+        <tbody>
+          <tr><td>Понедельник</td><td>19:00</td><td>Новички</td><td><span class="dot" style="background:var(--g1)"></span>5–6a</td></tr>
+          <tr><td>Среда</td><td>19:00</td><td>Техника</td><td><span class="dot" style="background:var(--g3)"></span>6b–6c</td></tr>
+          <tr><td>Четверг</td><td>18:00</td><td>Дети 7–12 лет</td><td><span class="dot" style="background:var(--g1)"></span>5</td></tr>
+          <tr><td>Суббота</td><td>12:00</td><td>Новички</td><td><span class="dot" style="background:var(--g1)"></span>5–6a</td></tr>
+          <tr><td>Воскресенье</td><td>17:00</td><td>Сила и выносливость</td><td><span class="dot" style="background:var(--g5)"></span>7a+</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <div class="cta">
+    <div><h2 style="margin:0">Ждём на стене</h2><p>ул. Примерная, 5 · каждый день 10:00–23:00</p></div>
+    <a class="btn" href="https://t.me/">Записаться в Telegram</a>
+  </div>
+
+  <footer>Скалодром «Зацеп», 2026. Демонстрационный проект.</footer>
+</div>
+
+<script>
+  // Раскладываем зацепы по стене
+  var colors = ['#F2C94C','#27AE60','#2F80ED','#EB5A3C','#9B51E0','#22262A'];
+  var wall = document.getElementById('holds');
+  var spots = [[8,8],[22,20],[40,6],[55,22],[70,10],[86,18],[92,40],[78,48],[64,38],[48,44],[30,36],[14,46],[90,66],[74,74],[60,62]];
+  spots.forEach(function(p, i){
+    var b = document.createElement('button');
+    var s = 34 + (i * 7) % 30;
+    b.className = 'hold';
+    b.tabIndex = -1;
+    b.style.cssText = 'left:'+p[0]+'%;top:'+p[1]+'%;width:'+s+'px;height:'+(s*0.85)+'px;background:'+colors[i % colors.length];
+    b.addEventListener('click', function(){ b.classList.toggle('grab'); });
+    wall.appendChild(b);
+  });
+</script>
+</body>
+</html>

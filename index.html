@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Вадим — сайты для малого бизнеса</title>
+<meta name="description" content="Делаю лендинги и сайты-визитки для кафе, студий и мастеров.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Golos+Text:wght@400;500;700;900&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#EEF1EC; --ink:#17201B; --muted:#5C6B62; --line:#C9D1CB; --accent:#2F6B4F; --paper:#FFFFFF;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{font-family:"Golos Text",system-ui,sans-serif;background:var(--bg);color:var(--ink);line-height:1.55;font-size:17px}
+  a{color:inherit}
+  :focus-visible{outline:3px solid var(--accent);outline-offset:3px}
+  .wrap{max-width:1100px;margin:0 auto;padding:0 24px}
+
+  header{display:flex;justify-content:space-between;align-items:center;padding:24px 0}
+  header nav{display:flex;gap:24px}
+  header nav a{text-decoration:none;color:var(--muted);font-weight:500}
+  header nav a:hover{color:var(--ink)}
+
+  .hero{padding:72px 0 96px}
+  .hero h1{font-size:clamp(3rem,11vw,8.5rem);font-weight:900;line-height:.92;letter-spacing:-.04em}
+  .hero p{max-width:34ch;margin-top:32px;font-size:1.3rem;color:var(--muted)}
+  .hero .cta{display:inline-block;margin-top:32px;background:var(--ink);color:var(--bg);padding:16px 28px;border-radius:999px;text-decoration:none;font-weight:700}
+  .hero .cta:hover{background:var(--accent)}
+
+  h2{font-size:clamp(1.8rem,4vw,2.6rem);letter-spacing:-.02em;margin-bottom:32px}
+  section{padding:72px 0;border-top:1px solid var(--line)}
+
+  .projects{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:32px}
+  .project{text-decoration:none;display:block}
+  .preview{aspect-ratio:16/10;border-radius:14px;overflow:hidden;position:relative;transition:transform .25s}
+  .project:hover .preview{transform:translateY(-4px)}
+  .project h3{font-size:1.35rem;margin-top:18px}
+  .project p{color:var(--muted);max-width:42ch}
+
+  /* мини-превью сайтов, нарисованные на CSS */
+  .pv-bakery{background:#1E3A8A;padding:9%}
+  .pv-bakery b{display:block;color:#F7CB46;font-size:clamp(1.4rem,3.4vw,2.2rem);line-height:1;font-weight:900;max-width:8ch}
+  .pv-bakery i{position:absolute;right:8%;bottom:14%;width:38%;aspect-ratio:2/1.1;background:#E3A857;border-radius:50% 50% 45% 45%}
+  .pv-climb{background:#D7DBDF}
+  .pv-climb span{position:absolute;border-radius:46% 54% 60% 40%}
+  .pv-climb b{position:absolute;left:8%;bottom:10%;font-size:clamp(1.3rem,3vw,2rem);font-weight:900;color:#22262A;line-height:1;max-width:9ch}
+
+  .services{display:grid;grid-template-columns:repeat(auto-fit,minmax(240px,1fr));gap:0 48px}
+  .service{padding:20px 0;border-bottom:1px solid var(--line)}
+  .service h3{font-size:1.15rem}
+  .service p{color:var(--muted)}
+
+  .contact{background:var(--ink);color:var(--bg);border-radius:24px;padding:56px 40px;margin:72px 0}
+  .contact h2{margin-bottom:16px}
+  .contact p{color:#AFC0B5;max-width:44ch}
+  .contact .links{display:flex;flex-wrap:wrap;gap:16px;margin-top:28px}
+  .contact a{background:var(--bg);color:var(--ink);padding:14px 24px;border-radius:999px;text-decoration:none;font-weight:700}
+  .contact a:hover{background:#B7D8C4}
+  footer{padding:0 0 40px;color:var(--muted);font-size:.9rem}
+
+  @media (max-width:600px){ header nav{gap:14px;font-size:.95rem} .contact{padding:40px 24px} }
+  @media (prefers-reduced-motion:reduce){ *{transition:none!important;scroll-behavior:auto!important} }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header>
+    <strong>Имя Ф.</strong>
+    <nav>
+      <a href="#work">Работы</a>
+      <a href="#services">Что делаю</a>
+      <a href="#contact">Связаться</a>
+    </nav>
+  </header>
+
+  <div class="hero">
+    <h1>Сайты, которые приводят клиентов</h1>
+    <p>Делаю лендинги и сайты-визитки для кафе, студий и частных мастеров. Быстро, аккуратно, под телефон.</p>
+    <a class="cta" href="#contact">Обсудить проект</a>
+  </div>
+
+  <section id="work">
+    <h2>Работы</h2>
+    <div class="projects">
+      <a class="project" href="bakery/">
+        <div class="preview pv-bakery"><b>Хлеб из печи к 7 утра</b><i></i></div>
+        <h3>Пекарня «Опара»</h3>
+        <p>Лендинг для районной пекарни: меню с ценами, предзаказ на утро, часы работы.</p>
+      </a>
+      <a class="project" href="climbing/">
+        <div class="preview pv-climb">
+          <span style="left:12%;top:14%;width:9%;height:13%;background:#F2C94C"></span>
+          <span style="left:34%;top:30%;width:11%;height:15%;background:#2F80ED"></span>
+          <span style="left:60%;top:12%;width:8%;height:12%;background:#EB5A3C"></span>
+          <span style="left:76%;top:40%;width:12%;height:16%;background:#27AE60"></span>
+          <span style="left:50%;top:58%;width:9%;height:13%;background:#9B51E0"></span>
+          <b>Залезь выше, чем вчера</b>
+        </div>
+        <h3>Скалодром «Зацеп»</h3>
+        <p>Сайт скалодрома: цены, расписание групп и шкала сложности трасс.</p>
+      </a>
+    </div>
+  </section>
+
+  <section id="services">
+    <h2>Что делаю</h2>
+    <div class="services">
+      <div class="service"><h3>Лендинг</h3><p>Одна страница, которая рассказывает о вашем деле и собирает заявки.</p></div>
+      <div class="service"><h3>Сайт-визитка</h3><p>Несколько страниц: услуги, цены, контакты, отзывы.</p></div>
+      <div class="service"><h3>Доработка</h3><p>Обновлю старый сайт, чтобы он нормально выглядел на телефоне.</p></div>
+      <div class="service"><h3>Telegram-бот</h3><p>Запись, заказы и ответы на частые вопросы прямо в мессенджере.</p></div>
+    </div>
+  </section>
+
+  <div class="contact" id="contact">
+    <h2>Расскажите о задаче</h2>
+    <p>Напишите, чем занимаетесь и какой сайт нужен. Отвечу в течение дня и предложу варианты.</p>
+    <div class="links">
+      <a href="https://t.me/@wont1a">Написать в Telegram</a>
+      <a href="mailto:arseniii1945@gmail.com">Написать на почту</a>
+    </div>
+  </div>
+
+  <footer>© 2026 Имя Фамилия</footer>
+</div>
+</body>
+</html>
