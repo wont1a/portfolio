@@ -4,173 +4,298 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>Скалодром «Зацеп» — лазание для всех уровней</title>
+<meta name="description" content="Скалодром: 120 трасс, групповые занятия, прокат снаряжения.">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700;900&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@500;600;700;800;900&family=Manrope:wght@400;600;700;800&display=swap" rel="stylesheet">
 <style>
-  :root{
-    --wall:#D7DBDF; --graphite:#22262A; --mid:#5A6168; --white:#FFFFFF;
-    --g1:#F2C94C; --g2:#27AE60; --g3:#2F80ED; --g4:#EB5A3C; --g5:#9B51E0; --g6:#22262A;
-  }
-  *{box-sizing:border-box;margin:0;padding:0}
-  html{scroll-behavior:smooth}
-  body{font-family:"Rubik",system-ui,sans-serif;background:var(--wall);color:var(--graphite);line-height:1.55;font-size:17px}
-  a{color:inherit}
-  :focus-visible{outline:3px solid var(--g3);outline-offset:3px}
-  .wrap{max-width:1140px;margin:0 auto;padding:0 24px}
+@property --a{syntax:'<color>';inherits:true;initial-value:#F28C28}
+@property --b{syntax:'<color>';inherits:true;initial-value:#9A3D0C}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Manrope",system-ui,sans-serif;color:#fff;min-height:100vh;line-height:1.55;
+  background:radial-gradient(120% 90% at 15% 0%,var(--a),var(--b) 75%);background-attachment:fixed;
+  transition:--a .9s ease,--b .9s ease}
+a{color:inherit}
+button{font:inherit;color:inherit;cursor:pointer;border:0;background:none}
+:focus-visible{outline:3px solid #fff;outline-offset:3px;border-radius:8px}
+h1,.big,.logo,h2,.ghost{font-family:"Montserrat",sans-serif}
 
-  header{display:flex;justify-content:space-between;align-items:center;padding:22px 0;position:relative;z-index:2}
-  .logo{font-weight:900;font-size:1.5rem;text-decoration:none}
-  nav{display:flex;gap:22px}
-  nav a{text-decoration:none;font-weight:500;color:var(--mid)}
-  nav a:hover{color:var(--graphite)}
+.frame{position:relative;max-width:1240px;margin:5vh auto 0;border-radius:32px;overflow:hidden;
+  padding:28px 44px 30px;min-height:min(740px,90vh);display:grid;grid-template-rows:auto 1fr auto;gap:12px;
+  background:linear-gradient(140deg,color-mix(in srgb,var(--a) 82%,#000),color-mix(in srgb,var(--b) 88%,#000));
+  box-shadow:0 50px 90px -30px rgba(0,0,0,.55),inset 0 1px 0 rgba(255,255,255,.18);
+  animation:frameIn 1s cubic-bezier(.2,.8,.2,1) both}
+@keyframes frameIn{from{opacity:0;transform:translateY(40px) scale(.96)}}
 
-  /* Герой: стена с зацепами. Наведи/нажми на зацеп — он «хватается» */
-  .hero{position:relative;min-height:78vh;display:flex;align-items:flex-end;padding-bottom:64px;
-    background-image:radial-gradient(circle,#C3C8CD 2px,transparent 2.5px);background-size:48px 48px}
-  .holds{position:absolute;inset:0}
-  .hold{position:absolute;border:0;cursor:pointer;border-radius:46% 54% 60% 40% / 52% 40% 60% 48%;
-    box-shadow:inset -6px -8px 0 rgba(0,0,0,.18);transition:transform .2s}
-  .hold:hover,.hold.grab{transform:scale(1.15) rotate(-8deg)}
-  .hero-text{position:relative;z-index:1;background:var(--wall);padding:28px 32px 28px 0;max-width:720px}
-  .hero h1{font-size:clamp(3rem,9vw,7rem);font-weight:900;line-height:.92;letter-spacing:-.03em}
-  .hero p{margin-top:20px;font-size:1.2rem;color:var(--mid);max-width:38ch}
-  .btn{display:inline-block;margin-top:28px;background:var(--graphite);color:var(--white);padding:16px 28px;border-radius:10px;text-decoration:none;font-weight:700}
-  .btn:hover{background:var(--g3)}
+.top{display:flex;align-items:center;justify-content:space-between;gap:16px}
+.logo{font-weight:700;letter-spacing:.02em;text-decoration:none;display:flex;align-items:center;gap:10px;font-size:1.05rem}
+.logo i{width:30px;height:30px;border-radius:9px;background:#fff;color:var(--b);display:grid;place-items:center;font-style:normal;font-weight:800;transition:color .9s}
+.pill{display:flex;gap:4px;padding:5px;border-radius:999px;background:rgba(0,0,0,.2);backdrop-filter:blur(8px)}
+.pill a{padding:9px 18px;border-radius:999px;text-decoration:none;font-size:.9rem;font-weight:600;opacity:.85;white-space:nowrap}
+.pill a:hover{opacity:1;background:rgba(255,255,255,.12)}
+.pill a.on{background:#fff;color:#1a1a1a;opacity:1}
+.icons{display:flex;gap:8px}
+.icons a{width:40px;height:40px;border-radius:50%;background:rgba(0,0,0,.2);display:grid;place-items:center;transition:background .2s}
+.icons a:hover{background:rgba(255,255,255,.25)}
+.icons svg{width:18px;height:18px}
 
-  section{padding:80px 0}
-  h2{font-size:clamp(2rem,5vw,3.2rem);font-weight:900;letter-spacing:-.02em;margin-bottom:12px}
-  .lead{color:var(--mid);max-width:54ch;margin-bottom:40px}
+.hero{display:grid;grid-template-columns:1.15fr 1.15fr .7fr;align-items:center;gap:24px;position:relative}
+.ghost{position:absolute;left:50%;top:50%;transform:translate(-50%,-55%);font-size:clamp(5rem,15vw,13rem);font-weight:900;
+  white-space:nowrap;color:transparent;-webkit-text-stroke:2px rgba(255,255,255,.12);pointer-events:none;letter-spacing:-.03em;transition:opacity .4s}
+.left,.right,.stage{position:relative;z-index:1;min-width:0}
+.frame>*{min-width:0}
+.arrows{display:flex;align-items:center;gap:8px;margin-bottom:26px}
+.arrows button{width:38px;height:38px;border-radius:50%;background:rgba(0,0,0,.22);display:grid;place-items:center;transition:background .2s,transform .2s}
+.arrows button:hover{background:#fff;color:#1a1a1a}
+.arrows button:active{transform:scale(.9)}
+.arrows svg{width:16px;height:16px}
+.count{margin-left:10px;font-size:.85rem;opacity:.75;font-variant-numeric:tabular-nums}
+h1{font-size:clamp(2.1rem,3.7vw,3.1rem);line-height:1.04;font-weight:700;letter-spacing:-.02em}
+.line{display:block;overflow:hidden;padding-bottom:.06em}
+.line>span{display:inline-block}
+.desc{margin-top:18px;max-width:36ch;opacity:.88;font-size:.98rem}
+.cta{display:inline-flex;align-items:center;gap:10px;margin-top:26px;background:#fff;color:#1a1a1a;padding:13px 22px;border-radius:999px;
+  text-decoration:none;font-weight:700;font-size:.95rem;transition:transform .25s,box-shadow .25s}
+.cta:hover{transform:translateY(-2px);box-shadow:0 14px 30px -10px rgba(0,0,0,.5)}
+.cta svg{width:14px;height:14px;transition:transform .25s}
+.cta:hover svg{transform:translateX(4px)}
 
-  /* Шкала сложности: цвет трассы = уровень */
-  .grades{display:grid;grid-template-columns:repeat(6,1fr);border-radius:14px;overflow:hidden}
-  .grade{padding:22px 16px 20px;color:var(--white);min-height:150px;display:flex;flex-direction:column;justify-content:space-between}
-  .grade b{font-size:1.8rem;font-weight:900}
-  .grade span{font-size:.95rem;opacity:.92}
-  .grade:nth-child(1){background:var(--g1);color:var(--graphite)}
-  .grade:nth-child(2){background:var(--g2)}
-  .grade:nth-child(3){background:var(--g3)}
-  .grade:nth-child(4){background:var(--g4)}
-  .grade:nth-child(5){background:var(--g5)}
-  .grade:nth-child(6){background:var(--g6)}
+.stage{height:min(460px,52vh);perspective:900px}
+.item{position:absolute;inset:0;display:grid;place-items:center;opacity:0;pointer-events:none;
+  transition:transform 1s cubic-bezier(.7,0,.2,1),opacity .7s ease}
+.item.r{transform:translateX(45%) rotate(20deg) scale(.55)}
+.item.l{transform:translateX(-45%) rotate(-20deg) scale(.55)}
+.item.on{opacity:1;transform:none;pointer-events:auto}
+.item.nt{transition:none}
+.tilt{width:100%;height:100%;display:grid;place-items:center;transition:transform .5s ease-out;
+  transform:translate(calc(var(--mx,0)*14px),calc(var(--my,0)*10px)) rotateY(calc(var(--mx,0)*10deg)) rotateX(calc(var(--my,0)*-8deg))}
+.float{width:min(100%,430px);animation:float 5s ease-in-out infinite;filter:drop-shadow(0 30px 30px rgba(0,0,0,.35))}
+.float svg{width:100%;height:auto;display:block}
+@keyframes float{50%{transform:translateY(-14px)}}
+.shadow{position:absolute;left:50%;bottom:6%;width:46%;height:22px;transform:translateX(-50%);border-radius:50%;
+  background:radial-gradient(rgba(0,0,0,.4),transparent 70%);animation:shadow 5s ease-in-out infinite}
+@keyframes shadow{50%{transform:translateX(-50%) scale(.85);opacity:.6}}
 
-  .white{background:var(--white)}
-  .prices{display:grid;grid-template-columns:repeat(auto-fit,minmax(230px,1fr));gap:0}
-  .price{padding:28px 24px;border-left:1px solid #E3E6E9}
-  .price:first-child{border-left:0;padding-left:0}
-  .price h3{font-size:1.1rem;font-weight:500;color:var(--mid)}
-  .price .sum{font-size:2.4rem;font-weight:900;margin:6px 0}
-  .price p{color:var(--mid);font-size:.95rem}
-  .price.best .sum{color:var(--g3)}
+.right{text-align:right;justify-self:end}
+.big{font-size:clamp(2rem,3.4vw,2.8rem);font-weight:600;line-height:1.1;font-variant-numeric:tabular-nums}
+.old{font-family:"Montserrat",sans-serif;font-size:clamp(1.4rem,2.4vw,2rem);opacity:.75;text-decoration:line-through;text-decoration-thickness:3px;min-height:1.3em}
+.optl{margin-top:26px;font-size:.88rem;opacity:.85}
+.opts{display:flex;gap:8px;justify-content:flex-end;flex-wrap:wrap;margin-top:12px;max-width:240px;margin-left:auto}
+.opt{min-width:46px;height:46px;padding:0 14px;border-radius:999px;background:rgba(0,0,0,.25);font-size:.85rem;font-weight:700;
+  display:grid;place-items:center;transition:background .25s,color .25s,transform .25s}
+button.opt:hover{transform:translateY(-2px)}
+.opt.on{background:#fff;color:#1a1a1a}
+span.opt{font-weight:600;height:38px}
 
-  table{width:100%;border-collapse:collapse;font-size:1rem}
-  th,td{text-align:left;padding:16px 12px;border-bottom:1px solid #BFC5CB}
-  th{font-weight:700;color:var(--mid)}
-  td .dot{display:inline-block;width:12px;height:12px;border-radius:50%;margin-right:8px;vertical-align:middle}
-  .scroll{overflow-x:auto}
+.bottom{display:grid;grid-template-columns:1fr auto 1fr;align-items:end;gap:16px}
+.social{display:flex;gap:10px}
+.social a{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;opacity:.85;transition:background .2s}
+.social a:hover{background:rgba(255,255,255,.18);opacity:1}
+.social svg{width:17px;height:17px}
+.caption{text-align:center;font-family:"Montserrat",sans-serif;font-size:1.05rem;line-height:1.3;max-width:24ch}
+.next{justify-self:end;display:flex;align-items:center;gap:12px;text-align:right;font-size:.8rem;opacity:.9}
+.next .th{width:92px;height:92px;border-radius:20px;background:rgba(0,0,0,.2);display:grid;place-items:center;padding:8px;transition:transform .3s,background .3s}
+.next:hover .th{transform:scale(1.06) rotate(-4deg);background:rgba(255,255,255,.18)}
+.next .th svg,.next .th>div{width:100%;height:auto}
+.next small{display:block;opacity:.7}
 
-  .cta{background:var(--graphite);color:var(--white);border-radius:20px;padding:56px 40px;display:flex;flex-wrap:wrap;justify-content:space-between;align-items:center;gap:24px;margin-bottom:80px}
-  .cta p{color:#AEB5BC;margin-top:8px}
-  .cta .btn{background:var(--g1);color:var(--graphite);margin:0}
-  .cta .btn:hover{background:var(--white)}
-  footer{padding:0 0 40px;color:var(--mid);font-size:.9rem}
+.intro{opacity:0;animation:up .8s cubic-bezier(.2,.8,.2,1) forwards}
+@keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 
-  @media (max-width:800px){
-    nav{display:none}
-    .grades{grid-template-columns:repeat(3,1fr)}
-    .price{border-left:0;padding-left:0;border-top:1px solid #E3E6E9}
-    .hero-text{padding-right:16px}
-  }
-  @media (prefers-reduced-motion:reduce){ .hold{transition:none} html{scroll-behavior:auto} }
+.below{max-width:1240px;margin:28px auto 0;display:grid;gap:28px;padding-bottom:60px}
+.panel{border-radius:32px;padding:48px 44px;background:rgba(0,0,0,.22);backdrop-filter:blur(10px);
+  box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
+.panel h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
+.panel .sub{opacity:.85;max-width:52ch;margin-bottom:30px}
+.cols{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:28px}
+.cols h3{font-size:1.05rem;margin-bottom:6px}
+.cols p{opacity:.85}
+form{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:14px;align-items:end}
+label{display:grid;gap:6px;font-weight:600;font-size:.92rem}
+input,select{font:inherit;padding:13px 16px;border-radius:14px;border:2px solid transparent;background:rgba(255,255,255,.14);color:#fff}
+select option{color:#1a1a1a}
+input::placeholder{color:rgba(255,255,255,.6)}
+input:focus,select:focus{outline:none;border-color:#fff}
+form .cta{margin:0;justify-content:center;border:0;cursor:pointer}
+.done{display:none;background:#fff;color:#1a1a1a;padding:18px 22px;border-radius:16px;font-weight:700}
+.done.show{display:block;animation:up .5s both}
+table{width:100%;border-collapse:collapse}
+th,td{text-align:left;padding:14px 10px;border-bottom:1px solid rgba(255,255,255,.18)}
+th{opacity:.75;font-weight:600}
+.scroll{overflow-x:auto}
+footer{text-align:center;opacity:.75;font-size:.85rem}
+
+/* мокап телефона для портфолио */
+.phone{width:min(210px,62%);margin:0 auto;aspect-ratio:9/18.5;border-radius:34px;background:#111;padding:9px;box-shadow:inset 0 0 0 2px #333}
+.scr{width:100%;height:100%;border-radius:26px;overflow:hidden;position:relative;padding:34px 16px}
+.scr b{display:block;font-family:"Montserrat",sans-serif;font-weight:800;font-size:1.25rem;line-height:1.05}
+.scr .bar{height:7px;border-radius:4px;background:rgba(255,255,255,.35);margin-top:10px}
+.scr .btn{width:56%;height:22px;border-radius:999px;margin-top:16px}
+.scr .pic{position:absolute;left:12%;right:12%;bottom:10%;height:34%}
+.next .th .phone{width:40px;border-radius:9px;padding:2px}
+.th .scr{border-radius:7px;padding:6px 4px}
+.th .scr b,.th .scr .bar,.th .scr .btn{display:none}
+
+@media (max-width:900px){
+  .frame{margin:12px;padding:20px;border-radius:26px;min-height:auto}
+  .pill{overflow-x:auto;max-width:100%}
+  .icons{display:none}
+  .pill a{padding:9px 12px;font-size:.85rem}
+  .hero{grid-template-columns:1fr;text-align:left;gap:10px}
+  .stage{height:300px;order:-1}
+  .right{text-align:left;justify-self:start;margin-top:18px}
+  .hero{grid-template-columns:minmax(0,1fr)}
+  .opts{justify-content:flex-start;margin-left:0}
+  .bottom{grid-template-columns:1fr auto}
+  .caption{display:none}
+  .below{margin:20px 12px 0}
+  .panel{padding:32px 22px;border-radius:26px}
+  .ghost{top:22%}
+}
+@media (max-width:560px){ .top{flex-wrap:wrap} .pill{order:3;width:100%} .next span{display:none} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important;scroll-behavior:auto!important}
+  .intro{opacity:1}
+}
 </style>
 </head>
 <body>
-<div class="wrap">
-  <header>
-    <a class="logo" href="#">Зацеп</a>
-    <nav><a href="#grades">Трассы</a><a href="#prices">Цены</a><a href="#schedule">Группы</a></nav>
-  </header>
+<div class="frame" id="top">
+  <div class="top intro" style="animation-delay:0.3s">
+    <a class="logo" href="#top"><i>З</i>ЗАЦЕП</a>
+    <nav class="pill"><a href="#top" class="on">Тарифы</a><a href="#schedule">Расписание</a><a href="#visit">Адрес</a></nav>
+    <div class="icons"><a href="https://t.me/" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 4.2 2.9 11.4c-1.3.5-1.2 1.2-.2 1.5l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8L23 5.6c.3-1.3-.5-1.9-1.6-1.4ZM8.6 14l9.6-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.3L8.6 14Z"/></svg></a><a href="#visit" aria-label="Адрес"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></a></div>
+  </div>
 
   <div class="hero">
-    <div class="holds" id="holds" aria-hidden="true"></div>
-    <div class="hero-text">
-      <h1>Залезь выше, чем вчера</h1>
-      <p>120 трасс для новичков и опытных. Инструктор проведёт первое занятие, обувь выдадим на месте.</p>
-      <a class="btn" href="#prices">Прийти на первое занятие</a>
-    </div>
-  </div>
-</div>
-
-<div class="wrap">
-  <section id="grades">
-    <h2>Цвет трассы — её сложность</h2>
-    <p class="lead">Все зацепы одной трассы одного цвета. Начните с жёлтых, а когда пройдёте пять подряд — переходите к зелёным.</p>
-    <div class="grades">
-      <div class="grade"><b>5</b><span>Первый раз на стене</span></div>
-      <div class="grade"><b>6a</b><span>Пара занятий позади</span></div>
-      <div class="grade"><b>6b</b><span>Лазаете регулярно</span></div>
-      <div class="grade"><b>6c</b><span>Нужна техника</span></div>
-      <div class="grade"><b>7a</b><span>Сильный любитель</span></div>
-      <div class="grade"><b>7b+</b><span>Соревновательный уровень</span></div>
-    </div>
-  </section>
-</div>
-
-<div class="white">
-  <div class="wrap">
-    <section id="prices">
-      <h2>Цены</h2>
-      <p class="lead">Первое посещение с инструктором — по цене разового.</p>
-      <div class="prices">
-        <div class="price"><h3>Разовое посещение</h3><div class="sum">700 ₽</div><p>Весь день, любые трассы</p></div>
-        <div class="price"><h3>8 посещений</h3><div class="sum">4 800 ₽</div><p>Действует 2 месяца</p></div>
-        <div class="price best"><h3>Безлимит на месяц</h3><div class="sum">7 500 ₽</div><p>Выгоднее, если ходите от 3 раз в неделю</p></div>
-        <div class="price"><h3>Прокат обуви</h3><div class="sum">200 ₽</div><p>Магнезия бесплатно</p></div>
+    <div class="ghost" id="ghost" aria-hidden="true"></div>
+    <div class="left">
+      <div class="arrows intro" style="animation-delay:0.45s">
+        <button id="prev" type="button" aria-label="Назад"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m15 5-7 7 7 7"/></svg></button>
+        <button id="nextBtn" type="button" aria-label="Вперёд"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></button>
+        <span class="count" id="count"></span>
       </div>
-    </section>
+      <h1 class="intro" style="animation-delay:0.55s"><span class="line"><span id="t1"></span></span><span class="line"><span id="t2"></span></span></h1>
+      <p class="desc intro" style="animation-delay:0.7s"><span class="line" style="display:block"><span id="desc" style="display:block"></span></span></p>
+      <a class="cta intro" style="animation-delay:0.85s" id="cta" href="#"><span class="line"><span id="ctal"></span></span><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><path d="m9 5 7 7-7 7"/></svg></a>
+    </div>
+    <div class="stage intro" id="stage" style="animation-delay:0.4s" aria-live="polite"></div>
+    <div class="right intro" style="animation-delay:0.7s">
+      <div class="big"><span class="line"><span id="big"></span></span></div>
+      <div class="old" id="old"></div>
+      <div class="optl" id="optl"></div>
+      <div class="opts" id="opts"></div>
+    </div>
+  </div>
+
+  <div class="bottom intro" style="animation-delay:1s">
+    <div class="social"><a href="https://t.me/" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 4.2 2.9 11.4c-1.3.5-1.2 1.2-.2 1.5l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8L23 5.6c.3-1.3-.5-1.9-1.6-1.4ZM8.6 14l9.6-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.3L8.6 14Z"/></svg></a><a href="tel:+79000000000" aria-label="Телефон"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg></a><a href="#schedule" aria-label="Расписание"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg></a></div>
+    <div class="caption"><span class="line"><span id="cap" style="display:block"></span></span></div>
+    <button class="next" id="next" type="button" aria-label="Следующий"><span><small>Дальше</small><b id="nextName"></b></span><div class="th" id="nextTh"></div></button>
   </div>
 </div>
 
-<div class="wrap">
-  <section id="schedule">
-    <h2>Групповые занятия</h2>
-    <p class="lead">До 8 человек в группе. Запишитесь заранее — места заканчиваются.</p>
-    <div class="scroll">
-      <table>
-        <thead><tr><th>День</th><th>Время</th><th>Группа</th><th>Уровень</th></tr></thead>
-        <tbody>
-          <tr><td>Понедельник</td><td>19:00</td><td>Новички</td><td><span class="dot" style="background:var(--g1)"></span>5–6a</td></tr>
-          <tr><td>Среда</td><td>19:00</td><td>Техника</td><td><span class="dot" style="background:var(--g3)"></span>6b–6c</td></tr>
-          <tr><td>Четверг</td><td>18:00</td><td>Дети 7–12 лет</td><td><span class="dot" style="background:var(--g1)"></span>5</td></tr>
-          <tr><td>Суббота</td><td>12:00</td><td>Новички</td><td><span class="dot" style="background:var(--g1)"></span>5–6a</td></tr>
-          <tr><td>Воскресенье</td><td>17:00</td><td>Сила и выносливость</td><td><span class="dot" style="background:var(--g5)"></span>7a+</td></tr>
-        </tbody>
-      </table>
-    </div>
-  </section>
-
-  <div class="cta">
-    <div><h2 style="margin:0">Ждём на стене</h2><p>ул. Примерная, 5 · каждый день 10:00–23:00</p></div>
-    <a class="btn" href="https://t.me/">Записаться в Telegram</a>
-  </div>
-
-  <footer>Скалодром «Зацеп», 2026. Демонстрационный проект.</footer>
+<div class="below">
+<section class="panel" id="schedule"><h2>Групповые занятия</h2><p class="sub">До 8 человек в группе. Запишитесь заранее — места заканчиваются.</p>
+<div class="scroll"><table><thead><tr><th>День</th><th>Время</th><th>Группа</th><th>Трассы</th></tr></thead><tbody>
+<tr><td>Понедельник</td><td>19:00</td><td>Новички</td><td>Жёлтые</td></tr><tr><td>Среда</td><td>19:00</td><td>Техника</td><td>Синие</td></tr>
+<tr><td>Четверг</td><td>18:00</td><td>Дети 7–12 лет</td><td>Жёлтые</td></tr><tr><td>Суббота</td><td>12:00</td><td>Новички</td><td>Жёлтые</td></tr>
+<tr><td>Воскресенье</td><td>17:00</td><td>Сила и выносливость</td><td>Фиолетовые</td></tr></tbody></table></div></section>
+<section class="panel" id="visit"><h2>Ждём на стене</h2><div class="cols" style="margin-top:24px">
+<div><h3>Адрес</h3><p>ул. Примерная, 5</p></div><div><h3>Часы работы</h3><p>Каждый день 10:00–23:00</p></div>
+<div><h3>Запись</h3><p><a href="https://t.me/">Telegram</a><br><a href="tel:+79000000000">+7 900 000-00-00</a></p></div></div></section>
+<footer>Скалодром «Зацеп», 2026. Демонстрационный проект.</footer>
 </div>
 
 <script>
-  // Раскладываем зацепы по стене
-  var colors = ['#F2C94C','#27AE60','#2F80ED','#EB5A3C','#9B51E0','#22262A'];
-  var wall = document.getElementById('holds');
-  var spots = [[8,8],[22,20],[40,6],[55,22],[70,10],[86,18],[92,40],[78,48],[64,38],[48,44],[30,36],[14,46],[90,66],[74,74],[60,62]];
-  spots.forEach(function(p, i){
-    var b = document.createElement('button');
-    var s = 34 + (i * 7) % 30;
-    b.className = 'hold';
-    b.tabIndex = -1;
-    b.style.cssText = 'left:'+p[0]+'%;top:'+p[1]+'%;width:'+s+'px;height:'+(s*0.85)+'px;background:'+colors[i % colors.length];
-    b.addEventListener('click', function(){ b.classList.toggle('grab'); });
-    wall.appendChild(b);
+const ITEMS=[{"name": "Разовое", "ghost": "СТАРТ", "title": ["Залезь выше,", "чем вчера"], "text": "Первый раз? Инструктор покажет, как страховаться и падать, а жёлтые трассы пройдёте уже в первый вечер.", "cta": ["Записаться", "#schedule"], "optLabel": "Кто идёт:", "opts": [{"label": "Взрослый", "price": 700}, {"label": "Студент", "price": 550}, {"label": "Ребёнок", "price": 450}], "caption": "Обувь и магнезия —<br>на месте", "a": "#F2B92C", "b": "#6E4600", "visual": "<svg viewBox=\"0 0 400 300\"><path d=\"M90 160c-20-70 40-120 120-115 70 4 140 30 130 100-8 60-60 110-140 108C130 250 105 215 90 160Z\" fill=\"#F7C843\" stroke=\"#A87A0C\" stroke-width=\"6\"/>\n<path d=\"M130 110c30-40 100-45 140-25\" fill=\"none\" stroke=\"#fff\" stroke-width=\"16\" stroke-linecap=\"round\" opacity=\".35\"/>\n<path d=\"M120 200c40 30 120 30 170-10\" fill=\"none\" stroke=\"#A87A0C\" stroke-width=\"14\" stroke-linecap=\"round\" opacity=\".35\"/>\n<circle cx=\"215\" cy=\"150\" r=\"26\" fill=\"#A87A0C\"/><circle cx=\"215\" cy=\"150\" r=\"15\" fill=\"#C9CED3\"/><circle cx=\"215\" cy=\"150\" r=\"7\" fill=\"#5A6168\"/></svg>"}, {"name": "8 посещений", "ghost": "РИТМ", "title": ["Два раза", "в неделю"], "text": "Абонемент на 8 посещений на два месяца. Хватит, чтобы перейти с жёлтых трасс на синие.", "cta": ["Купить абонемент", "#visit"], "optLabel": "Кто идёт:", "opts": [{"label": "Взрослый", "price": 4800, "old": 5600}, {"label": "Студент", "price": 3900, "old": 4400}], "caption": "Заморозка<br>до 14 дней", "a": "#3B82F6", "b": "#12296B", "visual": "<svg viewBox=\"0 0 400 300\"><path d=\"M90 160c-20-70 40-120 120-115 70 4 140 30 130 100-8 60-60 110-140 108C130 250 105 215 90 160Z\" fill=\"#4D8EF7\" stroke=\"#1C4BA8\" stroke-width=\"6\"/>\n<path d=\"M130 110c30-40 100-45 140-25\" fill=\"none\" stroke=\"#fff\" stroke-width=\"16\" stroke-linecap=\"round\" opacity=\".35\"/>\n<path d=\"M120 200c40 30 120 30 170-10\" fill=\"none\" stroke=\"#1C4BA8\" stroke-width=\"14\" stroke-linecap=\"round\" opacity=\".35\"/>\n<circle cx=\"215\" cy=\"150\" r=\"26\" fill=\"#1C4BA8\"/><circle cx=\"215\" cy=\"150\" r=\"15\" fill=\"#C9CED3\"/><circle cx=\"215\" cy=\"150\" r=\"7\" fill=\"#5A6168\"/></svg>"}, {"name": "Безлимит", "ghost": "ВЫШЕ", "title": ["Без лимита", "и без оправданий"], "text": "Приходите хоть каждый день: месяц на любых трассах плюс одна групповая тренировка в неделю.", "cta": ["Купить безлимит", "#visit"], "optLabel": "Срок:", "opts": [{"label": "1 мес", "price": 7500}, {"label": "3 мес", "price": 19900, "old": 22500}], "caption": "Для тех, кто<br>уже не может без стены", "a": "#A855F7", "b": "#3B0F75", "visual": "<svg viewBox=\"0 0 400 300\"><path d=\"M90 160c-20-70 40-120 120-115 70 4 140 30 130 100-8 60-60 110-140 108C130 250 105 215 90 160Z\" fill=\"#B06BF8\" stroke=\"#5B21B6\" stroke-width=\"6\"/>\n<path d=\"M130 110c30-40 100-45 140-25\" fill=\"none\" stroke=\"#fff\" stroke-width=\"16\" stroke-linecap=\"round\" opacity=\".35\"/>\n<path d=\"M120 200c40 30 120 30 170-10\" fill=\"none\" stroke=\"#5B21B6\" stroke-width=\"14\" stroke-linecap=\"round\" opacity=\".35\"/>\n<circle cx=\"215\" cy=\"150\" r=\"26\" fill=\"#5B21B6\"/><circle cx=\"215\" cy=\"150\" r=\"15\" fill=\"#C9CED3\"/><circle cx=\"215\" cy=\"150\" r=\"7\" fill=\"#5A6168\"/></svg>"}];
+
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const stage=$('#stage'), frame=$('.frame'); let cur=0, busy=false, optIdx=0;
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+ITEMS.forEach((it,k)=>{
+  const d=document.createElement('div'); d.className='item '+(k?'r':'on');
+  d.innerHTML='<div class="tilt"><div class="float">'+it.visual+'</div></div><div class="shadow"></div>';
+  stage.appendChild(d);
+});
+const els=()=>$$('#stage .item');
+
+function swapText(el,html,delay){
+  if(reduce){el.innerHTML=html;return}
+  const o=el.animate([{transform:'none',opacity:1},{transform:'translateY(-100%)',opacity:0}],{duration:320,delay,easing:'cubic-bezier(.7,0,.8,.3)',fill:'forwards'});
+  o.onfinish=()=>{el.innerHTML=html;o.cancel();
+    el.animate([{transform:'translateY(100%)',opacity:0},{transform:'none',opacity:1}],{duration:520,easing:'cubic-bezier(.2,.8,.2,1)'})};
+}
+function countTo(el,from,to){
+  if(reduce||from===to){el.textContent=fmt(to);return}
+  const t0=performance.now(),D=600;
+  (function step(t){const p=Math.min(1,(t-t0)/D),e=1-Math.pow(1-p,3);el.textContent=fmt(Math.round(from+(to-from)*e));if(p<1)requestAnimationFrame(step)})(t0);
+}
+function fmt(n){return n.toLocaleString('ru-RU').replace(/\u00a0/g,' ')+' ₽'}
+let shownPrice=null;
+
+function fillRight(it,animate){
+  const big=$('#big'), old=$('#old'), opts=$('#opts');
+  $('#optl').textContent=it.optLabel||'';
+  opts.innerHTML='';
+  (it.opts||[]).forEach((o,k)=>{
+    const priced=o.price!=null; const b=document.createElement(priced?'button':'span');
+    b.className='opt'+(priced&&k===0?' on':''); b.textContent=o.label;
+    if(priced){b.type='button';b.onclick=()=>{$$('#opts .opt').forEach(x=>x.classList.remove('on'));b.classList.add('on');setPrice(o.price,o.old)}}
+    opts.appendChild(b);
   });
+  const first=(it.opts||[]).find(o=>o.price!=null);
+  if(first) setPrice(first.price,first.old);
+  else { shownPrice=null; animate?swapText(big,it.big,0):big.innerHTML=it.big; old.textContent=''; }
+  if(animate) opts.animate([{opacity:0,transform:'translateY(10px)'},{opacity:1,transform:'none'}],{duration:500,delay:250,fill:'backwards'});
+}
+function setPrice(p,o){
+  countTo($('#big'),shownPrice==null?p:shownPrice,p); shownPrice=p;
+  $('#old').textContent=o?fmt(o):'';
+}
+
+function go(n,dir){
+  if(busy) return; n=(n+ITEMS.length)%ITEMS.length; if(n===cur) return; busy=true;
+  dir=dir||(n>cur?1:-1);
+  const it=ITEMS[n], all=els(), out=all[cur], inn=all[n];
+  out.classList.remove('on'); out.classList.add(dir>0?'l':'r');
+  inn.classList.add('nt'); inn.classList.remove('l','r'); inn.classList.add(dir>0?'r':'l');
+  void inn.offsetWidth; inn.classList.remove('nt'); inn.classList.remove('l','r'); inn.classList.add('on');
+  document.body.style.setProperty('--a',it.a); document.body.style.setProperty('--b',it.b);
+  swapText($('#t1'),it.title[0],0); swapText($('#t2'),it.title[1],70);
+  swapText($('#desc'),it.text,140);
+  swapText($('#cap'),it.caption,180);
+  const g=$('#ghost'); g.style.opacity=0; setTimeout(()=>{g.textContent=it.ghost;g.style.opacity=1},400);
+  const c=$('#cta'); c.href=it.cta[1]; swapText($('#ctal'),it.cta[0],200);
+  fillRight(it,true);
+  cur=n; $('#count').textContent=(n+1)+' / '+ITEMS.length; setNext();
+  setTimeout(()=>busy=false,900);
+}
+function setNext(){
+  const nx=ITEMS[(cur+1)%ITEMS.length];
+  $('#nextTh').innerHTML=nx.thumb||nx.visual; $('#nextName').textContent=nx.name;
+}
+$('#prev').onclick=()=>go(cur-1,-1); $('#nextBtn').onclick=()=>go(cur+1,1); $('#next').onclick=()=>go(cur+1,1);
+addEventListener('keydown',e=>{if(e.target.matches('input,select,textarea'))return; if(e.key==='ArrowRight')go(cur+1,1); if(e.key==='ArrowLeft')go(cur-1,-1)});
+let sx=null; stage.addEventListener('touchstart',e=>sx=e.touches[0].clientX,{passive:true});
+stage.addEventListener('touchend',e=>{if(sx==null)return;const dx=e.changedTouches[0].clientX-sx;if(Math.abs(dx)>40)go(cur+(dx<0?1:-1),dx<0?1:-1);sx=null});
+if(!reduce) frame.addEventListener('mousemove',e=>{const r=frame.getBoundingClientRect();
+  frame.style.setProperty('--mx',((e.clientX-r.left)/r.width-.5)*2); frame.style.setProperty('--my',((e.clientY-r.top)/r.height-.5)*2)});
+frame.addEventListener('mouseleave',()=>{frame.style.setProperty('--mx',0);frame.style.setProperty('--my',0)});
+
+// первый экран
+(function(){const it=ITEMS[0];
+  document.body.style.setProperty('--a',it.a);document.body.style.setProperty('--b',it.b);
+  $('#t1').innerHTML=it.title[0];$('#t2').innerHTML=it.title[1];$('#desc').innerHTML=it.text;$('#cap').innerHTML=it.caption;
+  $('#ghost').textContent=it.ghost;$('#cta').href=it.cta[1];$('#ctal').textContent=it.cta[0];
+  fillRight(it,false);$('#count').textContent='1 / '+ITEMS.length;setNext();})();
+
+// форма (демо)
+const f=$('#f'); if(f) f.addEventListener('submit',e=>{e.preventDefault();const d=$('#done');
+  d.textContent=f.dataset.msg.replace('{name}',f.elements['name'].value.trim());d.classList.add('show');f.style.display='none'});
+
 </script>
 </body>
 </html>
