@@ -91,8 +91,22 @@ body.deep .dock,body.zooming .dock{opacity:0;transform:translateY(30px);pointer-
 .view.on .lines>*{opacity:1;transform:none}
 .view.on .lines>*:nth-child(2){transition-delay:.12s}.view.on .lines>*:nth-child(3){transition-delay:.24s}
 .gallery{display:flex;gap:10px;position:absolute;right:30px;top:30px}
-.gallery .media{width:110px;height:76px;border-radius:14px;border:2px solid rgba(255,255,255,.3);cursor:pointer;transition:transform .3s}
+.gallery .media{width:96px;height:66px;border-radius:14px;border:2px solid rgba(255,255,255,.3);cursor:pointer;transition:transform .3s}
 .gallery .media:hover{transform:translateY(-3px)}
+.gallery .media.on{border-color:#fff;box-shadow:0 0 0 2px rgba(255,181,71,.95)}
+/* листалки фото */
+.snav{position:absolute;top:50%;transform:translateY(-50%);z-index:3;width:38px;height:38px;border-radius:50%;display:grid;place-items:center;padding:0;
+  background:rgba(4,6,15,.5);backdrop-filter:blur(6px);-webkit-backdrop-filter:blur(6px);border:1px solid rgba(255,255,255,.28);color:#fff;font:600 1.35rem/1 system-ui,sans-serif;cursor:pointer;opacity:0;transition:opacity .25s,background .2s,transform .2s}
+.snav.prev{left:12px}.snav.next{right:12px}
+.snav:hover{background:rgba(4,6,15,.8)}
+.hotel:hover .snav,.hotel:focus-within .snav,.snav:focus-visible{opacity:1}
+.gallery{align-items:center}
+.gallery .snav{position:static;transform:none;opacity:1;flex:none}
+.gallery .snav:hover{transform:scale(1.08)}
+.hero,.hotel .media{touch-action:pan-y;user-select:none;-webkit-user-select:none}
+.media.fade{animation:mfade .45s ease}
+@keyframes mfade{from{opacity:.4}to{opacity:1}}
+@media (hover:none){.hotel .snav{opacity:.85}}
 .facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
 .fact{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 18px;backdrop-filter:blur(10px)}
 .fact small{color:var(--mute);font-size:.74rem;display:block}
@@ -185,7 +199,7 @@ section.blk{margin-top:56px}
 .hotel.on{border-color:var(--sun);box-shadow:0 0 0 1px var(--sun),0 24px 50px -22px rgba(255,181,71,.6)}
 .hotel .media{height:180px}
 .hotel .rooms{position:absolute;left:12px;bottom:12px;display:flex;gap:6px}
-.hotel .rooms i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer}
+.hotel .rooms i{position:relative;width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer}.hotel .rooms i::after{content:"";position:absolute;inset:-7px}
 .hotel .rooms i.on{background:#fff}
 .hotel .badge{position:absolute;top:12px;left:12px;font-size:.72rem;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--sun);color:#1B1100}
 .hotel .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
@@ -257,7 +271,7 @@ section.blk{margin-top:56px}
   .back{padding-top:70px}
   .quest{top:66px}
   .hero{height:52vh;border-radius:22px}.hero .cap{left:20px;right:20px;bottom:20px}
-  .gallery{right:16px;top:16px}.gallery .media{width:70px;height:50px}
+  .gallery{right:16px;top:16px;gap:6px}.gallery .media{width:52px;height:38px;border-radius:10px}.gallery .snav{width:30px;height:30px;font-size:1.1rem}
   .facts,.info{grid-template-columns:repeat(2,1fr)}
   .cmap{grid-template-columns:1fr}.mapbox{min-height:280px}
   .visa{grid-template-columns:1fr;text-align:left}.visa .term{text-align:left}.stamp{position:absolute;right:16px;top:16px;width:70px;height:70px;font-size:.5rem}
@@ -423,6 +437,22 @@ function setMedia(el){const key=el.dataset.img,small=el.closest('.gallery,.ccard
   const im=new Image();im.decoding='async';im.onload=()=>{if(el.dataset.img!==key)return;el.style.backgroundImage=`url(${im.src})`;el.dataset.has=1};
   im.onerror=()=>{if(small&&im.src.indexOf('/sm/')>-1)im.src=full};im.src=src}
 function loadMedia(root=document){ root.querySelectorAll('.media[data-img]:not([data-tried])').forEach(el=>{el.dataset.tried=1;if(mediaIO&&!el.closest('.tip'))mediaIO.observe(el);else setMedia(el)})}
+/* листалки: показать другое фото в том же блоке (с запасным постером, если файла нет) */
+function swapMedia(m,key,fallback){m.dataset.img=key;m.dataset.tried=1;const src='img/'+key+'.jpg',im=new Image();im.decoding='async';
+  im.onload=()=>{if(m.dataset.img!==key)return;m.style.backgroundImage=`url(${src})`;m.dataset.has=1;m.classList.remove('fade');void m.offsetWidth;m.classList.add('fade')};
+  im.onerror=()=>{if(m.dataset.img!==key)return;m.style.backgroundImage='';m.removeAttribute('data-has');const o=m.querySelector('.ls');if(o)o.outerHTML=fallback()};im.src=src}
+function swipe(el,fn,skip){let x0=null,y0=0;
+  el.addEventListener('pointerdown',e=>{if(e.button>0||(skip&&e.target.closest(skip)))return;x0=e.clientX;y0=e.clientY});
+  el.addEventListener('pointerup',e=>{if(x0===null)return;const dx=e.clientX-x0,dy=e.clientY-y0;x0=null;
+    if(Math.abs(dx)>40&&Math.abs(dx)>Math.abs(dy)*1.3){el.dataset.swiped=1;setTimeout(()=>delete el.dataset.swiped,60);fn(dx<0?1:-1)}});
+  el.addEventListener('pointercancel',()=>x0=null);el.addEventListener('dragstart',e=>e.preventDefault())}
+function heroThumbs(id,c){return `<button class="snav prev" type="button" aria-label="Предыдущее фото">‹</button>${[0,1,2,3].map(n=>media(n?id+'-'+n:id,c,n?'':'on','',n)).join('')}<button class="snav next" type="button" aria-label="Следующее фото">›</button>`}
+function heroSlider(v,id,c){const hero=v.querySelector('.hero'),m=hero.querySelector(':scope>.media'),keys=[id,id+'-1',id+'-2',id+'-3'],th=[...hero.querySelectorAll('.gallery .media')];let i=0,pre=false;
+  const preload=()=>{if(pre)return;pre=true;keys.forEach(k=>{const im=new Image();im.src='img/'+k+'.jpg'})};
+  const set=n=>{preload();i=(n+keys.length)%keys.length;swapMedia(m,keys[i],()=>art(keys[i],c,i));th.forEach((t,k)=>t.classList.toggle('on',k===i))};
+  th.forEach((t,k)=>{t.setAttribute('role','button');t.setAttribute('tabindex','0');t.setAttribute('aria-label','Фото '+(k+1));t.addEventListener('click',()=>set(k));t.addEventListener('keydown',e=>{if(e.key==='Enter'||e.key===' '){e.preventDefault();set(k)}})});
+  hero.querySelector('.snav.prev').addEventListener('click',()=>set(i-1));hero.querySelector('.snav.next').addEventListener('click',()=>set(i+1));
+  hero.addEventListener('pointerenter',preload,{once:true});swipe(hero,d=>set(i+d),'.gallery')}
 
 /* =================== ПЛАНЕТА =================== */
 const cv=$('#globe'), ctx=cv.getContext('2d');
@@ -553,7 +583,7 @@ function renderCountry(c){
   v.innerHTML=`<div class="wrap">
    <div class="back"><button class="chipbtn" data-go="#/">← К планете</button><span class="crumbs">Планета / ${c.name}</span></div>
    <div class="hero">${media(c.id,c.c)}<div class="shade"></div>
-     <div class="gallery">${[1,2,3].map(n=>media(c.id+'-'+n,c.c,'','',n)).join('')}</div>
+     <div class="gallery">${heroThumbs(c.id,c.c)}</div>
      <div class="cap lines"><p class="crumbs">${c.tag}</p><h2>${c.name}</h2><p>Туры от ${fmt(c.from)} на человека с перелётом из Москвы. Выберите город на карте ниже.</p></div></div>
    <div class="facts">
      <div class="fact"><small>Виза для граждан РФ</small><b class="${c.visa.ok?'visa-ok':'visa-w'}">${c.visa.title}${c.visa.ok?', '+c.visa.term:''}</b></div>
@@ -565,7 +595,7 @@ function renderCountry(c){
        <div class="cities">${c.cities.map(ct=>`<button class="ccard" data-go="#/${c.id}/${ct.id}">${media(ct.id,c.c)}<span><b>${ct.name}</b><p>${ct.desc}</p><p>Перелёт ${ct.fl}</p></span><span class="go">→</span></button>`).join('')}</div></div></section>
    <p class="note" style="margin:40px 0 80px">Сведения о визах приведены для примера. Перед поездкой сверьте актуальные правила въезда на сайте консульства или у наших менеджеров.</p></div>`;
   v.querySelectorAll('.cpin').forEach(g=>{const f=()=>go(`#/${c.id}/${g.dataset.city}`);g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter')f()})});
-  loadMedia(v)}
+  heroSlider(v,c.id,c.c);loadMedia(v)}
 
 /* =================== ЭКРАН ГОРОДА И ПОДБОР ТУРА =================== */
 const AIRL=[['Аэрофлот','SU'],['S7 Airlines','S7'],['Уральские авиалинии','U6'],['Red Wings','WZ'],['Azur Air','ZF']];
@@ -587,7 +617,7 @@ function renderCity(c,ct){
   v.innerHTML=`<div class="wrap">
    <div class="back"><button class="chipbtn" data-go="#/${c.id}">← ${c.name}</button><span class="crumbs">Планета / ${c.name} / ${ct.name}</span></div>
    <div class="hero">${media(ct.id,c.c)}<div class="shade"></div>
-     <div class="gallery">${[1,2,3].map(n=>media(ct.id+'-'+n,c.c,'','',n)).join('')}</div>
+     <div class="gallery">${heroThumbs(ct.id,c.c)}</div>
      <div class="cap lines"><p class="crumbs">${c.name}</p><h2>${ct.name}</h2><p>${ct.desc}</p></div></div>
    <div class="visa ${c.visa.ok?'ok':'w'}"><div class="stamp">${c.visa.ok?'VISA<br>FREE':'VISA<br>REQUIRED'}</div>
      <div><small class="crumbs">Визовый режим для граждан РФ</small><div class="big">${c.visa.title}</div><p>${c.visa.text}</p></div>
@@ -613,7 +643,7 @@ function renderCity(c,ct){
        <div class="stub"><small>за человека</small><b>${fmt(f.price)}</b><span class="barcode"></span></div></button>`).join('')}</div></section>
 
    <section class="blk" id="sHotels"><h3>Отель</h3><p class="sub">Проверенные отели с реальными отзывами туристов. Цена за номер за ночь.</p>
-     <div class="hotels">${ho.map((h,i)=>`<button class="hotel" data-h="${i}"><div class="media" data-img="${ct.id}-hotel-${i+1}" style="--fb:linear-gradient(${140+i*40}deg,${c.c[0]},${c.c[1]})">${art(ct.id+'-hotel-'+(i+1),c.c,i%2?3:0)}${h.tag?`<span class="badge">${h.tag}</span>`:''}<span class="rooms">${[1,2,3].map(n=>`<i class="${n===1?'on':''}" data-r="${n}"></i>`).join('')}</span></div>
+     <div class="hotels">${ho.map((h,i)=>`<button class="hotel" data-h="${i}"><div class="media" data-img="${ct.id}-hotel-${i+1}" style="--fb:linear-gradient(${140+i*40}deg,${c.c[0]},${c.c[1]})">${art(ct.id+'-hotel-'+(i+1),c.c,i%2?3:0)}${h.tag?`<span class="badge">${h.tag}</span>`:''}<span class="snav prev" role="button" aria-label="Предыдущее фото">‹</span><span class="snav next" role="button" aria-label="Следующее фото">›</span><span class="rooms">${[1,2,3].map(n=>`<i class="${n===1?'on':''}" data-r="${n}"></i>`).join('')}</span></div>
        <div class="body"><div class="row"><h4>${h.name}</h4><span class="score">${h.sc.toFixed(1)}</span></div><span class="stars">${'★'.repeat(h.st)}</span>
        <div class="am">${h.am.map(a=>`<span>${a}</span>`).join('')}</div><div class="price"><small>за ночь</small><b>${fmt(h.price)}</b></div></div></button>`).join('')}</div></section>
 
@@ -621,16 +651,23 @@ function renderCity(c,ct){
        <p class="note">В стоимость входят перелёт, проживание, трансфер из аэропорта и медицинская страховка. Без скрытых доплат.</p></div>
      <div class="card total"><div><small class="crumbs">Итого за всех</small><div><b id="total">—</b></div><p class="promo" id="promo"></p></div>
        <div><button class="dream" id="dream" disabled>Забронировать тур мечты</button><p class="need" id="need">Выберите даты, перелёт и отель</p></div></div></div></div>`;
-  loadMedia(v);
+  heroSlider(v,ct.id,c.c);loadMedia(v);
   // анимация столбиков погоды
   requestAnimationFrame(()=>setTimeout(()=>v.querySelectorAll('.bar').forEach(b=>b.style.height=b.dataset.h+'%'),400));
   v.querySelector('#months').addEventListener('click',e=>{const b=e.target.closest('.pill');if(!b)return;v.querySelectorAll('#months .pill').forEach(x=>x.classList.toggle('on',x===b));S.month=+b.dataset.m;upd(true,'sFlights')});
   v.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{S.nights=Math.max(3,Math.min(21,S.nights+ +b.dataset.n));upd()}));
   v.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{S.pax=Math.max(1,Math.min(6,S.pax+ +b.dataset.p));upd()}));
   v.querySelectorAll('.pass').forEach(b=>b.addEventListener('click',()=>{v.querySelectorAll('.pass').forEach(x=>x.classList.toggle('on',x===b));S.fl=+b.dataset.f;upd(true,'sHotels')}));
-  v.querySelectorAll('.hotel').forEach(b=>b.addEventListener('click',e=>{const r=e.target.closest('.rooms i');if(r){e.stopPropagation();const m=b.querySelector('.media');b.querySelectorAll('.rooms i').forEach(x=>x.classList.toggle('on',x===r));
-      const key=`${ct.id}-hotel-${+b.dataset.h+1}`;m.dataset.img=key+(r.dataset.r>1?'-'+r.dataset.r:'');m.removeAttribute('data-tried');m.removeAttribute('data-has');m.style.backgroundImage='';const old=m.querySelector('.ls');if(old)old.outerHTML=art(key,c.c,+r.dataset.r===2?2:+r.dataset.r===3?3:0);loadMedia(b);return}
-    v.querySelectorAll('.hotel').forEach(x=>x.classList.toggle('on',x===b));S.ho=+b.dataset.h;upd(true,'sum')}));
+  const hset=(b,n)=>{const h=+b.dataset.h,key=`${ct.id}-hotel-${h+1}`,r=((n-1)%3+3)%3+1;b._r=r;
+    b.querySelectorAll('.rooms i').forEach(x=>x.classList.toggle('on',+x.dataset.r===r));
+    swapMedia(b.querySelector('.media'),key+(r>1?'-'+r:''),()=>art(key,c.c,r===2?2:r===3?3:(h%2?3:0)));
+    const nx=r%3+1,im=new Image();im.src='img/'+key+(nx>1?'-'+nx:'')+'.jpg'};
+  v.querySelectorAll('.hotel').forEach(b=>{const m=b.querySelector('.media');b._r=1;swipe(m,d=>hset(b,b._r+d));
+    b.addEventListener('keydown',e=>{if(e.key==='ArrowRight'||e.key==='ArrowLeft'){e.preventDefault();hset(b,b._r+(e.key==='ArrowRight'?1:-1))}});
+    b.addEventListener('click',e=>{if(m.dataset.swiped)return;
+      const nv=e.target.closest('.snav');if(nv){e.stopPropagation();hset(b,b._r+(nv.classList.contains('next')?1:-1));return}
+      const r=e.target.closest('.rooms i');if(r){e.stopPropagation();hset(b,+r.dataset.r);return}
+      v.querySelectorAll('.hotel').forEach(x=>x.classList.toggle('on',x===b));S.ho=+b.dataset.h;upd(true,'sum')})});
   v.querySelector('#dream').addEventListener('click',openBooking);
   upd()}
 function nw(n,a,b,c){n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1==1)return a;return c}
