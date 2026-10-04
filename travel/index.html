@@ -69,7 +69,8 @@ body.deep .dock,body.zooming .dock{opacity:0;transform:translateY(30px);pointer-
 .media::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--fb)}
 .media::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.35;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
 .media .sun{position:absolute;z-index:-1;border-radius:50%;filter:blur(2px)}
-.media[data-has] .sun,.media[data-has]::before,.media[data-has]::after{display:none}
+.media[data-has] .sun,.media[data-has]::before,.media[data-has]::after,.media[data-has] .ls{display:none}
+.media .ls{position:absolute;inset:0;width:100%;height:100%;z-index:-1}
 
 /* ---------- панели страны и города ---------- */
 .view{position:fixed;inset:0;z-index:15;overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transition:opacity .7s,visibility 0s .7s;scroll-behavior:smooth;overscroll-behavior:contain}
@@ -355,8 +356,67 @@ const MONTHS=['Янв','Фев','Мар','Апр','Май','Июн','Июл','А
 const fmt=n=>Math.round(n).toLocaleString('ru-RU').replace(/\u00a0/g,' ')+' ₽';
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
-function media(key,c,cls='',extra=''){ // фото из img/ или градиент
-  return `<div class="media ${cls}" data-img="${key}" style="--fb:linear-gradient(150deg,${c[0]},${c[1]});${extra}"><span class="sun" style="width:38%;aspect-ratio:1;right:12%;top:14%;background:radial-gradient(circle,rgba(255,255,255,.75),rgba(255,255,255,0) 65%)"></span></div>`}
+
+/* =================== ИЛЛЮСТРАЦИИ-ПОСТЕРЫ (рисуются кодом, без файлов) =================== */
+const SCENE={turkey:'domes-sea',istanbul:'domes-sea',antalya:'sea-mountains',cappadocia:'balloons',uae:'towers-desert',dubai:'towers-desert',abudhabi:'domes-sea',
+ egypt:'pyramids',cairo:'pyramids',sharm:'sea-mountains',hurghada:'sea-palms',thailand:'karst-sea',phuket:'karst-sea',bangkok:'spires',samui:'sea-palms',
+ vietnam:'karst-mist',hanoi:'karst-mist',nhatrang:'sea-mountains',phuquoc:'sea-palms',srilanka:'hills',kandy:'hills',colombo:'sea-city',bentota:'sea-palms',
+ georgia:'peaks',tbilisi:'hills-city',batumi:'sea-city',cuba:'sea-palms',havana:'sea-city',varadero:'sea-palms'};
+function hsh(s){let h=2166136261;for(const ch of s)h=Math.imul(h^ch.charCodeAt(0),16777619);return h>>>0}
+function rnd(seed){let a=seed;return()=>{a|=0;a=a+0x6D2B79F5|0;let t=Math.imul(a^a>>>15,1|a);t=t+Math.imul(t^t>>>7,61|t)^t;return((t^t>>>14)>>>0)/4294967296}}
+function hx(h){h=h.replace('#','');return[0,2,4].map(i=>parseInt(h.substr(i,2),16))}
+function mix(a,b,t){const A=hx(a),B=hx(b);return'#'+A.map((v,i)=>Math.round(v+(B[i]-v)*t).toString(16).padStart(2,'0')).join('')}
+function ridge(r,y0,amp,wl,rough){const ph=[r()*6,r()*6,r()*6],f=[1,2.3,5.1].map(k=>k/wl);let d=`M-10 460L-10 ${y0}`;
+  for(let x=-10;x<=810;x+=10){const n=Math.sin(x*f[0]+ph[0])*.6+Math.sin(x*f[1]+ph[1])*.3+Math.sin(x*f[2]+ph[2])*.1*rough;d+=`L${x} ${(y0-amp*(n*.5+.5)).toFixed(1)}`}return d+'L810 460Z'}
+function karst(r,y0,amp,n){let d=`M-10 460L-10 ${y0}`;let x=-10;while(x<820){const w=40+r()*90,h=amp*(.4+r()*.6);d+=`C${x+w*.05} ${y0-h} ${x+w*.95} ${y0-h} ${x+w} ${y0}`;x+=w}return d+'L820 460Z'}
+function palm(x,y,h,lean,col){const tx=x+lean,ty=y-h;let p=`<path d="M${x-h*.03} ${y}Q${x+lean*.25} ${y-h*.55} ${tx-h*.012} ${ty}L${tx+h*.012} ${ty}Q${x+lean*.25+h*.02} ${y-h*.55} ${x+h*.03} ${y}Z" fill="${col}"/>`;
+  [-175,-150,-125,-100,-75,-50,-25,-5,160,20].forEach((deg,k)=>{const a=deg*Math.PI/180,L=h*(.38+((k*37)%10)/50),ex=tx+Math.cos(a)*L,ey=ty+Math.sin(a)*L*.55+L*.38,cx1=tx+Math.cos(a)*L*.55,cy1=ty+Math.sin(a)*L*.85-L*.05,w=h*.035;
+    p+=`<path d="M${tx} ${ty}Q${cx1} ${cy1-w} ${ex} ${ey}Q${cx1} ${cy1+w*1.6} ${tx} ${ty+w*.6}Z" fill="${col}"/>`});
+  return p+`<circle cx="${tx-4}" cy="${ty+6}" r="${h*.02}" fill="${col}"/><circle cx="${tx+5}" cy="${ty+7}" r="${h*.02}" fill="${col}"/>`}
+function skyline(r,y,col,kind){let o='',x=-10;while(x<820){const w=14+r()*34,big=r();
+  if(kind==='towers'){const h=40+r()*(big>.85?190:90);o+=`<rect x="${x}" y="${y-h}" width="${w*.7}" height="${h}" fill="${col}"/>`;if(big>.85)o+=`<path d="M${x+w*.35-2} ${y-h}L${x+w*.35} ${y-h-50}L${x+w*.35+2} ${y-h}Z" fill="${col}"/>`;x+=w*.75}
+  else if(kind==='domes'){const h=18+r()*28;o+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${col}"/>`;if(big>.7){const R=w*.5+6;o+=`<path d="M${x+w/2-R} ${y-h}A${R} ${R} 0 0 1 ${x+w/2+R} ${y-h}Z" fill="${col}"/><rect x="${x+w+6}" y="${y-h-70}" width="4" height="${70+h}" fill="${col}"/><path d="M${x+w+5} ${y-h-70}L${x+w+8} ${y-h-88}L${x+w+11} ${y-h-70}Z" fill="${col}"/>`;x+=R}x+=w}
+  else if(kind==='spires'){const h=16+r()*22;o+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${col}"/>`;if(big>.75)o+=`<path d="M${x} ${y-h}L${x+w/2} ${y-h-60-r()*40}L${x+w} ${y-h}Z" fill="${col}"/>`;x+=w}
+  else{const h=10+r()*(big>.9?60:30);o+=`<rect x="${x}" y="${y-h}" width="${w}" height="${h}" fill="${col}"/>`;x+=w+1}}return o}
+const ART={};
+function art(key,c,variant=0){const id=key+'_'+variant;if(ART[id])return ART[id];
+  const base=key.replace(/-hotel.*|-\d+$/,''),hotel=/-hotel/.test(key),sc=SCENE[base]||'sea-mountains',r=rnd(hsh(key+variant)),u='a'+(hsh(id)%1e7);
+  const night=variant===2, dawn=variant===3;
+  const SK={sunset:['#2B1B4A','#C2557A','#FFB27A'],golden:['#1E2C5A','#E98A5B','#FFD39A'],tropic:['#1A5FA8','#53B9E0','#FFE3B0'],mist:['#34465F','#8FA5B9','#EDE6D8'],desert:['#3A1F4A','#E2725B','#FFD08A'],
+    dawn:['#3B2E6E','#F09AA8','#FFE0C2'],night:['#03061A','#14183F','#3A2A5C']};
+  const pick={'domes-sea':'sunset','sea-city':'sunset','hills-city':'sunset','balloons':'dawn','pyramids':'desert','towers-desert':'desert','karst-mist':'mist','karst-sea':'tropic','sea-palms':'tropic','sea-mountains':'tropic','spires':'golden','hills':'golden','peaks':'golden'}[sc]||'golden';
+  const P=SK[night?'night':dawn?'dawn':(variant===1&&pick==='tropic'?'sunset':pick)];
+  let top=P[0], mid=P[1], hor=P[2], sun=night?'#F4F1FF':'#FFF4D6';
+  const sea=/sea/.test(sc), H=sea?262:300, sx=120+r()*560, sy=night?70+r()*60:H-40-r()*80, sr=night?16:26+r()*20;
+  const dark=mix(top,'#05060F',.6), far=mix(mid,hor,.35);
+  let o=`<svg class="ls" viewBox="0 0 800 450" preserveAspectRatio="xMidYMid slice" aria-hidden="true"><defs><linearGradient id="${u}s" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${top}"/><stop offset=".55" stop-color="${mid}"/><stop offset="1" stop-color="${hor}"/></linearGradient>
+  <radialGradient id="${u}g"><stop offset="0" stop-color="${sun}" stop-opacity=".9"/><stop offset=".25" stop-color="${sun}" stop-opacity=".35"/><stop offset="1" stop-color="${sun}" stop-opacity="0"/></radialGradient>
+  <linearGradient id="${u}w" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="${mix(mid,hor,.35)}"/><stop offset=".5" stop-color="${mix(mid,top,.45)}"/><stop offset="1" stop-color="${mix(top,'#020414',.45)}"/></linearGradient>
+  <linearGradient id="${u}m" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#fff" stop-opacity="0"/><stop offset="1" stop-color="${hor}" stop-opacity=".85"/></linearGradient></defs>
+  <rect width="800" height="450" fill="url(#${u}s)"/>`;
+  if(night)for(let i=0;i<70;i++)o+=`<circle cx="${r()*800}" cy="${r()*H*.8}" r="${r()*1.3+.3}" fill="#fff" opacity="${.3+r()*.6}"/>`;
+  o+=`<circle cx="${sx}" cy="${sy}" r="${sr*5}" fill="url(#${u}g)"/><circle cx="${sx}" cy="${sy}" r="${sr}" fill="${sun}"/>`;
+  if(!night)for(let i=0;i<3;i++){const y=60+r()*120,x=r()*800;o+=`<path d="M${x} ${y}h${80+r()*140}" stroke="#fff" stroke-opacity=".25" stroke-width="${4+r()*6}" stroke-linecap="round"/>`}
+  const L=(n,fn)=>{for(let i=0;i<n;i++){const t=i/(n-1||1);o+=`<path d="${fn(i,t)}" fill="${mix(far,dark,.15+t*.85)}"/>`}};
+  if(sc==='balloons'){L(3,(i)=>ridge(r,H+30+i*45,70-i*15,300,1.5));const cols=['#E8505B','#F9B16E','#4FE3FF','#F7D35C','#8B7CFF','#2BB38A'];
+    for(let i=0;i<9;i++){const x=40+r()*720,y=40+r()*200,s=8+r()*18,cc=cols[i%6];o+=`<g opacity="${.6+s/40}"><path d="M${x-s} ${y}A${s} ${s*1.15} 0 1 1 ${x+s} ${y}Q${x+s*.5} ${y+s*1.2} ${x+s*.25} ${y+s*1.6}H${x-s*.25}Q${x-s*.5} ${y+s*1.2} ${x-s} ${y}Z" fill="${cc}"/><rect x="${x-s*.22}" y="${y+s*1.7}" width="${s*.44}" height="${s*.35}" fill="${dark}"/></g>`}}
+  else if(sc==='pyramids'){L(2,(i)=>ridge(r,H+40+i*30,30,400,.5));const px=200+r()*300;[[px,150],[px+170,110],[px-120,70]].forEach(([x,h])=>{o+=`<path d="M${x-h*1.1} ${H+60}L${x} ${H+60-h}L${x+h*1.1} ${H+60}Z" fill="${mix(dark,'#7A5530',.35)}"/><path d="M${x} ${H+60-h}L${x+h*1.1} ${H+60}H${x+h*.25}Z" fill="${dark}" opacity=".5"/>`});o+=`<path d="${ridge(r,H+90,25,300,.5)}" fill="${dark}"/>`}
+  else if(/karst/.test(sc)){for(let i=0;i<4;i++){o+=`<path d="${karst(r,H+10+i*40,150-i*20)}" fill="${mix(far,dark,.2+i*.25)}"/>`;if(sc==='karst-mist')o+=`<rect y="${H-40+i*40}" width="800" height="80" fill="url(#${u}m)" opacity=".5"/>`}}
+  else if(sc==='peaks'){L(4,(i)=>ridge(r,H+i*45,180-i*35,180-i*20,3));}
+  else if(/hills/.test(sc)){L(4,(i)=>ridge(r,H+i*40,90-i*15,350,.8));if(sc==='hills-city')o+=skyline(r,H+130,dark,'domes')}
+  else if(/towers|domes|spires/.test(sc)&&!sea){L(2,(i)=>ridge(r,H+20+i*30,30,400,.4));o+=skyline(r,H+90,mix(dark,top,.2),sc.split('-')[0]);o+=skyline(r,H+120,dark,sc.split('-')[0])}
+  if(sea){ if(/mountains/.test(sc))L(2,(i)=>`M-10 ${H}`+ridge(r,H,80-i*30,300,1.5).slice(String(`M-10 460L-10 ${H}`).length));
+    if(sc==='karst-sea'){}
+    if(sc==='domes-sea')o+=skyline(r,H,mix(dark,top,.15),'domes'); if(sc==='sea-city')o+=skyline(r,H,mix(dark,top,.15),'city');
+    o+=`<rect y="${H}" width="800" height="${450-H}" fill="url(#${u}w)"/>`;
+    for(let i=0;i<26;i++){const y=H+4+i*i*.32,w=(10+r()*40)*(1+i*.12);o+=`<rect x="${sx-w/2+(r()-.5)*i*3}" y="${y}" width="${w}" height="${1.2+i*.08}" rx="1" fill="${sun}" opacity="${.65-i*.02}"/>`}
+    for(let i=0;i<14;i++)o+=`<path d="M${r()*800} ${H+20+r()*170}h${20+r()*50}" stroke="#fff" stroke-opacity=".12" stroke-width="1.5"/>`}
+  if(/palms/.test(sc)||(hotel&&/sea|karst/.test(sc))){o+=`<path d="M-10 450L-10 ${430-r()*20}Q200 ${400} 420 ${425}T810 ${415}V450Z" fill="${dark}"/>`;o+=palm(60+r()*80,440,150+r()*60,30+r()*30,dark)+palm(700+r()*60,445,120+r()*50,-30-r()*20,dark)}
+  if(hotel){o+=`<rect y="372" width="800" height="78" fill="${mix(mid,dark,.75)}"/><rect y="352" width="800" height="22" fill="#3FD8E8" opacity=".85"/><rect y="352" width="800" height="3" fill="#fff" opacity=".7"/>`;
+    for(let i=0;i<3;i++){const x=150+i*190;o+=`<path d="M${x} 410h70l14-18" stroke="${mix(hor,'#fff',.4)}" stroke-width="5" fill="none" stroke-linecap="round"/>`}}
+  o+=`</svg>`;return ART[id]=o}
+function media(key,c,cls='',extra='',v=0){ // фото из img/ или нарисованный постер
+  return `<div class="media ${cls}" data-img="${key}" style="--fb:linear-gradient(150deg,${c[0]},${c[1]});${extra}">${art(key,c,v)}</div>`}
 function loadMedia(root=document){ root.querySelectorAll('.media[data-img]:not([data-tried])').forEach(el=>{el.dataset.tried=1;const src='img/'+el.dataset.img+'.jpg';const im=new Image();im.onload=()=>{el.style.backgroundImage=`url(${src})`;el.dataset.has=1};im.src=src})}
 
 /* =================== ПЛАНЕТА =================== */
@@ -484,7 +544,7 @@ function renderCountry(c){
   v.innerHTML=`<div class="wrap">
    <div class="back"><button class="chipbtn" data-go="#/">← К планете</button><span class="crumbs">Планета / ${c.name}</span></div>
    <div class="hero">${media(c.id,c.c)}<div class="shade"></div>
-     <div class="gallery">${[1,2,3].map(n=>media(c.id+'-'+n,[c.c[1],c.c[0]])).join('')}</div>
+     <div class="gallery">${[1,2,3].map(n=>media(c.id+'-'+n,c.c,'','',n)).join('')}</div>
      <div class="cap lines"><p class="crumbs">${c.tag}</p><h2>${c.name}</h2><p>Туры от ${fmt(c.from)} на человека с перелётом из Москвы. Выберите город на карте ниже.</p></div></div>
    <div class="facts">
      <div class="fact"><small>Виза для граждан РФ</small><b class="${c.visa.ok?'visa-ok':'visa-w'}">${c.visa.title}${c.visa.ok?', '+c.visa.term:''}</b></div>
@@ -493,7 +553,7 @@ function renderCountry(c){
      <div class="fact"><small>Разница во времени</small><b>${c.facts.time}</b></div></div>
    <section class="blk"><h3>Куда именно?</h3><p class="sub">Нажмите на город на карте или в списке. Покажем погоду по месяцам, перелёты и лучшие отели.</p>
      <div class="cmap"><div class="mapbox">${countryMap(c)}</div>
-       <div class="cities">${c.cities.map(ct=>`<button class="ccard" data-go="#/${c.id}/${ct.id}">${media(ct.id,[c.c[1],c.c[0]])}<span><b>${ct.name}</b><p>${ct.desc}</p><p>Перелёт ${ct.fl}</p></span><span class="go">→</span></button>`).join('')}</div></div></section>
+       <div class="cities">${c.cities.map(ct=>`<button class="ccard" data-go="#/${c.id}/${ct.id}">${media(ct.id,c.c)}<span><b>${ct.name}</b><p>${ct.desc}</p><p>Перелёт ${ct.fl}</p></span><span class="go">→</span></button>`).join('')}</div></div></section>
    <p class="note" style="margin:40px 0 80px">Сведения о визах приведены для примера. Перед поездкой сверьте актуальные правила въезда на сайте консульства или у наших менеджеров.</p></div>`;
   v.querySelectorAll('.cpin').forEach(g=>{const f=()=>go(`#/${c.id}/${g.dataset.city}`);g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter')f()})});
   loadMedia(v)}
@@ -517,8 +577,8 @@ function renderCity(c,ct){
   const v=$('#vCity');
   v.innerHTML=`<div class="wrap">
    <div class="back"><button class="chipbtn" data-go="#/${c.id}">← ${c.name}</button><span class="crumbs">Планета / ${c.name} / ${ct.name}</span></div>
-   <div class="hero">${media(ct.id,[c.c[1],c.c[0]])}<div class="shade"></div>
-     <div class="gallery">${[1,2,3].map(n=>media(ct.id+'-'+n,c.c)).join('')}</div>
+   <div class="hero">${media(ct.id,c.c)}<div class="shade"></div>
+     <div class="gallery">${[1,2,3].map(n=>media(ct.id+'-'+n,c.c,'','',n)).join('')}</div>
      <div class="cap lines"><p class="crumbs">${c.name}</p><h2>${ct.name}</h2><p>${ct.desc}</p></div></div>
    <div class="visa ${c.visa.ok?'ok':'w'}"><div class="stamp">${c.visa.ok?'VISA<br>FREE':'VISA<br>REQUIRED'}</div>
      <div><small class="crumbs">Визовый режим для граждан РФ</small><div class="big">${c.visa.title}</div><p>${c.visa.text}</p></div>
@@ -544,7 +604,7 @@ function renderCity(c,ct){
        <div class="stub"><small>за человека</small><b>${fmt(f.price)}</b><span class="barcode"></span></div></button>`).join('')}</div></section>
 
    <section class="blk" id="sHotels"><h3>Отель</h3><p class="sub">Проверенные отели с реальными отзывами туристов. Цена за номер за ночь.</p>
-     <div class="hotels">${ho.map((h,i)=>`<button class="hotel" data-h="${i}"><div class="media" data-img="${ct.id}-hotel-${i+1}" style="--fb:linear-gradient(${140+i*40}deg,${c.c[0]},${c.c[1]})">${h.tag?`<span class="badge">${h.tag}</span>`:''}<span class="rooms">${[1,2,3].map(n=>`<i class="${n===1?'on':''}" data-r="${n}"></i>`).join('')}</span></div>
+     <div class="hotels">${ho.map((h,i)=>`<button class="hotel" data-h="${i}"><div class="media" data-img="${ct.id}-hotel-${i+1}" style="--fb:linear-gradient(${140+i*40}deg,${c.c[0]},${c.c[1]})">${art(ct.id+'-hotel-'+(i+1),c.c,i%2?3:0)}${h.tag?`<span class="badge">${h.tag}</span>`:''}<span class="rooms">${[1,2,3].map(n=>`<i class="${n===1?'on':''}" data-r="${n}"></i>`).join('')}</span></div>
        <div class="body"><div class="row"><h4>${h.name}</h4><span class="score">${h.sc.toFixed(1)}</span></div><span class="stars">${'★'.repeat(h.st)}</span>
        <div class="am">${h.am.map(a=>`<span>${a}</span>`).join('')}</div><div class="price"><small>за ночь</small><b>${fmt(h.price)}</b></div></div></button>`).join('')}</div></section>
 
@@ -560,7 +620,7 @@ function renderCity(c,ct){
   v.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{S.pax=Math.max(1,Math.min(6,S.pax+ +b.dataset.p));upd()}));
   v.querySelectorAll('.pass').forEach(b=>b.addEventListener('click',()=>{v.querySelectorAll('.pass').forEach(x=>x.classList.toggle('on',x===b));S.fl=+b.dataset.f;upd(true,'sHotels')}));
   v.querySelectorAll('.hotel').forEach(b=>b.addEventListener('click',e=>{const r=e.target.closest('.rooms i');if(r){e.stopPropagation();const m=b.querySelector('.media');b.querySelectorAll('.rooms i').forEach(x=>x.classList.toggle('on',x===r));
-      m.dataset.img=`${ct.id}-hotel-${+b.dataset.h+1}${r.dataset.r>1?'-'+r.dataset.r:''}`;m.removeAttribute('data-tried');m.removeAttribute('data-has');m.style.backgroundImage='';m.style.setProperty('--fb',`linear-gradient(${120+r.dataset.r*50}deg,${c.c[0]},${c.c[1]})`);loadMedia(b);return}
+      const key=`${ct.id}-hotel-${+b.dataset.h+1}`;m.dataset.img=key+(r.dataset.r>1?'-'+r.dataset.r:'');m.removeAttribute('data-tried');m.removeAttribute('data-has');m.style.backgroundImage='';const old=m.querySelector('.ls');if(old)old.outerHTML=art(key,c.c,+r.dataset.r===2?2:+r.dataset.r===3?3:0);loadMedia(b);return}
     v.querySelectorAll('.hotel').forEach(x=>x.classList.toggle('on',x===b));S.ho=+b.dataset.h;upd(true,'sum')}));
   v.querySelector('#dream').addEventListener('click',openBooking);
   upd()}
