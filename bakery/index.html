@@ -12,7 +12,7 @@
 @property --a{syntax:'<color>';inherits:true;initial-value:#F28C28}
 @property --b{syntax:'<color>';inherits:true;initial-value:#9A3D0C}
 *{box-sizing:border-box;margin:0;padding:0}
-html{scroll-behavior:smooth}
+html{scroll-behavior:smooth;overflow-x:clip}
 body{font-family:"Manrope",system-ui,sans-serif;color:#fff;min-height:100vh;line-height:1.55;
   background:radial-gradient(120% 90% at 15% 0%,var(--a),var(--b) 75%);background-attachment:fixed;
   transition:--a .9s ease,--b .9s ease}
@@ -112,6 +112,7 @@ span.opt{font-weight:600;height:38px}
 @keyframes up{from{opacity:0;transform:translateY(24px)}to{opacity:1;transform:none}}
 
 .below{max-width:1240px;margin:28px auto 0;display:grid;gap:28px;padding-bottom:60px}
+.below>*{min-width:0}
 .panel{border-radius:32px;padding:48px 44px;background:rgba(0,0,0,.22);backdrop-filter:blur(10px);
   box-shadow:inset 0 1px 0 rgba(255,255,255,.15)}
 .panel h2{font-size:clamp(1.7rem,3.4vw,2.5rem);font-weight:700;letter-spacing:-.02em;margin-bottom:10px}
@@ -232,6 +233,67 @@ footer{text-align:center;opacity:.75;font-size:.85rem}
 @keyframes m3{0%,38%{opacity:0;transform:translateY(10px) scale(.85)}45%,90%{opacity:1;transform:none}97%,100%{opacity:0}}
 @keyframes tap{0%,58%,72%,100%{background:rgba(255,255,255,.16);color:#fff}61%,69%{background:#fff;color:#0B4F80}}
 
+.photo{height:min(440px,50vh);aspect-ratio:4/5;margin:0 auto;border-radius:240px 240px 26px 26px;overflow:hidden;background:rgba(0,0,0,.25);
+  box-shadow:0 40px 60px -30px rgba(0,0,0,.65),0 0 0 6px rgba(255,255,255,.14)}
+.photo img,.pcard img,.pscr img{width:100%;height:100%;object-fit:cover;display:block;color:transparent}
+.float:has(.photo){width:auto}
+.item:has(.photo) .shadow{display:none}
+.next .th .photo{height:auto;width:100%;aspect-ratio:1;border-radius:14px;box-shadow:none}
+.pscr{padding:0!important;position:relative}
+.pscr img,.pscr>svg{position:absolute;inset:0;width:100%;height:100%}
+.pscr .ov{position:absolute;inset:0}
+.pscr b{position:absolute;left:14px;right:14px;top:30px}
+.pscr .btn{position:absolute;left:14px;top:104px;margin:0}
+.th .pscr b,.th .pscr .btn{display:none}
+.pgrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:18px}
+.pcard{margin:0;border-radius:20px;overflow:hidden;background:rgba(0,0,0,.22)}
+.pcard .im{aspect-ratio:4/3.3;overflow:hidden;background:rgba(0,0,0,.2)}
+.pcard img{transition:transform 1s cubic-bezier(.2,.8,.2,1)}
+.pcard:hover img{transform:scale(1.07)}
+.pcard figcaption{display:flex;justify-content:space-between;align-items:baseline;gap:10px;padding:14px 18px 16px}
+.pcard figcaption span{opacity:.85;white-space:nowrap;font-weight:700}
+
+.tagged{position:relative}
+.tagged>.tex{position:absolute;inset:0;width:100%;height:100%}
+.tagged .stripe{position:absolute;left:18%;top:-10%;width:16px;height:70%;transform:rotate(-8deg);opacity:.95;box-shadow:0 4px 10px rgba(0,0,0,.25)}
+.label{position:absolute;left:9%;right:9%;bottom:9%;padding:18px 18px 14px;background:#EADBC2;color:#3A2A1A;border-radius:6px;transform:rotate(-2.5deg);
+  box-shadow:0 18px 30px -12px rgba(0,0,0,.55);background-image:repeating-linear-gradient(0deg,rgba(80,50,20,.04) 0 1px,transparent 1px 3px)}
+.label::before{content:"";position:absolute;top:10px;left:50%;width:12px;height:12px;margin-left:-6px;border-radius:50%;background:rgba(0,0,0,.25);box-shadow:inset 0 2px 3px rgba(0,0,0,.4)}
+.label small{display:block;margin-top:10px;font-size:.66rem;letter-spacing:.12em;text-transform:uppercase;opacity:.7}
+.label b{display:block;font-family:"Montserrat",sans-serif;font-size:1.15rem;line-height:1.15;margin:4px 0 10px}
+.label ul{list-style:none;font-size:.78rem}
+.label li{display:flex;justify-content:space-between;gap:10px;padding:5px 0;border-top:1px dashed rgba(58,42,26,.3)}
+.label li span{opacity:.7} .label li b{font-size:.78rem;margin:0;text-align:right}
+.th .label,.th .stripe{display:none}
+.icards{display:grid;grid-template-columns:repeat(3,1fr);gap:16px}
+@media (max-width:1000px){.icards{grid-template-columns:repeat(2,1fr)}}
+@media (max-width:600px){.icards{grid-template-columns:1fr}}
+.icard{background:rgba(255,255,255,.08);border:1px solid rgba(255,255,255,.14);border-radius:18px;padding:20px;transition:background .3s,transform .3s}
+.icard:hover{background:rgba(255,255,255,.13);transform:translateY(-3px)}
+.icard header{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.icard h3{font-size:1.1rem} .icard header b{white-space:nowrap}
+.icard .meta{font-size:.82rem;opacity:.7;margin:4px 0 10px}
+.icard p{opacity:.9;font-size:.92rem}
+.tags{display:flex;flex-wrap:wrap;gap:6px;margin-top:12px}
+.tags em{font-style:normal;font-size:.72rem;font-weight:600;padding:4px 10px;border-radius:999px;background:rgba(0,0,0,.25)}
+.steps{list-style:none;counter-reset:s;display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:22px;margin-top:24px}
+.steps li{counter-increment:s;display:grid;gap:4px}
+.steps li::before{content:counter(s);width:36px;height:36px;border-radius:50%;background:#fff;color:#1a1a1a;display:grid;place-items:center;font-weight:800;margin-bottom:6px}
+.steps span{opacity:.85}
+.faqs{margin-top:20px}
+.qa{border-bottom:1px solid rgba(255,255,255,.18)}
+.qa summary{display:flex;justify-content:space-between;align-items:center;gap:16px;padding:18px 0;cursor:pointer;list-style:none;font-weight:700;font-size:1.05rem}
+.qa summary::-webkit-details-marker{display:none}
+.qa i{position:relative;width:12px;height:12px;flex:none}
+.qa i::before,.qa i::after{content:"";position:absolute;left:0;right:0;top:50%;height:2px;background:currentColor;transition:transform .3s}
+.qa i::after{transform:rotate(90deg)} .qa[open] i::after{transform:rotate(0)}
+.qa p{padding:0 24px 18px 0;opacity:.85;animation:up .4s both}
+.real{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;opacity:0;transition:opacity .9s ease}
+.real.in{opacity:1}
+.ci{display:none;position:relative;aspect-ratio:4/3;border-radius:14px;overflow:hidden;margin-bottom:14px}
+.ci.has{display:block}
+.icard .ci{margin:-8px -8px 14px}
+
 @media (max-width:900px){ .svc-grid{grid-template-columns:minmax(0,1fr)} .svc{padding:18px 20px 24px} }
 @media (max-width:400px){ .tgl{width:66px;height:66px} .chat{width:180px} .a-card{transform:scale(.9)} }
 @media (prefers-reduced-motion:reduce){ .rv{opacity:1;transform:none} .msg.typing{display:none} }
@@ -242,7 +304,8 @@ footer{text-align:center;opacity:.75;font-size:.85rem}
   .below{padding-bottom:110px}
   [id]{scroll-margin-top:16px}
   .icons{display:none}
-  .pill a{padding:9px 12px;font-size:.85rem}
+  .pill a{padding:9px 10px;font-size:.78rem}
+  .stage .photo{height:285px}
   .stage .phone{height:280px;border-radius:26px;padding:6px}
   .stage .scr{border-radius:21px;padding:24px 12px}
   .stage .scr b{font-size:.95rem}
@@ -265,7 +328,7 @@ footer{text-align:center;opacity:.75;font-size:.85rem}
 </style>
 </head>
 <body>
-<nav class="pill" id="nav" aria-label="Разделы"><span class="ind" aria-hidden="true"></span><a href="#top" class="on">Выпечка</a><a href="#order">Предзаказ</a><a href="#visit">Как найти</a></nav>
+<nav class="pill" id="nav" aria-label="Разделы"><span class="ind" aria-hidden="true"></span><a href="#top" class="on">Выпечка</a><a href="#order">Предзаказ</a><a href="#faq">Вопросы</a><a href="#visit">Адрес</a></nav>
 <div class="frame" id="top">
   <div class="top intro" style="animation-delay:0.3s">
     <a class="logo" href="#top"><i>О</i>ОПАРА</a>
@@ -301,6 +364,13 @@ footer{text-align:center;opacity:.75;font-size:.85rem}
 </div>
 
 <div class="below">
+<section class="panel"><h2>Сегодня на витрине</h2><p class="sub">Всё испечено этой ночью. То, что не продали за день, отдаём в фонд помощи.</p><div class="icards"><article class="icard"><div class="ci" data-img="menu-wheat" data-alt="Пшеничный на закваске"></div><header><h3>Пшеничный на закваске</h3><b>290 ₽</b></header><p class="meta">600 г · 240 ккал/100 г</p><p>Мука высшего сорта, вода, соль, пшеничная закваска.</p><div class="tags"><em>глютен</em><em>веган</em></div></article><article class="icard"><div class="ci" data-img="menu-rye" data-alt="Ржаной с тмином"></div><header><h3>Ржаной с тмином</h3><b>240 ₽</b></header><p class="meta">500 г · 210 ккал/100 г</p><p>Ржаная обдирная мука, закваска, тмин, солод.</p><div class="tags"><em>глютен</em><em>веган</em></div></article><article class="icard"><div class="ci" data-img="menu-croissant" data-alt="Круассан"></div><header><h3>Круассан</h3><b>140 ₽</b></header><p class="meta">70 г · 380 ккал/100 г</p><p>Мука, сливочное масло 82%, молоко, яйцо, сахар.</p><div class="tags"><em>глютен</em><em>молоко</em><em>яйцо</em></div></article><article class="icard"><div class="ci" data-img="menu-bun" data-alt="Булочка с кардамоном"></div><header><h3>Булочка с кардамоном</h3><b>180 ₽</b></header><p class="meta">90 г · 340 ккал/100 г</p><p>Сдобное тесто, кардамон, жемчужный сахар.</p><div class="tags"><em>глютен</em><em>молоко</em><em>яйцо</em></div></article><article class="icard"><div class="ci" data-img="menu-focaccia" data-alt="Фокачча с томатами"></div><header><h3>Фокачча с томатами</h3><b>260 ₽</b></header><p class="meta">300 г · 270 ккал/100 г</p><p>Оливковое масло, томаты черри, розмарин, морская соль.</p><div class="tags"><em>глютен</em><em>веган</em></div></article><article class="icard"><div class="ci" data-img="menu-glutenfree" data-alt="Безглютеновый хлеб"></div><header><h3>Безглютеновый хлеб</h3><b>350 ₽</b></header><p class="meta">400 г · 230 ккал/100 г</p><p>Рисовая и гречневая мука, псиллиум, семена льна. Печём по средам и субботам.</p><div class="tags"><em>без глютена</em><em>веган</em></div></article></div></section>
+<section class="panel"><h2>Доставка и самовывоз</h2><div class="cols" style="margin-top:24px">
+<div><h3>Самовывоз</h3><p>Бесплатно. Предзаказ до 22:00 накануне, заказ ждёт на кассе до 12:00.</p></div>
+<div><h3>Доставка</h3><p>В радиусе 3 км: 150 ₽, бесплатно от 1 500 ₽. Привозим с 8:00 до 20:00, курьер звонит за 15 минут.</p></div>
+<div><h3>Оплата</h3><p>Картой, наличными или по СБП. Для доставки ссылка на оплату приходит в Telegram.</p></div></div></section>
+<section class="panel"><h2>Торты и выпечка на заказ</h2><p class="sub">Принимаем за 3 дня. Минимальный вес торта 1,5 кг, цена от 2 400 ₽ за кг. Предоплата 50%, остальное при получении.</p>
+<div class="cols"><div><h3>Наполнения</h3><p>Медовик, наполеон, морковный, шоколад с вишней, фисташка с малиной.</p></div><div><h3>Оформление</h3><p>Ягоды, живые цветы, надпись бесплатно. Фигурки и печать фото по договорённости.</p></div><div><h3>Для праздника</h3><p>Сеты мини-круассанов и тарталеток от 12 штук для офиса и дня рождения.</p></div></div></section>
 <section class="panel" id="order"><h2>Отложим для вас</h2><p class="sub">Оставьте заявку до 22:00 — утром хлеб будет ждать на кассе с вашим именем.</p>
 <form id="f" data-msg="{name}, готово! Заберите заказ завтра с 7:00 до 12:00."><label>Имя<input required name="name" autocomplete="given-name" placeholder="Анна"></label>
 <label>Телефон<input required name="phone" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></label>
@@ -310,11 +380,27 @@ footer{text-align:center;opacity:.75;font-size:.85rem}
 <div><h3>Адрес</h3><p>ул. Примерная, 12<br>вход со двора, жёлтая дверь</p></div>
 <div><h3>Часы работы</h3><p>Каждый день 7:00–21:00</p></div>
 <div><h3>Контакты</h3><p><a href="tel:+79000000000">+7 900 000-00-00</a><br><a href="https://t.me/">Telegram</a></p></div></div></section>
+<section class="panel" id="faq"><h2>Частые вопросы</h2><div class="faqs"><details class="qa"><summary>Хлеб правда свежий каждый день?<i aria-hidden="true"></i></summary><p>Да. Печём ночью с 2:00, всё, что не продали за день, вечером отдаём в фонд помощи.</p></details><details class="qa"><summary>Есть ли что-то без глютена или без сахара?<i aria-hidden="true"></i></summary><p>Безглютеновый хлеб по средам и субботам, весь хлеб на закваске без сахара и дрожжей.</p></details><details class="qa"><summary>Можно ли нарезать хлеб?<i aria-hidden="true"></i></summary><p>Да, бесплатно, скажите на кассе или отметьте в заявке.</p></details><details class="qa"><summary>Как хранить хлеб на закваске?<i aria-hidden="true"></i></summary><p>В льняном мешочке или бумажном пакете, не в холодильнике. Через 3 дня отлично подходит для тостов.</p></details><details class="qa"><summary>Работаете ли в праздники?<i aria-hidden="true"></i></summary><p>Да, без выходных. 31 декабря до 18:00, 1 января с 12:00.</p></details></div></section>
 <footer>Пекарня «Опара», 2026. Демонстрационный проект.</footer>
 </div>
 
 <script>
-const ITEMS=[{"name": "Пшеничный", "ghost": "ХЛЕБ", "title": ["Хлеб из печи", "к 7 утра"], "text": "Пшеничный на живой закваске. Тесто бродит 18 часов, поэтому корка хрустит, а мякиш остаётся влажным до вечера.", "cta": ["Отложить на утро", "#order"], "optLabel": "Вес:", "opts": [{"label": "600 г", "price": 290}, {"label": "1 кг", "price": 450}], "caption": "Печём каждую ночь,<br>с 7:00 уже на полке", "a": "#F28C28", "b": "#8A3509", "visual": "<svg viewBox=\"0 0 400 300\"><path d=\"M40 250C30 140 120 90 200 90s170 50 160 160Z\" fill=\"#E7A453\"/>\n<path d=\"M40 250C30 140 120 90 200 90s170 50 160 160Z\" fill=\"none\" stroke=\"#A9632A\" stroke-width=\"5\"/>\n<path d=\"M60 240c10-70 70-115 140-120\" fill=\"none\" stroke=\"#F6C784\" stroke-width=\"10\" stroke-linecap=\"round\" opacity=\".6\"/>\n<g fill=\"none\" stroke=\"#FBE3B0\" stroke-width=\"12\" stroke-linecap=\"round\"><path d=\"M105 165q32-22 64-9\"/><path d=\"M172 142q32-22 64-9\"/><path d=\"M240 165q32-22 64-9\"/></g>\n<rect x=\"38\" y=\"242\" width=\"324\" height=\"14\" rx=\"7\" fill=\"#B8702F\"/></svg>"}, {"name": "Круассан", "ghost": "БУТЕР", "title": ["Хруст, который", "слышно"], "text": "Слоёное тесто на сливочном масле 82%. Двадцать семь слоёв, никакого маргарина.", "cta": ["Взять к кофе", "#order"], "optLabel": "Сколько:", "opts": [{"label": "1", "price": 140}, {"label": "4", "price": 480, "old": 560}, {"label": "6", "price": 690, "old": 840}], "caption": "Лучше всего<br>до 11 утра", "a": "#E9A92B", "b": "#7A4504", "visual": "<svg viewBox=\"0 0 400 300\"><ellipse cx=\"52\" cy=\"222\" rx=\"22\" ry=\"30\" transform=\"rotate(-62 52 222)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"46\" cy=\"212\" rx=\"9\" ry=\"7\" transform=\"rotate(-62 52 222)\" fill=\"#F7D08F\" opacity=\".7\"/><ellipse cx=\"348\" cy=\"222\" rx=\"22\" ry=\"30\" transform=\"rotate(62 348 222)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"342\" cy=\"212\" rx=\"9\" ry=\"7\" transform=\"rotate(62 348 222)\" fill=\"#F7D08F\" opacity=\".7\"/><ellipse cx=\"88\" cy=\"196\" rx=\"34\" ry=\"44\" transform=\"rotate(-45 88 196)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"80\" cy=\"181\" rx=\"14\" ry=\"10\" transform=\"rotate(-45 88 196)\" fill=\"#F7D08F\" opacity=\".7\"/><ellipse cx=\"312\" cy=\"196\" rx=\"34\" ry=\"44\" transform=\"rotate(45 312 196)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"304\" cy=\"181\" rx=\"14\" ry=\"10\" transform=\"rotate(45 312 196)\" fill=\"#F7D08F\" opacity=\".7\"/><ellipse cx=\"136\" cy=\"178\" rx=\"46\" ry=\"58\" transform=\"rotate(-24 136 178)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"124\" cy=\"158\" rx=\"18\" ry=\"13\" transform=\"rotate(-24 136 178)\" fill=\"#F7D08F\" opacity=\".7\"/><ellipse cx=\"264\" cy=\"178\" rx=\"46\" ry=\"58\" transform=\"rotate(24 264 178)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"252\" cy=\"158\" rx=\"18\" ry=\"13\" transform=\"rotate(24 264 178)\" fill=\"#F7D08F\" opacity=\".7\"/><ellipse cx=\"200\" cy=\"170\" rx=\"58\" ry=\"72\" transform=\"rotate(0 200 170)\" fill=\"#E2A04B\" stroke=\"#A35E1F\" stroke-width=\"5\"/><ellipse cx=\"186\" cy=\"145\" rx=\"23\" ry=\"16\" transform=\"rotate(0 200 170)\" fill=\"#F7D08F\" opacity=\".7\"/></svg>"}, {"name": "Ржаной", "ghost": "РОЖЬ", "title": ["Ржаной", "с характером"], "text": "Плотный, с кислинкой и тмином. Хранится неделю и становится только вкуснее.", "cta": ["Отложить на утро", "#order"], "optLabel": "Нарезать?", "opts": [{"label": "Целый", "price": 240}, {"label": "Нарезать", "price": 250}], "caption": "Рецепт<br>без дрожжей", "a": "#9A6440", "b": "#2E1A0E", "visual": "<svg viewBox=\"0 0 400 300\"><ellipse cx=\"200\" cy=\"165\" rx=\"150\" ry=\"120\" fill=\"#6B4026\" stroke=\"#3E2414\" stroke-width=\"5\"/>\n<ellipse cx=\"170\" cy=\"120\" rx=\"80\" ry=\"40\" fill=\"#8A5634\" opacity=\".7\"/>\n<g stroke=\"#2F1A0D\" stroke-width=\"7\" stroke-linecap=\"round\"><path d=\"M120 120l160 100\"/><path d=\"M280 110L130 225\"/></g><ellipse cx=\"150\" cy=\"110\" rx=\"5\" ry=\"2.6\" transform=\"rotate(20 150 110)\" fill=\"#E9CDA3\"/><ellipse cx=\"240\" cy=\"100\" rx=\"5\" ry=\"2.6\" transform=\"rotate(-30 240 100)\" fill=\"#E9CDA3\"/><ellipse cx=\"270\" cy=\"170\" rx=\"5\" ry=\"2.6\" transform=\"rotate(40 270 170)\" fill=\"#E9CDA3\"/><ellipse cx=\"130\" cy=\"190\" rx=\"5\" ry=\"2.6\" transform=\"rotate(-10 130 190)\" fill=\"#E9CDA3\"/><ellipse cx=\"200\" cy=\"210\" rx=\"5\" ry=\"2.6\" transform=\"rotate(60 200 210)\" fill=\"#E9CDA3\"/><ellipse cx=\"180\" cy=\"140\" rx=\"5\" ry=\"2.6\" transform=\"rotate(-50 180 140)\" fill=\"#E9CDA3\"/><ellipse cx=\"250\" cy=\"230\" rx=\"5\" ry=\"2.6\" transform=\"rotate(10 250 230)\" fill=\"#E9CDA3\"/><ellipse cx=\"115\" cy=\"150\" rx=\"5\" ry=\"2.6\" transform=\"rotate(80 115 150)\" fill=\"#E9CDA3\"/><ellipse cx=\"290\" cy=\"130\" rx=\"5\" ry=\"2.6\" transform=\"rotate(-15 290 130)\" fill=\"#E9CDA3\"/></svg>"}, {"name": "С кардамоном", "ghost": "ПРЯНО", "title": ["Булочка", "по-шведски"], "text": "Сдобная, с кардамоном и жемчужным сахаром. Как в кофейнях Стокгольма, только ближе.", "cta": ["Взять к кофе", "#order"], "optLabel": "Сколько:", "opts": [{"label": "1", "price": 180}, {"label": "3", "price": 480, "old": 540}], "caption": "Выпекаем<br>к обеду", "a": "#D9778F", "b": "#6A2238", "visual": "<svg viewBox=\"0 0 400 300\"><circle cx=\"200\" cy=\"155\" r=\"125\" fill=\"#D9985A\" stroke=\"#9C5A26\" stroke-width=\"5\"/>\n<path d=\"M200 155m-8 0a10 10 0 1 1 20 4a30 30 0 1 1-52-8a52 52 0 1 1 92 16a78 78 0 1 1-140-18a100 100 0 1 1 186 22\" fill=\"none\" stroke=\"#8E4E1E\" stroke-width=\"13\" stroke-linecap=\"round\"/>\n<g fill=\"#FFF4E4\"><circle cx=\"150\" cy=\"95\" r=\"6\"/><circle cx=\"250\" cy=\"110\" r=\"5\"/><circle cx=\"270\" cy=\"200\" r=\"6\"/><circle cx=\"140\" cy=\"210\" r=\"5\"/><circle cx=\"205\" cy=\"230\" r=\"4\"/><circle cx=\"110\" cy=\"150\" r=\"4\"/></g></svg>"}];
+/* Фото из папки img: если файл есть, он появляется поверх текстуры, если нет, остаётся текстура */
+(function(){
+  function L(el){ if(el.dataset.tried) return; el.dataset.tried=1;
+    var src='img/'+el.dataset.img+'.jpg', im=new Image();
+    im.onload=function(){ var i=document.createElement('img'); i.src=src; i.alt=el.dataset.alt||''; i.className='real'; i.decoding='async';
+      var tex=[].filter.call(el.children,function(c){return c.matches('.hs,.silk,.tex')});
+      var ref=tex.length?tex[tex.length-1].nextSibling:el.firstChild; el.insertBefore(i,ref); el.classList.add('has');
+      requestAnimationFrame(function(){requestAnimationFrame(function(){i.classList.add('in')})}) };
+    im.src=src }
+  function scan(r){ if(r.matches&&r.matches('[data-img]')) L(r); if(r.querySelectorAll) r.querySelectorAll('[data-img]').forEach(L) }
+  scan(document);
+  new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1)scan(n)})})}).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<script>
+const ITEMS=[{"name": "Пшеничный", "ghost": "ХЛЕБ", "title": ["Хлеб из печи", "к 7 утра"], "text": "Пшеничный на живой закваске. Тесто бродит 18 часов, поэтому корка хрустит, а мякиш остаётся влажным до вечера.", "cta": ["Отложить на утро", "#order"], "optLabel": "Вес:", "opts": [{"label": "600 г", "price": 290}, {"label": "1 кг", "price": 450}], "caption": "Печём каждую ночь,<br>с 7:00 уже на полке", "a": "#F28C28", "b": "#8A3509", "visual": "<div class=\"photo tagged\" data-img=\"bread-wheat\"><svg class=\"tex \" viewBox=\"0 0 500 620\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\"><defs><filter id=\"lt1\" x=\"0\" y=\"0\" width=\"100%\" height=\"100%\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.006 0.09\" numOctaves=\"3\" seed=\"4\" result=\"n\"/><feDiffuseLighting in=\"n\" surfaceScale=\"2.2\" lighting-color=\"#E9D2B8\"><feDistantLight azimuth=\"225\" elevation=\"45\"/></feDiffuseLighting><feComposite in2=\"SourceGraphic\" operator=\"arithmetic\" k1=\"1\"/></filter><filter id=\"fl1\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".7\" seed=\"7\"/><feColorMatrix values=\"0 0 0 0 1  0 0 0 0 .97  0 0 0 0 .92  0 0 0 10 -6.8\"/></filter></defs><rect width=\"500\" height=\"620\" fill=\"#4A3424\" filter=\"url(#lt1)\"/><rect width=\"500\" height=\"620\" filter=\"url(#fl1)\" opacity=\"0.8\"/></svg><div class=\"label\"><small>Испечён сегодня в 4:30</small><b>Пшеничный на закваске</b><ul><li><span>Вес</span><b>600 г</b></li><li><span>Состав</span><b>мука, вода, соль, закваска</b></li><li><span>Хранится</span><b>3 дня</b></li></ul></div></div>"}, {"name": "Круассан", "ghost": "БУТЕР", "title": ["Хруст, который", "слышно"], "text": "Слоёное тесто на сливочном масле 82%. Двадцать семь слоёв, никакого маргарина.", "cta": ["Взять к кофе", "#order"], "optLabel": "Сколько:", "opts": [{"label": "1", "price": 140}, {"label": "4", "price": 480, "old": 560}, {"label": "6", "price": 690, "old": 840}], "caption": "Лучше всего<br>до 11 утра", "a": "#E9A92B", "b": "#7A4504", "visual": "<div class=\"photo tagged\" data-img=\"croissant\"><svg class=\"tex \" viewBox=\"0 0 500 620\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\"><defs><filter id=\"lt2\" x=\"0\" y=\"0\" width=\"100%\" height=\"100%\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.006 0.09\" numOctaves=\"3\" seed=\"4\" result=\"n\"/><feDiffuseLighting in=\"n\" surfaceScale=\"2.2\" lighting-color=\"#E9D2B8\"><feDistantLight azimuth=\"225\" elevation=\"45\"/></feDiffuseLighting><feComposite in2=\"SourceGraphic\" operator=\"arithmetic\" k1=\"1\"/></filter><filter id=\"fl2\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".7\" seed=\"7\"/><feColorMatrix values=\"0 0 0 0 1  0 0 0 0 .97  0 0 0 0 .92  0 0 0 10 -6.8\"/></filter></defs><rect width=\"500\" height=\"620\" fill=\"#4A3424\" filter=\"url(#lt2)\"/><rect width=\"500\" height=\"620\" filter=\"url(#fl2)\" opacity=\"0.8\"/></svg><div class=\"label\"><small>Из печи в 6:15</small><b>Круассан на масле 82%</b><ul><li><span>Вес</span><b>70 г</b></li><li><span>Аллергены</span><b>глютен, молоко, яйцо</b></li><li><span>Ккал</span><b>380 на 100 г</b></li></ul></div></div>"}, {"name": "Ржаной", "ghost": "РОЖЬ", "title": ["Ржаной", "с характером"], "text": "Плотный, с кислинкой и тмином. Хранится неделю и становится только вкуснее.", "cta": ["Отложить на утро", "#order"], "optLabel": "Нарезать?", "opts": [{"label": "Целый", "price": 240}, {"label": "Нарезать", "price": 250}], "caption": "Рецепт<br>без дрожжей", "a": "#9A6440", "b": "#2E1A0E", "visual": "<div class=\"photo tagged\" data-img=\"bread-rye\"><svg class=\"tex \" viewBox=\"0 0 500 620\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\"><defs><filter id=\"lt3\" x=\"0\" y=\"0\" width=\"100%\" height=\"100%\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.006 0.09\" numOctaves=\"3\" seed=\"4\" result=\"n\"/><feDiffuseLighting in=\"n\" surfaceScale=\"2.2\" lighting-color=\"#E9D2B8\"><feDistantLight azimuth=\"225\" elevation=\"45\"/></feDiffuseLighting><feComposite in2=\"SourceGraphic\" operator=\"arithmetic\" k1=\"1\"/></filter><filter id=\"fl3\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".7\" seed=\"7\"/><feColorMatrix values=\"0 0 0 0 1  0 0 0 0 .97  0 0 0 0 .92  0 0 0 10 -6.8\"/></filter></defs><rect width=\"500\" height=\"620\" fill=\"#4A3424\" filter=\"url(#lt3)\"/><rect width=\"500\" height=\"620\" filter=\"url(#fl3)\" opacity=\"0.8\"/></svg><div class=\"label\"><small>Испечён сегодня в 3:50</small><b>Ржаной с тмином</b><ul><li><span>Вес</span><b>500 г</b></li><li><span>Состав</span><b>ржаная мука, закваска, тмин</b></li><li><span>Хранится</span><b>7 дней</b></li></ul></div></div>"}, {"name": "С кардамоном", "ghost": "ПРЯНО", "title": ["Булочка", "по-шведски"], "text": "Сдобная, с кардамоном и жемчужным сахаром. Как в кофейнях Стокгольма, только ближе.", "cta": ["Взять к кофе", "#order"], "optLabel": "Сколько:", "opts": [{"label": "1", "price": 180}, {"label": "3", "price": 480, "old": 540}], "caption": "Выпекаем<br>к обеду", "a": "#D9778F", "b": "#6A2238", "visual": "<div class=\"photo tagged\" data-img=\"bun\"><svg class=\"tex \" viewBox=\"0 0 500 620\" preserveAspectRatio=\"xMidYMid slice\" aria-hidden=\"true\"><defs><filter id=\"lt4\" x=\"0\" y=\"0\" width=\"100%\" height=\"100%\"><feTurbulence type=\"fractalNoise\" baseFrequency=\"0.006 0.09\" numOctaves=\"3\" seed=\"4\" result=\"n\"/><feDiffuseLighting in=\"n\" surfaceScale=\"2.2\" lighting-color=\"#E9D2B8\"><feDistantLight azimuth=\"225\" elevation=\"45\"/></feDiffuseLighting><feComposite in2=\"SourceGraphic\" operator=\"arithmetic\" k1=\"1\"/></filter><filter id=\"fl4\"><feTurbulence type=\"fractalNoise\" baseFrequency=\".7\" seed=\"7\"/><feColorMatrix values=\"0 0 0 0 1  0 0 0 0 .97  0 0 0 0 .92  0 0 0 10 -6.8\"/></filter></defs><rect width=\"500\" height=\"620\" fill=\"#4A3424\" filter=\"url(#lt4)\"/><rect width=\"500\" height=\"620\" filter=\"url(#fl4)\" opacity=\"0.8\"/></svg><div class=\"label\"><small>К обеду, с 12:00</small><b>Булочка с кардамоном</b><ul><li><span>Вес</span><b>90 г</b></li><li><span>Аллергены</span><b>глютен, молоко, яйцо</b></li><li><span>Ккал</span><b>340 на 100 г</b></li></ul></div></div>"}];
 
 const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
 const stage=$('#stage'), frame=$('.frame'); let cur=0, busy=false, optIdx=0;
