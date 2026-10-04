@@ -417,14 +417,19 @@ function art(key,c,variant=0){const id=key+'_'+variant;if(ART[id])return ART[id]
   o+=`</svg>`;return ART[id]=o}
 function media(key,c,cls='',extra='',v=0){ // фото из img/ или нарисованный постер
   return `<div class="media ${cls}" data-img="${key}" style="--fb:linear-gradient(150deg,${c[0]},${c[1]});${extra}">${art(key,c,v)}</div>`}
-function loadMedia(root=document){ root.querySelectorAll('.media[data-img]:not([data-tried])').forEach(el=>{el.dataset.tried=1;const src='img/'+el.dataset.img+'.jpg';const im=new Image();im.onload=()=>{el.style.backgroundImage=`url(${src})`;el.dataset.has=1};im.src=src})}
+/* фото: грузятся только когда блок близко к экрану; для маленьких превью берётся лёгкая версия из img/sm */
+const mediaIO='IntersectionObserver' in window?new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){mediaIO.unobserve(e.target);setMedia(e.target)}}),{rootMargin:'300px'}):null;
+function setMedia(el){const key=el.dataset.img,small=el.closest('.gallery,.ccard,.tip'),full='img/'+key+'.jpg',src=small?'img/sm/'+key+'.jpg':full;
+  const im=new Image();im.decoding='async';im.onload=()=>{if(el.dataset.img!==key)return;el.style.backgroundImage=`url(${im.src})`;el.dataset.has=1};
+  im.onerror=()=>{if(small&&im.src.indexOf('/sm/')>-1)im.src=full};im.src=src}
+function loadMedia(root=document){ root.querySelectorAll('.media[data-img]:not([data-tried])').forEach(el=>{el.dataset.tried=1;if(mediaIO&&!el.closest('.tip'))mediaIO.observe(el);else setMedia(el)})}
 
 /* =================== ПЛАНЕТА =================== */
 const cv=$('#globe'), ctx=cv.getContext('2d');
 let W,H,DPR,R0, cLon=60, cLat=18, R=1, zoom=1, dots=[], stars=[], land=null, hoverC=null;
 let vLon=0.06, dragging=false, lastX=0,lastY=0, idle=0, anim=null;
 const rad=Math.PI/180;
-function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);R0=Math.min(W,H)*(W<700?.38:.36);
+function resize(){DPR=Math.min(devicePixelRatio||1,1.5);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);R0=Math.min(W,H)*(W<700?.38:.36);
   stars=Array.from({length:Math.round(W*H/2600)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.2,t:Math.random()*6}))}
 addEventListener('resize',resize); resize();
 function proj(lon,lat){ // ортографическая проекция
@@ -479,7 +484,11 @@ function draw(t){
     pins.push({i,x:px,y:py})});
 }
 let pins=[], last=performance.now();
+let frozen=false;
 function loop(t){const dt=Math.min(50,t-last);last=t;
+  // когда открыт экран страны/города, планета размыта и не видна — не перерисовываем её каждый кадр
+  if(document.body.classList.contains('deep')&&!anim&&!dragging){if(!frozen){draw(t);frozen=true}requestAnimationFrame(loop);return}
+  frozen=false;
   if(!dragging&&!anim){idle+=dt;cLon-=vLon*dt/16;vLon+=(0.06-vLon)*.02}
   if(anim)anim(t);
   cLat=Math.max(-60,Math.min(60,cLat));draw(t);
