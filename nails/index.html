@@ -1,0 +1,485 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Velvet — студия маникюра и педикюра</title>
+<meta name="description" content="Маникюр, педикюр, наращивание и дизайн ногтей. Онлайн-запись.">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:wght@400;500;600&family=Great+Vibes&family=Manrope:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--esp:#16100F;--esp2:#211816;--blush:#D9A7A0;--rose:#B97A73;--nude:#F1DCD6;--paper:#F6ECE9;--ink:#2A1D1B;--gold:#D9B48F;--mute:#A9938D}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{font-family:"Manrope",system-ui,sans-serif;background:var(--esp);color:var(--nude);line-height:1.6;font-size:16px;-webkit-font-smoothing:antialiased}
+a{color:inherit}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+:focus-visible{outline:2px solid var(--blush);outline-offset:3px;border-radius:6px}
+.serif{font-family:"Cormorant Garamond",Georgia,serif}
+.script{font-family:"Great Vibes",cursive;font-weight:400}
+.wrap{max-width:1240px;margin:0 auto;padding:0 32px}
+[id]{scroll-margin-top:80px}
+
+/* ---------- шапка ---------- */
+header{position:fixed;inset:0 0 auto;z-index:60;transition:background .4s,backdrop-filter .4s,box-shadow .4s}
+header.stuck{background:rgba(22,16,15,.94);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 1px 0 rgba(217,167,160,.15)}
+.bar{max-width:1240px;margin:0 auto;padding:18px 32px;display:flex;align-items:center;justify-content:space-between;gap:20px}
+.logo{display:flex;align-items:center;gap:10px;text-decoration:none}
+.logo svg{width:30px;height:24px;color:var(--blush)}
+.logo b{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:1.55rem;letter-spacing:.18em;line-height:1}
+.logo small{display:block;font-size:.58rem;letter-spacing:.32em;color:var(--blush);margin-top:2px}
+.links{position:relative;display:flex;gap:30px}
+.links a{text-decoration:none;font-size:.85rem;font-weight:500;letter-spacing:.04em;opacity:.75;padding:6px 0;transition:opacity .3s,color .3s}
+.links a:hover,.links a.on{opacity:1}
+.links .ul{position:absolute;left:0;bottom:-2px;height:1.5px;width:0;background:var(--blush);transition:transform .5s cubic-bezier(.6,0,.2,1),width .5s cubic-bezier(.6,0,.2,1)}
+.book{background:var(--blush);color:var(--esp);padding:11px 22px;border-radius:4px;text-decoration:none;font-weight:700;font-size:.85rem;transition:background .3s,transform .3s}
+.book:hover{background:var(--nude);transform:translateY(-1px)}
+
+/* ---------- первый экран ---------- */
+.hero{position:relative;min-height:100vh;overflow:hidden;
+  background:radial-gradient(70% 60% at 72% 45%,#4A2E2A 0%,#2A1B19 40%,var(--esp) 75%)}
+.hero::before{content:"";position:absolute;inset:0;opacity:.5;background:
+  linear-gradient(115deg,transparent 40%,rgba(255,220,210,.05) 47%,transparent 54%),
+  linear-gradient(100deg,transparent 55%,rgba(0,0,0,.35) 62%,transparent 72%),
+  linear-gradient(125deg,transparent 64%,rgba(255,220,210,.04) 70%,transparent 78%)}
+.hgrid{position:relative;max-width:1240px;margin:0 auto;padding:120px 32px 60px;min-height:100vh;display:grid;grid-template-columns:minmax(0,.9fr) minmax(0,1.25fr);align-items:center;gap:10px}
+h1{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(3.4rem,7.4vw,6.6rem);line-height:.92;letter-spacing:.01em;color:#FBF1EE}
+h1 .ln{display:block;overflow:hidden;padding-bottom:.04em}
+h1 .ln>span{display:inline-block;animation:rise 1.1s cubic-bezier(.2,.8,.2,1) both}
+h1 .ln:nth-child(2)>span{animation-delay:.12s}
+h1 .script{display:block;white-space:nowrap;font-size:.95em;line-height:.8;color:var(--blush);margin:-.06em 0 0 .25em;transform:rotate(-4deg);
+  clip-path:inset(0 100% 0 0);animation:write 1.6s .7s cubic-bezier(.6,0,.3,1) forwards}
+@keyframes rise{from{transform:translateY(105%)}}
+@keyframes write{to{clip-path:inset(-20% -60% -20% -5%)}}
+.lead{margin-top:28px;max-width:34ch;color:#D9C6C1;font-size:1.05rem;opacity:0;animation:fade .9s 1.2s forwards}
+.hcta{display:flex;align-items:center;gap:18px;margin-top:30px;opacity:0;animation:fade .9s 1.35s forwards}
+.btn{display:inline-flex;align-items:center;gap:12px;background:var(--blush);color:var(--esp);padding:15px 26px;border-radius:4px;text-decoration:none;font-weight:700;font-size:.92rem;transition:background .3s,gap .3s}
+.btn svg{width:18px;height:18px}
+.btn:hover{background:var(--nude);gap:18px}
+.ghostlink{font-size:.92rem;text-decoration:none;border-bottom:1px solid rgba(217,167,160,.5);padding-bottom:2px}
+.ghostlink:hover{border-color:var(--blush)}
+.perks{display:flex;gap:34px;margin-top:46px;opacity:0;animation:fade .9s 1.5s forwards}
+.perk{display:grid;justify-items:start;gap:8px;font-size:.78rem;line-height:1.35;color:#CDB8B2;max-width:11ch}
+.perk svg{width:26px;height:26px;color:var(--blush)}
+@keyframes fade{from{opacity:0;transform:translateY(14px)}to{opacity:1;transform:none}}
+
+.art{position:relative;width:100%;max-width:760px;aspect-ratio:560/520;justify-self:center;align-self:end;margin-bottom:-60px}
+.hand{width:100%;height:100%;overflow:visible;filter:drop-shadow(0 40px 50px rgba(0,0,0,.5))}
+.fin{animation:finIn 1.3s cubic-bezier(.2,.8,.2,1) both}
+@keyframes finIn{from{transform:translateY(180px);opacity:0}}
+.scanline{position:absolute;left:4%;right:4%;height:2px;top:12%;border-radius:2px;opacity:0;
+  background:linear-gradient(90deg,transparent,rgba(255,226,216,.9),transparent);box-shadow:0 0 18px 4px rgba(217,167,160,.45);
+  animation:scan 4.5s 2.4s ease-in-out infinite}
+@keyframes scan{0%{top:4%;opacity:0}10%{opacity:1}80%{opacity:1}100%{top:60%;opacity:0}}
+.frame{position:absolute;width:20%;aspect-ratio:1/1.15;transform:translate(-50%,-50%);opacity:0;animation:frameIn .7s cubic-bezier(.2,.8,.2,1) forwards}
+.frame i{position:absolute;width:16px;height:16px;border-color:#FFE9E2;border-style:solid;border-width:0}
+.frame i:nth-child(1){left:0;top:0;border-left-width:1.5px;border-top-width:1.5px}
+.frame i:nth-child(2){right:0;top:0;border-right-width:1.5px;border-top-width:1.5px}
+.frame i:nth-child(3){left:0;bottom:0;border-left-width:1.5px;border-bottom-width:1.5px}
+.frame i:nth-child(4){right:0;bottom:0;border-right-width:1.5px;border-bottom-width:1.5px}
+.frame::before{content:"";position:absolute;inset:0;border:1px solid rgba(255,233,226,.22);background:rgba(255,233,226,.04)}
+.frame span{position:absolute;left:calc(100% + 10px);top:6px;white-space:nowrap;font-size:.72rem;line-height:1.3;color:#FFEFE9;
+  background:rgba(22,16,15,.55);backdrop-filter:blur(6px);padding:6px 10px;border-radius:4px;border-left:2px solid var(--blush)}
+.frame span b{display:block;font-weight:600;color:var(--blush);font-size:.66rem;letter-spacing:.06em}
+.frame.left span{left:auto;right:calc(100% + 10px);border-left:0;border-right:2px solid var(--blush);text-align:right}
+@keyframes frameIn{0%{opacity:0;transform:translate(-50%,-50%) scale(1.5)}60%{opacity:1}100%{opacity:1;transform:translate(-50%,-50%) scale(1)}}
+
+.badge{position:absolute;left:0;bottom:10%;width:126px;height:126px;display:grid;place-items:center;text-decoration:none;opacity:0;animation:fade 1s 2s forwards}
+.badge svg.ring{position:absolute;inset:0;width:100%;height:100%;animation:spin 18s linear infinite}
+.badge .core{width:56px;height:56px;border-radius:50%;background:var(--esp);border:1px solid rgba(217,167,160,.6);display:grid;place-items:center;transition:background .3s,transform .3s}
+.badge .core svg{width:20px;height:20px;color:var(--blush)}
+.badge:hover .core{background:var(--blush);transform:scale(1.08)}
+.badge:hover .core svg{color:var(--esp)}
+@keyframes spin{to{transform:rotate(360deg)}}
+
+.stats{display:flex;gap:44px;margin-top:40px;padding-top:30px;border-top:1px solid rgba(217,167,160,.2)}
+.stat{}
+.stat b{display:block;font-family:"Cormorant Garamond",serif;font-weight:500;font-size:2.3rem;line-height:1;color:#FBF1EE;font-variant-numeric:lining-nums}
+.stat span{font-size:.78rem;color:var(--mute);line-height:1.35;display:block;max-width:15ch;margin-top:6px}
+.social{position:absolute;right:32px;bottom:34px;display:flex;gap:14px;z-index:2}
+.social a{width:34px;height:34px;display:grid;place-items:center;border-radius:50%;border:1px solid rgba(217,167,160,.3);transition:background .3s,color .3s}
+.social a:hover{background:var(--blush);color:var(--esp)}
+.social svg{width:15px;height:15px}
+
+/* ---------- о студии ---------- */
+.about{background:var(--esp2);padding:120px 0}
+.agrid{display:grid;grid-template-columns:1fr 1fr;gap:70px;align-items:center}
+h2{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:clamp(2.4rem,4.6vw,3.8rem);line-height:1;letter-spacing:.01em;color:#FBF1EE}
+h2 em{font-style:normal;color:var(--blush)}
+.kicker{font-size:.82rem;color:var(--blush);margin-bottom:18px;display:block;letter-spacing:.04em}
+.about p.txt{margin-top:24px;max-width:44ch;color:#D3C0BB;line-height:1.75}
+.about .sign{display:block;font-size:2.6rem;color:var(--blush);margin-top:22px;line-height:1}
+.hot{position:relative;aspect-ratio:1/1.05;border-radius:6px;overflow:hidden;
+  background:radial-gradient(80% 70% at 50% 40%,#E9C2BC,#B97A73 70%,#7E4A47)}
+.hot .bottle{position:absolute;left:50%;bottom:6%;width:56%;transform:translateX(-50%);animation:bob 6s ease-in-out infinite;filter:drop-shadow(0 30px 30px rgba(60,20,20,.35))}
+@keyframes bob{50%{transform:translateX(-50%) translateY(-12px) rotate(-1.5deg)}}
+.shine{animation:shine 5s 1s ease-in-out infinite}
+@keyframes shine{0%,60%{transform:translateX(-40px)}100%{transform:translateX(300px)}}
+.petal{position:absolute;width:38px;animation:drift 9s ease-in-out infinite;opacity:.95}
+@keyframes drift{0%,100%{transform:translate(0,0) rotate(0)}50%{transform:translate(18px,-22px) rotate(28deg)}}
+.dot{position:absolute;transform:translate(-50%,-50%)}
+.dot i{display:block;width:11px;height:11px;border-radius:50%;background:#fff;box-shadow:0 0 0 0 rgba(255,255,255,.6);animation:pulse 2.2s infinite}
+.dot span{position:absolute;top:50%;left:20px;transform:translateY(-50%);white-space:nowrap;font-size:.7rem;font-weight:600;letter-spacing:.08em;color:#fff;text-shadow:0 1px 8px rgba(80,30,30,.5);opacity:0;transition:opacity .6s .3s}
+.dot.l span{left:auto;right:20px}
+.hot.in .dot span{opacity:1}
+@keyframes pulse{0%{box-shadow:0 0 0 0 rgba(255,255,255,.6)}100%{box-shadow:0 0 0 16px rgba(255,255,255,0)}}
+
+/* ---------- манифест (слова проявляются при прокрутке) ---------- */
+.manifest{background:var(--paper);color:var(--ink);padding:110px 0 120px;position:relative;overflow:hidden}
+.drop{display:block;width:14px;height:110px;margin:0 auto 40px}
+.drop line,.drop path{stroke:#C69C96;stroke-dasharray:140;stroke-dashoffset:140;transition:stroke-dashoffset 1.4s cubic-bezier(.6,0,.2,1)}
+.drop path{transition-delay:1.2s}
+.manifest.in .drop line,.manifest.in .drop path{stroke-dashoffset:0}
+.mtext{position:relative;max-width:900px;margin:0 auto;text-align:center;font-family:"Cormorant Garamond",serif;font-weight:500;
+  font-size:clamp(1.8rem,3.8vw,3.1rem);line-height:1.18;letter-spacing:-.005em}
+.mtext .w{color:#D4BDB7;transition:color .35s}
+.mtext .w.on{color:var(--ink)}
+.chip{position:absolute;display:flex;font-family:"Manrope",sans-serif;line-height:1.2;align-items:center;gap:7px;font-size:.8rem;font-weight:600;background:#fff;color:var(--ink);
+  padding:7px 13px;border-radius:999px;box-shadow:0 10px 26px -12px rgba(90,40,35,.45);opacity:0;transform:scale(.6);transition:opacity .6s,transform .7s cubic-bezier(.3,1.6,.5,1)}
+.chip i{width:9px;height:9px;border-radius:50%}
+.manifest.in .chip{opacity:1;transform:none}
+.chip>span{display:inline-flex;align-items:center;gap:7px;animation:float 6s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-9px)}}
+
+/* ---------- услуги ---------- */
+.services{background:var(--paper);color:var(--ink);padding:0 0 120px}
+.sgrid{display:grid;grid-template-columns:.8fr repeat(4,1fr);gap:16px;align-items:stretch}
+.shead h2{color:var(--ink)}
+.shead h2 em{color:var(--rose)}
+.shead p{margin-top:18px;color:#6E5752;font-size:.95rem;max-width:24ch}
+.shead a{display:inline-flex;align-items:center;gap:10px;margin-top:22px;font-weight:700;font-size:.88rem;text-decoration:none;border-bottom:1px solid var(--rose);padding-bottom:3px}
+.shead a svg{width:16px;height:16px;transition:transform .3s}
+.shead a:hover svg{transform:translateX(4px)}
+.svc{position:relative;border-radius:6px;overflow:hidden;background:linear-gradient(180deg,#2B1F1D,#140E0D);color:#FBF1EE;min-height:400px;display:flex;flex-direction:column;justify-content:flex-end}
+.sart{position:absolute;inset:0;display:flex;align-items:flex-end;justify-content:center;overflow:hidden;
+  background:radial-gradient(60% 60% at 50% 55%,rgba(217,167,160,.28),transparent 70%)}
+.sart svg{width:min(96%,240px);height:auto;margin-bottom:22%;overflow:visible;transition:transform .7s cubic-bezier(.2,.8,.2,1);filter:drop-shadow(0 20px 22px rgba(0,0,0,.5))}
+.svc:hover .sart svg{transform:translateY(-10px) rotate(-3deg) scale(1.04)}
+.sinfo{position:relative;padding:20px 20px 22px;background:linear-gradient(180deg,transparent,rgba(20,14,13,.95) 30%)}
+.sinfo h3{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:1.6rem;line-height:1.05}
+.sinfo p{font-size:.84rem;color:#CBB6B0;margin-top:8px;max-height:0;opacity:0;overflow:hidden;transition:max-height .6s,opacity .5s,margin .5s}
+.svc:hover .sinfo p,.svc:focus-within .sinfo p{max-height:80px;opacity:1}
+.smeta{display:flex;justify-content:space-between;align-items:baseline;margin-top:12px;padding-top:12px;border-top:1px solid rgba(217,167,160,.25);font-size:.8rem;color:#CBB6B0}
+.smeta b{color:var(--blush);font-size:.95rem}
+
+/* ---------- прайс ---------- */
+.prices{background:var(--paper);color:var(--ink);padding:0 0 130px}
+.pbox{display:grid;grid-template-columns:.8fr 2fr;gap:40px;border-top:1px solid #DEC7C1;padding-top:60px}
+.tabs{position:relative;display:inline-flex;gap:4px;padding:4px;border-radius:999px;background:#EBD8D3;margin-top:26px}
+.tab{position:relative;z-index:1;padding:10px 18px;border-radius:999px;font-weight:600;font-size:.88rem;color:#6E5752;transition:color .35s}
+.tab.on{color:#FBF1EE}
+.tabs .pill{position:absolute;top:4px;bottom:4px;left:0;border-radius:999px;background:var(--esp);transition:transform .5s cubic-bezier(.6,0,.2,1.1),width .5s cubic-bezier(.6,0,.2,1.1)}
+.pane{display:none}
+.pane.on{display:block}
+.prow{display:flex;align-items:baseline;gap:14px;padding:18px 0;border-bottom:1px solid #E3CFCA}
+.pane.on .prow{animation:fade .55s both}
+.pn{font-family:"Cormorant Garamond",serif;font-size:1.45rem;font-weight:500;line-height:1.2}
+.pt{font-size:.8rem;color:#937A74;white-space:nowrap}
+.pd{flex:1;border-bottom:1px dotted #CDB2AC;transform:translateY(-5px)}
+.pp{font-weight:700;white-space:nowrap}
+
+/* ---------- запись ---------- */
+.booking{position:relative;overflow:hidden;padding:120px 0;background:radial-gradient(60% 70% at 85% 50%,#4A2E2A,var(--esp) 70%)}
+.bgrid{display:grid;grid-template-columns:1.1fr .9fr;gap:60px;align-items:center}
+.booking h2 .script{display:block;font-size:1.25em;color:var(--blush);line-height:.9;margin-top:.05em}
+form{margin-top:36px;display:grid;grid-template-columns:1fr 1fr;gap:16px}
+label{display:grid;gap:7px;font-size:.82rem;color:#CDB8B2}
+label.full{grid-column:1/-1}
+input,select{font:inherit;color:#FBF1EE;background:rgba(255,240,236,.06);border:1px solid rgba(217,167,160,.3);border-radius:4px;padding:13px 14px;transition:border-color .3s,background .3s}
+input:focus,select:focus{outline:none;border-color:var(--blush);background:rgba(255,240,236,.1)}
+select option{color:#1a1a1a}
+input::-webkit-calendar-picker-indicator{filter:invert(.85)}
+.times{grid-column:1/-1;display:flex;flex-wrap:wrap;gap:8px}
+.times button{padding:10px 16px;border-radius:4px;border:1px solid rgba(217,167,160,.35);font-size:.88rem;font-weight:600;transition:background .3s,color .3s,border-color .3s}
+.times button:hover{border-color:var(--blush)}
+.times button.on{background:var(--blush);color:var(--esp);border-color:var(--blush)}
+form .btn{grid-column:1/-1;justify-content:center;border:0;cursor:pointer;padding:17px}
+.err{grid-column:1/-1;color:#F2B1A8;font-size:.85rem;min-height:1.2em}
+.done{display:none;margin-top:36px;padding:28px;border:1px solid rgba(217,167,160,.4);border-radius:6px;background:rgba(255,240,236,.05)}
+.done.show{display:block;animation:fade .7s both}
+.done .script{font-size:2.6rem;color:var(--blush);line-height:1}
+.done p{margin-top:10px;color:#D9C6C1}
+.bart{position:relative;height:520px}
+.bart .bottle{position:absolute;left:50%;top:50%;width:62%;transform:translate(-50%,-50%);animation:bob2 6s ease-in-out infinite;filter:drop-shadow(0 40px 40px rgba(0,0,0,.55))}
+@keyframes bob2{50%{transform:translate(-50%,-53%) rotate(2deg)}}
+.contacts{display:grid;grid-template-columns:repeat(3,1fr);gap:30px;margin-top:90px;padding-top:40px;border-top:1px solid rgba(217,167,160,.2)}
+.contacts h3{font-family:"Cormorant Garamond",serif;font-weight:500;font-size:1.4rem;color:var(--blush);margin-bottom:6px}
+.contacts p{color:#D3C0BB}
+footer{background:var(--esp);padding:30px 0 40px;text-align:center;font-size:.8rem;color:var(--mute)}
+
+.reveal{opacity:0;transform:translateY(40px);transition:opacity .9s,transform 1s cubic-bezier(.2,.8,.2,1)}
+.reveal.in{opacity:1;transform:none}
+
+/* ---------- адаптив ---------- */
+@media (max-width:1080px){
+  .sgrid{grid-template-columns:repeat(2,1fr)} .shead{grid-column:1/-1;margin-bottom:10px}
+}
+@media (max-width:860px){
+  .wrap,.bar{padding-left:20px;padding-right:20px}
+  header.stuck{backdrop-filter:none;-webkit-backdrop-filter:none;background:rgba(22,16,15,.97)}
+  .links{position:fixed;left:50%;bottom:calc(14px + env(safe-area-inset-bottom));transform:translateX(-50%);gap:4px;padding:5px;border-radius:999px;
+    background:rgba(22,16,15,.88);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);box-shadow:0 14px 34px -12px rgba(0,0,0,.7),inset 0 0 0 1px rgba(217,167,160,.2)}
+  .links a{position:relative;z-index:1;padding:9px 12px;font-size:.8rem;white-space:nowrap;transition:color .35s}
+  .links a:first-of-type{display:none}
+  .links a.on{color:var(--esp)}
+  .links .ul{top:5px;bottom:5px;height:auto;border-radius:999px;z-index:0}
+  .hgrid{grid-template-columns:1fr;padding-top:100px;padding-left:20px;padding-right:20px;gap:0}
+  .art{order:-1;max-width:420px;margin:0 auto 10px}
+  .hand{overflow:hidden;-webkit-mask-image:linear-gradient(#000 62%,transparent 92%);mask-image:linear-gradient(#000 62%,transparent 92%)}
+  .frame span,.frame.left span{left:50%;right:auto;top:calc(100% + 6px);transform:translateX(-50%);font-size:.62rem;text-align:center;border:0;padding:4px 8px;white-space:nowrap}
+  .frame span b{font-size:.58rem}
+  .badge{display:none}
+  .social{display:none}
+  .perks{gap:20px}
+  .agrid,.bgrid,.pbox{grid-template-columns:1fr;gap:44px}
+  .about,.booking{padding:80px 0}
+  .bart{height:340px;order:-1}
+  form{grid-template-columns:1fr}
+  .contacts{grid-template-columns:1fr;margin-top:60px}
+  .chip{font-size:.7rem}
+  footer{padding-bottom:100px}
+}
+@media (max-width:520px){ .frame span{display:none} .sgrid{grid-template-columns:1fr} .svc{min-height:360px} .sinfo p{max-height:none;opacity:1;margin-top:8px} .pt{display:none} .book{padding:9px 14px;font-size:.8rem} }
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation:none!important;transition:none!important}
+  html{scroll-behavior:auto}
+  .lead,.hcta,.perks,.frame,.badge{opacity:1} .frame{transform:translate(-50%,-50%)}
+  h1 .script{clip-path:none} .reveal{opacity:1;transform:none} .scanline{display:none}
+  .chip{opacity:1;transform:none} .mtext .w{color:var(--ink)} .dot span{opacity:1}
+}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><defs>
+<linearGradient id="skin" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#E7B59C"/><stop offset=".55" stop-color="#F1C9B2"/><stop offset="1" stop-color="#C98A71"/></linearGradient>
+<linearGradient id="nude" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#F6DCD5"/><stop offset="1" stop-color="#D79F96"/></linearGradient>
+<linearGradient id="mauve" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#D2A3AC"/><stop offset="1" stop-color="#8B5865"/></linearGradient>
+<linearGradient id="rg" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F7D2B4"/><stop offset=".5" stop-color="#C98A6B"/><stop offset="1" stop-color="#8F5640"/></linearGradient>
+<linearGradient id="noir" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#4A3E3E"/><stop offset="1" stop-color="#140E0E"/></linearGradient>
+<linearGradient id="cherry" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#C9414B"/><stop offset="1" stop-color="#6A1119"/></linearGradient>
+<linearGradient id="milk" x1="0" y1="0" x2="0" y2="1"><stop offset="0" stop-color="#FFF7F3"/><stop offset="1" stop-color="#EBD5CE"/></linearGradient>
+<linearGradient id="gold" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#9C6B45"/><stop offset=".45" stop-color="#F4D3A6"/><stop offset="1" stop-color="#A9744B"/></linearGradient>
+<linearGradient id="glass" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#B9727A"/><stop offset=".35" stop-color="#E3A9AE"/><stop offset=".7" stop-color="#C98189"/><stop offset="1" stop-color="#8E4E57"/></linearGradient>
+<linearGradient id="cap" x1="0" y1="0" x2="1" y2="0"><stop offset="0" stop-color="#0D0909"/><stop offset=".35" stop-color="#4A4040"/><stop offset=".55" stop-color="#1A1414"/><stop offset="1" stop-color="#050303"/></linearGradient>
+<linearGradient id="petal" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#F4C6C4"/><stop offset="1" stop-color="#B9707A"/></linearGradient>
+<clipPath id="bclip"><path d="M58 210q0-26 26-26h132q26 0 26 26v156q0 34-34 34H92q-34 0-34-34Z"/></clipPath>
+<pattern id="glit" width="9" height="9" patternUnits="userSpaceOnUse"><circle cx="2" cy="2" r="1.1" fill="#FFF3E2" opacity=".9"/><circle cx="6.5" cy="5.5" r=".8" fill="#FFE2C0" opacity=".8"/><circle cx="4" cy="8" r=".6" fill="#fff" opacity=".7"/></pattern>
+</defs></svg>
+<header id="hdr"><div class="bar">
+  <a class="logo" href="#top" aria-label="Velvet, на главную"><svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.3" stroke-linejoin="round"><path d="M16 21c-3-3-4-7-4-10s1.6-6 4-8c2.4 2 4 5 4 8s-1 7-4 10Z"/><path d="M16 21c-4-1-9-4-10-10 4-.5 7 1 9 3.5M16 21c4-1 9-4 10-10-4-.5-7 1-9 3.5"/><path d="M16 21C10 21 4 19 1 15c3-1.5 6-1.4 8.5-.3M16 21c6 0 12-2 15-6-3-1.5-6-1.4-8.5-.3"/></svg><span><b>VELVET</b><small>NAIL STUDIO</small></span></a>
+  <nav class="links" id="links" aria-label="Разделы">
+    <span class="ul" aria-hidden="true"></span>
+    <a href="#top">Главная</a><a href="#about">О студии</a><a href="#services">Услуги</a><a href="#prices">Цены</a><a href="#book">Запись</a>
+  </nav>
+  <a class="book" href="#book">Записаться</a>
+</div></header>
+
+<main>
+<section class="hero" id="top">
+  <div class="hgrid">
+    <div>
+      <h1><span class="ln"><span>Ногти,</span></span><span class="ln"><span>которые</span></span><span class="script">вдохновляют</span></h1>
+      <p class="lead">Маникюр, педикюр и дизайн ногтей в студии, где каждая деталь продумана. Покрытие держится до трёх недель.</p>
+      <div class="hcta"><a class="btn" href="#book">Выбрать время <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a><a class="ghostlink" href="#prices">Смотреть цены</a></div>
+      <div class="perks">
+        <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M6 3h12l4 6-10 12L2 9Z"/><path d="M2 9h20M8.5 3 12 21 15.5 3"/></svg>Премиальные материалы</div>
+        <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4" stroke-linejoin="round"><path d="M12 2 4 5v6c0 5 3.4 9.4 8 11 4.6-1.6 8-6 8-11V5Z"/><path d="m8.5 12 2.5 2.5 4.5-5" stroke-linecap="round"/></svg>Стерилизация в три этапа</div>
+        <div class="perk"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.4"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3.5 2" stroke-linecap="round"/></svg>Мастера с опытом от 5 лет</div>
+      </div>
+    </div>
+    <div class="art">
+      <svg class="hand" viewBox="20 200 560 520" aria-hidden="true"><g transform="rotate(-27 300 770)"><g class="fin" style="animation-delay:0.35s"><rect x="262.0" y="350" width="76" height="580" rx="38.0" fill="url(#skin)"/><rect x="309.1" y="380.4" width="22.8" height="420" rx="11.4" fill="#9E6450" opacity=".18"/><path d="M300.0 313.5C325.5 320.8 330.4 352.4 330.4 384.0V423.0Q300.0 442.4 269.6 423.0V384.0C269.6 352.4 274.5 320.8 300.0 313.5Z" fill="url(#nude)"/><path d="M285.4 388.9C283.0 362.2 287.8 337.8 295.1 328.1" stroke="#fff" stroke-opacity=".55" stroke-width="5.5" stroke-linecap="round" fill="none"/><circle cx="309.7" cy="350.0" r="3.0" fill="#fff" opacity=".6"/></g></g><g transform="rotate(-9.5 300 770)"><g class="fin" style="animation-delay:0.5s"><rect x="262.0" y="270" width="76" height="660" rx="38.0" fill="url(#skin)"/><rect x="309.1" y="300.4" width="22.8" height="500" rx="11.4" fill="#9E6450" opacity=".18"/><path d="M300.0 233.5C325.5 240.8 330.4 272.4 330.4 304.0V343.0Q300.0 362.4 269.6 343.0V304.0C269.6 272.4 274.5 240.8 300.0 233.5Z" fill="url(#nude)"/><path d="M285.4 308.9C283.0 282.2 287.8 257.8 295.1 248.1" stroke="#fff" stroke-opacity=".55" stroke-width="5.5" stroke-linecap="round" fill="none"/><circle cx="309.7" cy="270.0" r="3.0" fill="#fff" opacity=".6"/></g></g><g transform="rotate(6.5 300 770)"><g class="fin" style="animation-delay:0.65s"><rect x="262.0" y="290" width="76" height="640" rx="38.0" fill="url(#skin)"/><rect x="309.1" y="320.4" width="22.8" height="480" rx="11.4" fill="#9E6450" opacity=".18"/><path d="M300.0 253.5C325.5 260.8 330.4 292.4 330.4 324.0V363.0Q300.0 382.4 269.6 363.0V324.0C269.6 292.4 274.5 260.8 300.0 253.5Z" fill="url(#rg)"/><path d="M300.0 253.5C325.5 260.8 330.4 292.4 330.4 324.0V363.0Q300.0 382.4 269.6 363.0V324.0C269.6 292.4 274.5 260.8 300.0 253.5Z" fill="url(#glit)"/><path d="M285.4 328.9C283.0 302.2 287.8 277.8 295.1 268.1" stroke="#fff" stroke-opacity=".55" stroke-width="5.5" stroke-linecap="round" fill="none"/><circle cx="309.7" cy="290.0" r="3.0" fill="#fff" opacity=".6"/></g></g><g transform="rotate(22 300 770)"><g class="fin" style="animation-delay:0.8s"><rect x="262.0" y="360" width="76" height="570" rx="38.0" fill="url(#skin)"/><rect x="309.1" y="390.4" width="22.8" height="410" rx="11.4" fill="#9E6450" opacity=".18"/><rect x="259.0" y="507.6" width="82" height="15" rx="7.5" fill="url(#gold)"/><circle cx="300" cy="514.6" r="7" fill="#fff" opacity=".9"/><path d="M300.0 323.5C325.5 330.8 330.4 362.4 330.4 394.0V433.0Q300.0 452.4 269.6 433.0V394.0C269.6 362.4 274.5 330.8 300.0 323.5Z" fill="url(#nude)"/><path d="M285.4 398.9C283.0 372.2 287.8 347.8 295.1 338.1" stroke="#fff" stroke-opacity=".55" stroke-width="5.5" stroke-linecap="round" fill="none"/><circle cx="309.7" cy="360.0" r="3.0" fill="#fff" opacity=".6"/></g></g></svg>
+      <div class="scanline" aria-hidden="true"></div>
+      <div class="frame left" style="left:35.9%;top:19%;animation-delay:1.7s"><i></i><i></i><i></i><i></i><span><b>Форма</b>Мягкий миндаль</span></div>
+      <div class="frame" style="left:59.2%;top:22%;animation-delay:2s"><i></i><i></i><i></i><i></i><span><b>Покрытие</b>Втирка «розовое золото»</span></div>
+      <div class="frame" style="left:76%;top:40%;animation-delay:2.3s"><i></i><i></i><i></i><i></i><span><b>Стойкость</b>До 21 дня без сколов</span></div>
+      <a class="badge" href="#book" aria-label="Записаться онлайн">
+        <svg class="ring" viewBox="0 0 120 120" aria-hidden="true"><defs><path id="circ" d="M60 60m-46 0a46 46 0 1 1 92 0a46 46 0 1 1-92 0"/></defs>
+        <text font-size="9.4" letter-spacing="3.1" fill="#D9A7A0" font-family="Manrope, sans-serif" font-weight="600"><textPath href="#circ">ЗАПИСЬ ОНЛАЙН • VELVET NAIL STUDIO • </textPath></text></svg>
+        <span class="core"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></span>
+      </a>
+    </div>
+  </div>
+  <div class="social">
+    <a href="https://t.me/" aria-label="Telegram"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 4.2 2.9 11.4c-1.3.5-1.2 1.2-.2 1.5l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8L23 5.6c.3-1.3-.5-1.9-1.6-1.4ZM8.6 14l9.6-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.3L8.6 14Z"/></svg></a><a href="tel:+79000000000" aria-label="Позвонить"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg></a><a href="#book" aria-label="Адрес"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6"><path d="M12 21s-7-6.2-7-11a7 7 0 0 1 14 0c0 4.8-7 11-7 11Z"/><circle cx="12" cy="10" r="2.5"/></svg></a>
+  </div>
+</section>
+
+<section class="about" id="about">
+  <div class="wrap agrid">
+    <div class="reveal">
+      <span class="kicker">Добро пожаловать в Velvet</span>
+      <h2>Красота.<br>Забота.<br><em>Уверенность.</em></h2>
+      <p class="txt">Мы верим, что маникюр — это не только красивые ногти, но и час тишины для себя. Мягкие кресла, ароматный чай и мастер, который слышит, какой результат вы хотите.</p>
+      <span class="sign script">Побалуйте себя</span>
+      <div class="stats reveal" aria-label="Студия в цифрах">
+    <div class="stat" ><b data-count="4.9" data-dec="1">0</b><span>рейтинг на Яндекс&nbsp;Картах</span></div>
+    <div class="stat" ><b data-count="1200" data-suf="+">0</b><span>постоянных клиенток</span></div>
+    <div class="stat" ><b data-count="21" data-suf=" день">0</b><span>держится покрытие</span></div>
+  </div>
+    </div>
+    <div class="hot reveal" id="hot">
+      <div class="petal" style="left:10%;top:14%"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+      <div class="petal" style="right:12%;top:30%;animation-delay:-3s;width:28px"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+      <div class="petal" style="left:18%;bottom:20%;animation-delay:-5s;width:32px"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+      <svg class="bottle" viewBox="0 0 300 420" aria-hidden="true">
+<ellipse cx="150" cy="404" rx="96" ry="12" fill="#000" opacity=".25"/>
+<rect x="104" y="24" width="92" height="150" rx="14" fill="url(#cap)"/>
+<rect x="116" y="34" width="10" height="128" rx="5" fill="#fff" opacity=".16"/>
+<rect x="96" y="166" width="108" height="22" rx="6" fill="#2A2020"/>
+<path d="M58 210q0-26 26-26h132q26 0 26 26v156q0 34-34 34H92q-34 0-34-34Z" fill="url(#glass)"/>
+<path d="M58 210q0-26 26-26h132q26 0 26 26v156q0 34-34 34H92q-34 0-34-34Z" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3"/>
+<rect x="74" y="200" width="16" height="170" rx="8" fill="#fff" opacity=".28"/>
+<text x="150" y="300" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" letter-spacing="6" fill="#FFF3EE" opacity=".92">VELVET</text>
+<text x="150" y="322" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" letter-spacing="3" fill="#FFF3EE" opacity=".75">NAIL STUDIO</text>
+<g clip-path="url(#bclip)"><g class="shine"><rect x="40" y="180" width="26" height="230" fill="#fff" opacity=".22" transform="skewX(-18)"/></g></g>
+</svg>
+      <div class="dot l" style="left:41%;top:24%"><i></i><span>КИСТЬ С ПЛОСКИМ СРЕЗОМ</span></div>
+      <div class="dot" style="left:62%;top:58%"><i></i><span>БЕЗ ФОРМАЛЬДЕГИДА</span></div>
+      <div class="dot l" style="left:34%;top:78%"><i></i><span>120 ОТТЕНКОВ</span></div>
+    </div>
+  </div>
+</section>
+
+<section class="manifest" id="manifest">
+  <svg class="drop" viewBox="0 0 14 110" aria-hidden="true"><line x1="7" y1="0" x2="7" y2="104" stroke-width="1.2"/><path d="M1 98l6 7 6-7" fill="none" stroke-width="1.2"/></svg>
+  <div class="mtext" id="mtext">В Velvet маникюр держится три недели и выглядит идеально каждый день. Инструменты проходят три этапа стерилизации, материалы мы берём только проверенные, а мастера работают от пяти лет. Вам остаётся одно: выбрать цвет и отдохнуть.
+    <span class="chip" style="left:-4%;top:-14%;transition-delay:.1s"><span><i style="background:#E7A1A9"></i>Аккуратно</span></span>
+    <span class="chip" style="right:2%;top:-20%;transition-delay:.25s"><span style="animation-delay:-2s"><i style="background:#9CC9A4"></i>Стерильно</span></span>
+    <span class="chip" style="left:-9%;top:58%;transition-delay:.4s"><span style="animation-delay:-4s"><i style="background:#D9B48F"></i>Стойко</span></span>
+    <span class="chip" style="right:-6%;top:70%;transition-delay:.55s"><span style="animation-delay:-1s"><i style="background:#C7A9E0"></i>Уютно</span></span>
+    <span class="chip" style="left:38%;bottom:-22%;transition-delay:.7s"><span style="animation-delay:-3s"><i style="background:#F2C59A"></i>Без спешки</span></span>
+  </div>
+</section>
+
+<section class="services" id="services">
+  <div class="wrap sgrid">
+    <div class="shead reveal"><h2>Наши<br><em>услуги</em></h2><p>Самые популярные процедуры студии. Полный список с ценами ниже.</p><a href="#prices">Полный прайс <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a></div>
+    <article class="svc reveal" style="transition-delay:0.0s"><div class="sart"><svg viewBox="60 40 280 400" aria-hidden="true"><g transform="rotate(-16 200 420)"><g class="sf" style="animation-delay:0s"><rect x="168.0" y="120" width="64" height="460" rx="32.0" fill="url(#skin)"/><rect x="207.7" y="145.6" width="19.2" height="300" rx="9.6" fill="#9E6450" opacity=".18"/><path d="M200.0 95.4C221.5 100.3 225.6 121.6 225.6 143.0V169.2Q200.0 182.3 174.4 169.2V143.0C174.4 121.6 178.5 100.3 200.0 95.4Z" fill="url(#nude)"/><path d="M187.7 146.2C185.7 128.2 189.8 111.8 195.9 105.2" stroke="#fff" stroke-opacity=".55" stroke-width="4.6" stroke-linecap="round" fill="none"/><circle cx="208.2" cy="120.0" r="2.6" fill="#fff" opacity=".6"/></g></g><g transform="rotate(0 200 420)"><g class="sf" style="animation-delay:0s"><rect x="168.0" y="90" width="64" height="490" rx="32.0" fill="url(#skin)"/><rect x="207.7" y="115.6" width="19.2" height="330" rx="9.6" fill="#9E6450" opacity=".18"/><path d="M200.0 65.4C221.5 70.3 225.6 91.6 225.6 113.0V139.2Q200.0 152.3 174.4 139.2V113.0C174.4 91.6 178.5 70.3 200.0 65.4Z" fill="url(#nude)"/><path d="M187.7 116.2C185.7 98.2 189.8 81.8 195.9 75.2" stroke="#fff" stroke-opacity=".55" stroke-width="4.6" stroke-linecap="round" fill="none"/><circle cx="208.2" cy="90.0" r="2.6" fill="#fff" opacity=".6"/></g></g><g transform="rotate(16 200 420)"><g class="sf" style="animation-delay:0s"><rect x="168.0" y="120" width="64" height="460" rx="32.0" fill="url(#skin)"/><rect x="207.7" y="145.6" width="19.2" height="300" rx="9.6" fill="#9E6450" opacity=".18"/><path d="M200.0 95.4C221.5 100.3 225.6 121.6 225.6 143.0V169.2Q200.0 182.3 174.4 169.2V143.0C174.4 121.6 178.5 100.3 200.0 95.4Z" fill="url(#nude)"/><path d="M187.7 146.2C185.7 128.2 189.8 111.8 195.9 105.2" stroke="#fff" stroke-opacity=".55" stroke-width="4.6" stroke-linecap="round" fill="none"/><circle cx="208.2" cy="120.0" r="2.6" fill="#fff" opacity=".6"/></g></g></svg></div>
+<div class="sinfo"><h3>Классический маникюр</h3><p>Аккуратная форма, уход за кутикулой и покрытие в один тон.</p><div class="smeta"><b>от 1 200 ₽</b><span>60 мин</span></div></div></article><article class="svc reveal" style="transition-delay:0.08s"><div class="sart"><svg viewBox="60 40 280 400" aria-hidden="true"><g transform="rotate(-16 200 420)"><g class="sf" style="animation-delay:0s"><rect x="169.0" y="130" width="62" height="450" rx="31.0" fill="url(#skin)"/><rect x="207.4" y="154.8" width="18.6" height="290" rx="9.3" fill="#9E6450" opacity=".18"/><path d="M200.0 88.0C220.8 96.4 224.8 132.8 224.8 169.2V214.0Q200.0 236.4 175.2 214.0V169.2C175.2 132.8 179.2 96.4 200.0 88.0Z" fill="url(#mauve)"/><path d="M188.1 174.8C186.1 144.0 190.1 116.0 196.0 104.8" stroke="#fff" stroke-opacity=".55" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="207.9" cy="130.0" r="2.5" fill="#fff" opacity=".6"/></g></g><g transform="rotate(0 200 420)"><g class="sf" style="animation-delay:0s"><rect x="169.0" y="100" width="62" height="480" rx="31.0" fill="url(#skin)"/><rect x="207.4" y="124.8" width="18.6" height="320" rx="9.3" fill="#9E6450" opacity=".18"/><path d="M200.0 58.0C220.8 66.4 224.8 102.8 224.8 139.2V184.0Q200.0 206.4 175.2 184.0V139.2C175.2 102.8 179.2 66.4 200.0 58.0Z" fill="url(#mauve)"/><path d="M188.1 144.8C186.1 114.0 190.1 86.0 196.0 74.8" stroke="#fff" stroke-opacity=".55" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="207.9" cy="100.0" r="2.5" fill="#fff" opacity=".6"/></g></g><g transform="rotate(16 200 420)"><g class="sf" style="animation-delay:0s"><rect x="169.0" y="130" width="62" height="450" rx="31.0" fill="url(#skin)"/><rect x="207.4" y="154.8" width="18.6" height="290" rx="9.3" fill="#9E6450" opacity=".18"/><path d="M200.0 88.0C220.8 96.4 224.8 132.8 224.8 169.2V214.0Q200.0 236.4 175.2 214.0V169.2C175.2 132.8 179.2 96.4 200.0 88.0Z" fill="url(#mauve)"/><path d="M188.1 174.8C186.1 144.0 190.1 116.0 196.0 104.8" stroke="#fff" stroke-opacity=".55" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="207.9" cy="130.0" r="2.5" fill="#fff" opacity=".6"/></g></g></svg></div>
+<div class="sinfo"><h3>Наращивание</h3><p>Длина и форма мечты: миндаль, овал или квадрат.</p><div class="smeta"><b>от 3 500 ₽</b><span>2,5 часа</span></div></div></article><article class="svc reveal" style="transition-delay:0.16s"><div class="sart"><svg viewBox="60 40 280 400" aria-hidden="true"><g transform="rotate(-16 200 420)"><g class="sf" style="animation-delay:0s"><rect x="169.0" y="120" width="62" height="460" rx="31.0" fill="url(#skin)"/><rect x="207.4" y="144.8" width="18.6" height="300" rx="9.3" fill="#9E6450" opacity=".18"/><path d="M200.0 87.0C220.8 93.6 224.8 122.2 224.8 150.8V186.0Q200.0 203.6 175.2 186.0V150.8C175.2 122.2 179.2 93.6 200.0 87.0Z" fill="url(#nude)"/><path d="M175.2 133.2Q200.0 109.0 224.8 133.2C224.8 109.0 212.4 91.4 200.0 87.0C187.6 91.4 175.2 109.0 175.2 133.2Z" fill="url(#milk)"/><path d="M188.1 155.2C186.1 131.0 190.1 109.0 196.0 100.2" stroke="#fff" stroke-opacity=".55" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="207.9" cy="120.0" r="2.5" fill="#fff" opacity=".6"/></g></g><g transform="rotate(0 200 420)"><g class="sf" style="animation-delay:0s"><rect x="169.0" y="90" width="62" height="490" rx="31.0" fill="url(#skin)"/><rect x="207.4" y="114.8" width="18.6" height="330" rx="9.3" fill="#9E6450" opacity=".18"/><path d="M200.0 57.0C220.8 63.6 224.8 92.2 224.8 120.8V156.0Q200.0 173.6 175.2 156.0V120.8C175.2 92.2 179.2 63.6 200.0 57.0Z" fill="url(#mauve)"/><path d="M175.2 145.0L224.8 95.5V112.0L175.2 161.5Z" fill="url(#gold)"/><circle cx="200.0" cy="90.0" r="3" fill="#fff"/><path d="M188.1 125.2C186.1 101.0 190.1 79.0 196.0 70.2" stroke="#fff" stroke-opacity=".55" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="207.9" cy="90.0" r="2.5" fill="#fff" opacity=".6"/></g></g><g transform="rotate(16 200 420)"><g class="sf" style="animation-delay:0s"><rect x="169.0" y="120" width="62" height="460" rx="31.0" fill="url(#skin)"/><rect x="207.4" y="144.8" width="18.6" height="300" rx="9.3" fill="#9E6450" opacity=".18"/><path d="M200.0 87.0C220.8 93.6 224.8 122.2 224.8 150.8V186.0Q200.0 203.6 175.2 186.0V150.8C175.2 122.2 179.2 93.6 200.0 87.0Z" fill="url(#nude)"/><circle cx="200.0" cy="120.0" r="2.6" fill="#FFF5EE"/><circle cx="192.6" cy="142.0" r="2.6" fill="#FFF5EE"/><circle cx="207.4" cy="142.0" r="2.6" fill="#FFF5EE"/><circle cx="200.0" cy="161.8" r="2.6" fill="#FFF5EE"/><path d="M188.1 155.2C186.1 131.0 190.1 109.0 196.0 100.2" stroke="#fff" stroke-opacity=".55" stroke-width="4.5" stroke-linecap="round" fill="none"/><circle cx="207.9" cy="120.0" r="2.5" fill="#fff" opacity=".6"/></g></g></svg></div>
+<div class="sinfo"><h3>Дизайн ногтей</h3><p>Френч, втирка, фольга, стразы и роспись вручную.</p><div class="smeta"><b>от 150 ₽</b><span>за ноготь</span></div></div></article><article class="svc reveal" style="transition-delay:0.24s"><div class="sart"><svg viewBox="70 190 270 250" aria-hidden="true"><path d="M92 420C80 330 96 268 150 252c60-18 150-12 180 30 26 38 16 90 6 138Z" fill="url(#skin)"/><g class="sf"><rect x="89.0" y="250" width="58" height="124" rx="29.0" fill="url(#skin)"/><rect x="125.0" y="258" width="17.4" height="104" rx="8.7" fill="#9E6450" opacity=".14"/><path d="M98.9 271.5Q98.9 259.3 111.1 259.3H124.9Q137.1 259.3 137.1 271.5V294.2Q118.0 301.3 98.9 294.2Z" fill="url(#noir)"/><path d="M98.9 281.1H137.1" stroke="url(#gold)" stroke-width="2.4"/><path d="M108.8 283.9C107.3 275.2 110.3 267.2 114.9 264.0" stroke="#fff" stroke-opacity=".55" stroke-width="3.4" stroke-linecap="round" fill="none"/><circle cx="124.1" cy="271.2" r="1.9" fill="#fff" opacity=".6"/></g><g class="sf"><rect x="153.0" y="232" width="46" height="112" rx="23.0" fill="url(#skin)"/><rect x="181.5" y="240" width="13.8" height="92" rx="6.9" fill="#9E6450" opacity=".14"/><path d="M160.8 249.1Q160.8 239.4 170.5 239.4H181.5Q191.2 239.4 191.2 249.1V267.7Q176.0 273.5 160.8 267.7Z" fill="url(#noir)"/><path d="M160.8 257.1H191.2" stroke="url(#gold)" stroke-width="2.4"/><path d="M168.7 259.3C167.5 252.3 169.9 245.8 173.6 243.2" stroke="#fff" stroke-opacity=".55" stroke-width="2.7" stroke-linecap="round" fill="none"/><circle cx="180.9" cy="249.0" r="1.5" fill="#fff" opacity=".6"/></g><g class="sf"><rect x="202.0" y="236" width="40" height="106" rx="20.0" fill="url(#skin)"/><rect x="226.8" y="244" width="12.0" height="86" rx="6.0" fill="#9E6450" opacity=".14"/><path d="M208.8 250.8Q208.8 242.4 217.2 242.4H226.8Q235.2 242.4 235.2 250.8V267.5Q222.0 272.6 208.8 267.5Z" fill="url(#noir)"/><path d="M215.7 260.1C214.6 253.8 216.7 248.1 219.9 245.8" stroke="#fff" stroke-opacity=".55" stroke-width="2.4" stroke-linecap="round" fill="none"/><circle cx="226.2" cy="251.0" r="1.3" fill="#fff" opacity=".6"/></g><g class="sf"><rect x="244.5" y="248" width="35" height="100" rx="17.5" fill="url(#skin)"/><rect x="266.2" y="256" width="10.5" height="80" rx="5.2" fill="#9E6450" opacity=".14"/><path d="M250.4 261.0Q250.4 253.6 257.8 253.6H266.2Q273.6 253.6 273.6 261.0V275.4Q262.0 279.9 250.4 275.4Z" fill="url(#noir)"/><path d="M256.5 269.0C255.5 263.5 257.4 258.6 260.2 256.6" stroke="#fff" stroke-opacity=".55" stroke-width="2.1" stroke-linecap="round" fill="none"/><circle cx="265.7" cy="261.0" r="1.2" fill="#fff" opacity=".6"/></g><g class="sf"><rect x="281.0" y="266" width="30" height="94" rx="15.0" fill="url(#skin)"/><rect x="299.6" y="274" width="9.0" height="74" rx="4.5" fill="#9E6450" opacity=".14"/><path d="M286.1 277.1Q286.1 270.8 292.4 270.8H299.6Q305.9 270.8 305.9 277.1V289.4Q296.0 293.1 286.1 289.4Z" fill="url(#noir)"/><path d="M291.2 283.9C290.5 279.2 292.0 275.0 294.4 273.3" stroke="#fff" stroke-opacity=".55" stroke-width="1.8" stroke-linecap="round" fill="none"/><circle cx="299.2" cy="277.1" r="1.0" fill="#fff" opacity=".6"/></g></svg></div>
+<div class="sinfo"><h3>SPA-педикюр</h3><p>Ванночка, пилинг, массаж стоп и стойкое покрытие.</p><div class="smeta"><b>от 2 800 ₽</b><span>90 мин</span></div></div></article>
+  </div>
+</section>
+
+<section class="prices" id="prices">
+  <div class="wrap pbox">
+    <div class="reveal"><h2 style="color:var(--ink)">Цены</h2><p style="margin-top:14px;color:#6E5752;max-width:28ch">Стоимость не меняется в зависимости от мастера. Снятие старого покрытия — бесплатно при записи на маникюр с покрытием.</p>
+      <div class="tabs" role="tablist" id="tabs"><span class="pill" aria-hidden="true"></span><button type="button" role="tab" class="tab on" data-t="0">Маникюр</button><button type="button" role="tab" class="tab" data-t="1">Педикюр</button><button type="button" role="tab" class="tab" data-t="2">Дизайн</button></div></div>
+    <div class="reveal" id="panes"><div class="pane on" data-p="0"><div class="prow"><span class="pn">Маникюр без покрытия</span><span class="pt">45 мин</span><span class="pd"></span><span class="pp">1 200 ₽</span></div><div class="prow"><span class="pn">Маникюр + гель-лак</span><span class="pt">1,5 часа</span><span class="pd"></span><span class="pp">2 200 ₽</span></div><div class="prow"><span class="pn">Укрепление гелем + гель-лак</span><span class="pt">2 часа</span><span class="pd"></span><span class="pp">2 600 ₽</span></div><div class="prow"><span class="pn">Наращивание, длина 1–2</span><span class="pt">2,5 часа</span><span class="pd"></span><span class="pp">3 500 ₽</span></div><div class="prow"><span class="pn">Снятие покрытия</span><span class="pt">15 мин</span><span class="pd"></span><span class="pp">300 ₽</span></div></div><div class="pane" data-p="1"><div class="prow"><span class="pn">Педикюр без покрытия</span><span class="pt">60 мин</span><span class="pd"></span><span class="pp">1 800 ₽</span></div><div class="prow"><span class="pn">Педикюр + гель-лак</span><span class="pt">1,5 часа</span><span class="pd"></span><span class="pp">2 800 ₽</span></div><div class="prow"><span class="pn">SPA-педикюр с массажем</span><span class="pt">2 часа</span><span class="pd"></span><span class="pp">3 400 ₽</span></div><div class="prow"><span class="pn">Обработка только пальчиков</span><span class="pt">40 мин</span><span class="pd"></span><span class="pp">1 500 ₽</span></div></div><div class="pane" data-p="2"><div class="prow"><span class="pn">Френч</span><span class="pt"></span><span class="pd"></span><span class="pp">400 ₽</span></div><div class="prow"><span class="pn">Втирка или «кошачий глаз»</span><span class="pt"></span><span class="pd"></span><span class="pp">300 ₽</span></div><div class="prow"><span class="pn">Фольга, слайдеры</span><span class="pt">за ноготь</span><span class="pd"></span><span class="pp">150 ₽</span></div><div class="prow"><span class="pn">Роспись вручную</span><span class="pt">за ноготь</span><span class="pd"></span><span class="pp">от 250 ₽</span></div><div class="prow"><span class="pn">Стразы</span><span class="pt">за ноготь</span><span class="pd"></span><span class="pp">100 ₽</span></div></div></div>
+  </div>
+</section>
+
+<section class="booking" id="book">
+  <div class="wrap">
+    <div class="bgrid">
+      <div class="reveal">
+        <span class="kicker">Готовы к сиянию?</span>
+        <h2>Запишитесь<span class="script">сегодня</span></h2>
+        <form id="f" novalidate>
+          <label>Имя<input name="name" required autocomplete="given-name" placeholder="Анна"></label>
+          <label>Телефон<input name="phone" type="tel" required autocomplete="tel" placeholder="+7 900 000-00-00"></label>
+          <label>Услуга<select name="svc">
+            <option>Маникюр + гель-лак</option><option>Маникюр без покрытия</option><option>Наращивание</option><option>Педикюр + гель-лак</option><option>SPA-педикюр</option><option>Маникюр + педикюр</option></select></label>
+          <label>Дата<input name="date" type="date" required></label>
+          <div class="times" role="radiogroup" aria-label="Время">
+            <button type="button" role="radio" aria-checked="false">10:00</button><button type="button" role="radio" aria-checked="false">12:00</button>
+            <button type="button" role="radio" aria-checked="false">14:30</button><button type="button" role="radio" aria-checked="false">17:00</button><button type="button" role="radio" aria-checked="false">19:30</button>
+          </div>
+          <div class="err" id="err" role="alert"></div>
+          <button class="btn" type="submit">Записаться <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+        </form>
+        <div class="done" id="done" role="status"><span class="script">Вы записаны!</span><p id="sum"></p></div>
+      </div>
+      <div class="bart" aria-hidden="true">
+        <div class="petal" style="left:8%;top:12%"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+        <div class="petal" style="right:10%;top:20%;animation-delay:-4s;width:30px"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+        <div class="petal" style="left:20%;bottom:10%;animation-delay:-2s;width:26px"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+        <div class="petal" style="right:18%;bottom:16%;animation-delay:-6s"><svg viewBox="0 0 40 24"><path d="M2 12C10-2 30-2 38 12C30 26 10 26 2 12Z" fill="url(#petal)"/><path d="M4 12H34" stroke="#fff" stroke-opacity=".35"/></svg></div>
+        <svg class="bottle" viewBox="0 0 300 420" aria-hidden="true">
+<ellipse cx="150" cy="404" rx="96" ry="12" fill="#000" opacity=".25"/>
+<rect x="104" y="24" width="92" height="150" rx="14" fill="url(#cap)"/>
+<rect x="116" y="34" width="10" height="128" rx="5" fill="#fff" opacity=".16"/>
+<rect x="96" y="166" width="108" height="22" rx="6" fill="#2A2020"/>
+<path d="M58 210q0-26 26-26h132q26 0 26 26v156q0 34-34 34H92q-34 0-34-34Z" fill="url(#glass)"/>
+<path d="M58 210q0-26 26-26h132q26 0 26 26v156q0 34-34 34H92q-34 0-34-34Z" fill="none" stroke="#fff" stroke-opacity=".35" stroke-width="3"/>
+<rect x="74" y="200" width="16" height="170" rx="8" fill="#fff" opacity=".28"/>
+<text x="150" y="300" text-anchor="middle" font-family="Cormorant Garamond, serif" font-size="34" letter-spacing="6" fill="#FFF3EE" opacity=".92">VELVET</text>
+<text x="150" y="322" text-anchor="middle" font-family="Manrope, sans-serif" font-size="10" letter-spacing="3" fill="#FFF3EE" opacity=".75">NAIL STUDIO</text>
+<g clip-path="url(#bclip)"><g class="shine"><rect x="40" y="180" width="26" height="230" fill="#fff" opacity=".22" transform="skewX(-18)"/></g></g>
+</svg>
+      </div>
+    </div>
+    <div class="contacts">
+      <div><h3>Адрес</h3><p>ул. Примерная, 21<br>второй этаж, вход со двора</p></div>
+      <div><h3>Часы работы</h3><p>Ежедневно 9:00–21:00<br>без перерыва</p></div>
+      <div><h3>Связаться</h3><p><a href="tel:+79000000000">+7 900 000-00-00</a><br><a href="https://t.me/">Написать в Telegram</a></p></div>
+    </div>
+  </div>
+</section>
+</main>
+<footer>Velvet Nail Studio, 2026. Демонстрационный проект.</footer>
+
+<script>
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+
+// шапка + подчёркивание активного раздела
+const hdr=$('#hdr'), nav=$('#links'), ul=nav.querySelector('.ul'), links=[...nav.querySelectorAll('a')];
+const secs=links.map(a=>document.querySelector(a.getAttribute('href')));
+let act=-1, lock=0;
+function place(){const a=links[act]; if(!a||!a.offsetWidth) {ul.style.width='0';return} ul.style.width=a.offsetWidth+'px'; ul.style.transform='translateX('+a.offsetLeft+'px)'}
+function setAct(k){if(k===act)return; act=k; links.forEach((a,j)=>a.classList.toggle('on',j===k)); place()}
+links.forEach((a,k)=>a.addEventListener('click',e=>{e.preventDefault(); setAct(k); lock=Date.now()+1000;
+  k===0?scrollTo({top:0,behavior:reduce?'auto':'smooth'}):secs[k].scrollIntoView({behavior:reduce?'auto':'smooth'})}));
+function spy(){hdr.classList.toggle('stuck',scrollY>30); if(Date.now()<lock)return;
+  let k=0; secs.forEach((s,j)=>{if(s.getBoundingClientRect().top<innerHeight*.4)k=j});
+  if(innerHeight+scrollY>=document.documentElement.scrollHeight-4)k=secs.length-1; setAct(k)}
+
+// слова манифеста
+const mt=$('#mtext'), chips=[...mt.querySelectorAll('.chip')];
+const txt=mt.firstChild.textContent.trim(); mt.firstChild.remove();
+const words=txt.split(' ').map(w=>{const s=document.createElement('span');s.className='w';s.textContent=w+' ';return s});
+words.reverse().forEach(w=>mt.prepend(w)); words.reverse();
+function paint(){const r=mt.getBoundingClientRect(); const p=Math.min(1,Math.max(0,(innerHeight*.85-r.top)/(r.height+innerHeight*.35)));
+  const n=Math.round(p*words.length); words.forEach((w,i)=>w.classList.toggle('on',i<n))}
+
+let tick=false; addEventListener('scroll',()=>{if(!tick){tick=true;requestAnimationFrame(()=>{spy();paint();tick=false})}},{passive:true});
+addEventListener('resize',place); spy(); paint(); if(document.fonts)document.fonts.ready.then(place);
+
+// появление при прокрутке
+const io=new IntersectionObserver(es=>es.forEach(e=>{if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target)}}),{threshold:.2});
+$$('.reveal,#hot,#manifest').forEach(el=>io.observe(el));
+
+// счётчики
+$$('[data-count]').forEach((el,i)=>{const to=+el.dataset.count, dec=+(el.dataset.dec||0), suf=el.dataset.suf||'';
+  const f=v=>v.toLocaleString('ru-RU',{minimumFractionDigits:dec,maximumFractionDigits:dec}).replace(/\u00a0/g,' ')+suf;
+  if(reduce){el.textContent=f(to);return}
+  const go=()=>{const t0=performance.now();(function st(t){const p=Math.min(1,(t-t0)/1400),e=1-Math.pow(1-p,4);el.textContent=f(to*e);if(p<1)requestAnimationFrame(st)})(t0)};
+  const o=new IntersectionObserver(es=>{if(es[0].isIntersecting){setTimeout(go,300+i*150);o.disconnect()}},{threshold:.6}); o.observe(el)});
+
+// вкладки прайса
+const tabs=$$('.tab'), pill=$('#tabs .pill');
+function tabTo(i){tabs.forEach((t,j)=>{t.classList.toggle('on',j===i);t.setAttribute('aria-selected',j===i)});
+  $$('.pane').forEach((p,j)=>{p.classList.toggle('on',j===i); if(j===i)[...p.children].forEach((r,k)=>r.style.animationDelay=k*0.06+'s')});
+  pill.style.width=tabs[i].offsetWidth+'px'; pill.style.transform='translateX('+(tabs[i].offsetLeft-4)+'px)'}
+tabs.forEach((t,i)=>t.addEventListener('click',()=>tabTo(i))); tabTo(0); addEventListener('resize',()=>tabTo(tabs.findIndex(t=>t.classList.contains('on'))));
+if(document.fonts)document.fonts.ready.then(()=>tabTo(tabs.findIndex(t=>t.classList.contains('on'))));
+
+// запись (демо)
+const f=$('#f'), err=$('#err'); let time='';
+const today=new Date(); today.setMinutes(today.getMinutes()-today.getTimezoneOffset()); f.elements['date'].min=today.toISOString().slice(0,10);
+$$('.times button').forEach(b=>b.addEventListener('click',()=>{$$('.times button').forEach(x=>{x.classList.remove('on');x.setAttribute('aria-checked','false')});b.classList.add('on');b.setAttribute('aria-checked','true');time=b.textContent}));
+f.addEventListener('submit',e=>{e.preventDefault(); const v=n=>f.elements[n].value.trim();
+  if(!v('name')) return err.textContent='Укажите имя, чтобы мастер знал, как к вам обращаться.';
+  if(v('phone').replace(/\D/g,'').length<10) return err.textContent='Укажите телефон: мы пришлём подтверждение записи.';
+  if(!v('date')) return err.textContent='Выберите дату визита.';
+  if(!time) return err.textContent='Выберите удобное время.';
+  const d=new Date(v('date')+'T12:00').toLocaleDateString('ru-RU',{day:'numeric',month:'long',weekday:'long'});
+  $('#sum').textContent=v('name')+', ждём вас '+d+' в '+time+'. Услуга: '+v('svc')+'. Мы позвоним за день, чтобы напомнить.';
+  f.style.display='none'; $('#done').classList.add('show')});
+</script>
+</body>
+</html>
