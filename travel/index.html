@@ -1,0 +1,617 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Орбита — туры, которые хочется открыть</title>
+<meta name="description" content="Турагентство «Орбита»: выберите страну на планете, город, перелёт и отель. Визовая информация для граждан РФ.">
+<link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@400;600;800&family=Manrope:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#04060F;--panel:rgba(12,18,40,.72);--line:rgba(140,170,255,.16);--txt:#E8EEFF;--mute:#8E9AC0;--cyan:#4FE3FF;--violet:#8B7CFF;--sun:#FFB547;--ok:#3DDC97;--warn:#FFB547}
+*{box-sizing:border-box;margin:0;padding:0}
+html{overflow-x:clip}
+body{font-family:"Manrope",system-ui,sans-serif;background:var(--bg);color:var(--txt);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+button{font:inherit;color:inherit;background:none;border:0;cursor:pointer}
+a{color:inherit}
+:focus-visible{outline:2px solid var(--cyan);outline-offset:3px;border-radius:8px}
+.disp{font-family:"Unbounded",sans-serif}
+.sr{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0)}
+
+/* ---------- планета ---------- */
+#globe{position:fixed;inset:0;width:100%;height:100%;display:block;cursor:grab;touch-action:none;transition:filter 1s,opacity 1s}
+#globe.drag{cursor:grabbing}
+body.deep #globe{filter:blur(6px) brightness(.45);pointer-events:none}
+
+/* ---------- шапка ---------- */
+.top{position:fixed;inset:0 0 auto;z-index:30;display:flex;align-items:center;justify-content:space-between;gap:16px;padding:20px 28px;pointer-events:none}
+.top>*{pointer-events:auto}
+body.deep .top{background:linear-gradient(rgba(4,6,15,.95) 55%,rgba(4,6,15,0))}
+.logo{display:flex;align-items:center;gap:12px;text-decoration:none}
+.logo i{width:34px;height:34px;border-radius:50%;background:radial-gradient(circle at 35% 30%,#fff,var(--cyan) 30%,var(--violet) 75%);box-shadow:0 0 24px rgba(79,227,255,.6);position:relative}
+.logo i::after{content:"";position:absolute;inset:-6px -10px;border:1.5px solid rgba(255,255,255,.55);border-radius:50%;transform:rotate(-20deg) scaleY(.35)}
+.logo b{font-family:"Unbounded";font-weight:800;letter-spacing:.08em;font-size:1.05rem}
+.logo small{display:block;font-size:.66rem;color:var(--mute);letter-spacing:.04em}
+.tools{display:flex;gap:10px;align-items:center}
+.chipbtn{display:flex;align-items:center;gap:8px;padding:10px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);font-weight:700;font-size:.85rem;transition:border-color .3s,transform .3s}
+.chipbtn:hover{border-color:rgba(79,227,255,.6);transform:translateY(-1px)}
+.chipbtn svg{width:18px;height:18px}
+.ring{--p:0;width:22px;height:22px;border-radius:50%;background:conic-gradient(var(--cyan) calc(var(--p)*1%),rgba(255,255,255,.12) 0);display:grid;place-items:center}
+.ring::after{content:"";width:14px;height:14px;border-radius:50%;background:#0B1124}
+
+/* ---------- главный экран: текст ---------- */
+.intro{position:fixed;left:28px;bottom:28px;z-index:20;max-width:440px;transition:opacity .6s,transform .8s cubic-bezier(.2,.8,.2,1)}
+body.deep .intro,body.zooming .intro{opacity:0;transform:translateY(30px);pointer-events:none}
+.intro h1{font-family:"Unbounded";font-weight:800;font-size:clamp(1.9rem,4.2vw,3.4rem);line-height:1.02;letter-spacing:-.02em}
+.intro h1 span{background:linear-gradient(90deg,var(--cyan),var(--violet));-webkit-background-clip:text;background-clip:text;color:transparent}
+.intro p{color:var(--mute);margin:14px 0 18px;max-width:36ch}
+.hint{display:inline-flex;align-items:center;gap:10px;font-size:.82rem;color:var(--mute)}
+.hint i{width:26px;height:26px;border-radius:50%;border:1px dashed rgba(255,255,255,.4);animation:spinh 6s linear infinite}
+@keyframes spinh{to{transform:rotate(360deg)}}
+.dock{position:fixed;right:28px;bottom:28px;z-index:20;display:flex;flex-wrap:wrap;justify-content:flex-end;gap:8px;max-width:520px;transition:opacity .6s,transform .8s}
+body.deep .dock,body.zooming .dock{opacity:0;transform:translateY(30px);pointer-events:none}
+.dock button{padding:9px 14px;border-radius:999px;background:var(--panel);border:1px solid var(--line);backdrop-filter:blur(10px);font-weight:700;font-size:.82rem;transition:background .3s,border-color .3s}
+.dock button:hover,.dock button.hot{border-color:var(--cyan);background:rgba(79,227,255,.12)}
+.dock button.seen::after{content:" ✓";color:var(--ok)}
+
+/* ---------- подсказка над пином ---------- */
+.tip{position:fixed;z-index:25;pointer-events:none;width:230px;border-radius:18px;overflow:hidden;background:#0B1124;border:1px solid rgba(79,227,255,.35);box-shadow:0 20px 50px -10px rgba(0,0,0,.8),0 0 30px rgba(79,227,255,.18);opacity:0;transform:translate(-50%,calc(-100% - 18px)) scale(.92);transition:opacity .25s,transform .25s}
+.tip.on{opacity:1;transform:translate(-50%,calc(-100% - 22px)) scale(1)}
+.tip .media{height:96px}
+.tip div.t{padding:12px 14px}
+.tip b{font-family:"Unbounded";font-size:.95rem}
+.tip p{font-size:.78rem;color:var(--mute);margin-top:2px}
+.tip .v{display:inline-block;margin-top:8px;font-size:.72rem;font-weight:800;padding:3px 9px;border-radius:999px;background:rgba(61,220,151,.15);color:var(--ok)}
+.tip .v.w{background:rgba(255,181,71,.15);color:var(--warn)}
+
+/* ---------- медиа-заглушки: фото из папки img или градиент ---------- */
+.media{position:relative;background-size:cover;background-position:center;overflow:hidden;isolation:isolate}
+.media::before{content:"";position:absolute;inset:0;z-index:-1;background:var(--fb)}
+.media::after{content:"";position:absolute;inset:0;z-index:-1;opacity:.35;mix-blend-mode:overlay;background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='160' height='160'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2'/%3E%3C/filter%3E%3Crect width='160' height='160' filter='url(%23n)' opacity='.6'/%3E%3C/svg%3E")}
+.media .sun{position:absolute;z-index:-1;border-radius:50%;filter:blur(2px)}
+.media[data-has] .sun,.media[data-has]::before,.media[data-has]::after{display:none}
+
+/* ---------- панели страны и города ---------- */
+.view{position:fixed;inset:0;z-index:15;overflow-y:auto;overflow-x:hidden;opacity:0;visibility:hidden;transition:opacity .7s,visibility 0s .7s;scroll-behavior:smooth;overscroll-behavior:contain}
+.view.on{opacity:1;visibility:visible;transition:opacity .7s}
+.wrap{max-width:1200px;margin:0 auto;padding:0 28px}
+.back{position:relative;z-index:5;display:flex;align-items:center;gap:12px;padding:86px 0 0;pointer-events:none}
+.back button{pointer-events:auto}
+.crumbs{font-size:.82rem;color:var(--mute)}
+.hero{position:relative;margin-top:16px;height:min(62vh,560px);border-radius:28px;overflow:hidden;transform:scale(.94);opacity:0;transition:transform 1.1s cubic-bezier(.2,.8,.2,1),opacity .8s}
+.view.on .hero{transform:none;opacity:1}
+.hero>.media{position:absolute;inset:0;transform:scale(1.15);transition:transform 6s ease-out}
+.view.on .hero>.media{transform:scale(1)}
+.hero .shade{position:absolute;inset:0;background:linear-gradient(0deg,rgba(4,6,15,.92),rgba(4,6,15,.25) 55%,rgba(4,6,15,.1))}
+.hero .cap{position:absolute;left:34px;right:34px;bottom:30px}
+.hero h2{font-family:"Unbounded";font-weight:800;font-size:clamp(2.4rem,7vw,5.6rem);line-height:.95;letter-spacing:-.03em}
+.hero p{max-width:52ch;color:#C9D3F5;margin-top:12px}
+.lines>*{opacity:0;transform:translateY(24px);transition:opacity .7s,transform .8s cubic-bezier(.2,.8,.2,1)}
+.view.on .lines>*{opacity:1;transform:none}
+.view.on .lines>*:nth-child(2){transition-delay:.12s}.view.on .lines>*:nth-child(3){transition-delay:.24s}
+.gallery{display:flex;gap:10px;position:absolute;right:30px;top:30px}
+.gallery .media{width:110px;height:76px;border-radius:14px;border:2px solid rgba(255,255,255,.3);cursor:pointer;transition:transform .3s}
+.gallery .media:hover{transform:translateY(-3px)}
+.facts{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:16px}
+.fact{background:var(--panel);border:1px solid var(--line);border-radius:18px;padding:16px 18px;backdrop-filter:blur(10px)}
+.fact small{color:var(--mute);font-size:.74rem;display:block}
+.fact b{font-size:1.05rem}
+.visa-ok{color:var(--ok)}.visa-w{color:var(--warn)}
+section.blk{margin-top:56px}
+.blk h3{font-family:"Unbounded";font-weight:600;font-size:clamp(1.3rem,2.6vw,1.9rem);letter-spacing:-.01em}
+.blk .sub{color:var(--mute);margin-top:6px;max-width:60ch}
+
+/* карта страны */
+.cmap{display:grid;grid-template-columns:1.3fr 1fr;gap:18px;margin-top:22px}
+.mapbox{position:relative;border-radius:24px;background:radial-gradient(120% 120% at 30% 20%,#0E1A3A,#060A18);border:1px solid var(--line);min-height:380px;overflow:hidden}
+.mapbox svg{width:100%;height:100%;display:block}
+.mapbox .grid line{stroke:rgba(140,170,255,.07)}
+.mapbox path.land{fill:rgba(79,227,255,.07);stroke:var(--cyan);stroke-width:1.6;stroke-linejoin:round;filter:drop-shadow(0 0 8px rgba(79,227,255,.5));stroke-dasharray:4000;stroke-dashoffset:4000}
+.view.on .mapbox path.land{animation:draw 2.4s .3s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.cpin{cursor:pointer}
+.cpin circle.p{fill:var(--sun);transition:r .25s}
+.cpin circle.h{fill:none;stroke:var(--sun);opacity:.6;animation:pulse 2s infinite;transform-box:fill-box;transform-origin:center}
+.cpin text{fill:#fff;font:700 13px "Manrope",sans-serif;paint-order:stroke;stroke:#060A18;stroke-width:4px}
+.cpin:hover circle.p,.cpin:focus circle.p{r:9}
+@keyframes pulse{0%{transform:scale(1);opacity:.7}100%{transform:scale(3);opacity:0}}
+.cities{display:grid;gap:12px;align-content:start}
+.ccard{display:grid;grid-template-columns:96px 1fr auto;gap:14px;align-items:center;text-align:left;padding:10px;border-radius:20px;background:var(--panel);border:1px solid var(--line);transition:border-color .3s,transform .3s}
+.ccard:hover{border-color:rgba(255,181,71,.6);transform:translateX(4px)}
+.ccard .media{height:72px;border-radius:14px}
+.ccard b{font-family:"Unbounded";font-size:1rem;font-weight:600}
+.ccard p{font-size:.8rem;color:var(--mute)}
+.ccard .go{width:38px;height:38px;border-radius:50%;display:grid;place-items:center;background:rgba(255,181,71,.15);color:var(--sun);margin-right:6px}
+
+/* ---------- город ---------- */
+.visa{position:relative;margin-top:16px;display:grid;grid-template-columns:auto 1fr auto;gap:22px;align-items:center;padding:24px 28px;border-radius:24px;overflow:hidden;border:1px solid}
+.visa.ok{background:linear-gradient(110deg,rgba(61,220,151,.16),rgba(61,220,151,.04));border-color:rgba(61,220,151,.4)}
+.visa.w{background:linear-gradient(110deg,rgba(255,181,71,.16),rgba(255,181,71,.04));border-color:rgba(255,181,71,.4)}
+.stamp{width:92px;height:92px;border-radius:50%;display:grid;place-items:center;text-align:center;font-family:"Unbounded";font-weight:800;font-size:.6rem;letter-spacing:.06em;border:3px double currentColor;transform:rotate(-12deg);line-height:1.2}
+.visa.ok .stamp{color:var(--ok)}.visa.w .stamp{color:var(--warn)}
+.visa .big{font-family:"Unbounded";font-weight:800;font-size:clamp(1.5rem,3.4vw,2.4rem);line-height:1.05}
+.visa.ok .big{color:var(--ok)}.visa.w .big{color:var(--warn)}
+.visa p{color:#C9D3F5;margin-top:6px;max-width:60ch}
+.visa .term{text-align:right}
+.visa .term b{display:block;font-family:"Unbounded";font-size:2rem;line-height:1}
+.visa .term small{color:var(--mute)}
+.info{display:grid;grid-template-columns:repeat(4,1fr);gap:12px;margin-top:12px}
+.clim{margin-top:12px;padding:22px;border-radius:24px;background:var(--panel);border:1px solid var(--line)}
+.clim .bars{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;align-items:end;height:130px;margin-top:16px}
+.clim .bar{position:relative;border-radius:8px 8px 4px 4px;background:linear-gradient(0deg,rgba(79,227,255,.25),var(--c));height:0;transition:height 1s cubic-bezier(.2,.8,.2,1)}
+.clim .bar span{position:absolute;top:-20px;left:0;right:0;text-align:center;font-size:.72rem;font-weight:700}
+.clim .bar.best{box-shadow:0 0 16px var(--c)}
+.clim .mo{display:grid;grid-template-columns:repeat(12,1fr);gap:6px;margin-top:6px;font-size:.7rem;color:var(--mute);text-align:center}
+
+/* ---------- конструктор тура ---------- */
+.quest{position:sticky;top:78px;z-index:6;display:flex;gap:6px;align-items:center;padding:8px;border-radius:999px;background:rgba(8,12,28,.85);border:1px solid var(--line);backdrop-filter:blur(12px);margin-top:44px;overflow-x:auto}
+.quest span{flex:1;min-width:max-content;text-align:center;font-size:.76rem;font-weight:700;padding:8px 12px;border-radius:999px;color:var(--mute);transition:background .4s,color .4s}
+.quest span.done{color:var(--ok)}
+.quest span.now{background:linear-gradient(90deg,var(--cyan),var(--violet));color:#05081A}
+.opts{display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;align-items:center}
+.pill{padding:10px 16px;border-radius:999px;border:1px solid var(--line);background:var(--panel);font-weight:700;font-size:.86rem;transition:all .25s}
+.pill.on{background:var(--txt);color:#05081A;border-color:var(--txt)}
+.stepper{display:inline-flex;align-items:center;gap:6px;padding:4px;border-radius:999px;border:1px solid var(--line);background:var(--panel)}
+.stepper button{width:34px;height:34px;border-radius:50%;background:rgba(255,255,255,.08);font-weight:800}
+.stepper b{min-width:92px;text-align:center;font-size:.9rem}
+.flights{display:grid;grid-template-columns:1fr;gap:14px;margin-top:18px}
+.blk,#sum{scroll-margin-top:150px}
+.pass{position:relative;text-align:left;display:grid;grid-template-columns:1fr 170px;border-radius:22px;background:linear-gradient(135deg,#121A38,#0B1027);border:1.5px solid var(--line);transition:border-color .3s,transform .4s,box-shadow .4s;overflow:hidden}
+.pass:hover{transform:translateY(-4px) rotate(-.4deg)}
+.pass.on{border-color:var(--cyan);box-shadow:0 0 0 1px var(--cyan),0 20px 40px -18px rgba(79,227,255,.55)}
+.pass .main{padding:18px 26px;display:grid;grid-template-columns:1.6fr 1fr;gap:6px 30px;align-items:center}
+.pass .air{grid-column:1/-1}
+.pass .air{display:flex;justify-content:space-between;font-size:.76rem;color:var(--mute);font-weight:700;letter-spacing:.06em;text-transform:uppercase}
+.pass .route{display:grid;grid-template-columns:auto 1fr auto;align-items:center;gap:16px;margin:8px 0}
+.pass .path em{white-space:nowrap}
+.pass .route b{font-family:"Unbounded";font-size:1.5rem;line-height:1}
+.pass .route small{display:block;color:var(--mute);font-size:.72rem;margin-top:3px}
+.pass .path{position:relative;height:2px;background:repeating-linear-gradient(90deg,rgba(255,255,255,.35) 0 6px,transparent 6px 12px)}
+.pass .path i{position:absolute;top:-9px;left:0;font-style:normal;transition:left 1.2s cubic-bezier(.4,0,.2,1)}
+.pass:hover .path i,.pass.on .path i{left:calc(100% - 16px)}
+.pass .path em{position:absolute;top:8px;left:0;right:0;text-align:center;font-style:normal;font-size:.72rem;color:var(--mute)}
+.pass .meta{display:grid;grid-template-columns:repeat(3,auto);gap:4px 14px;font-size:.76rem;color:var(--mute)}
+.pass .meta b{color:var(--txt);font-size:.82rem}
+.pass .stub{border-left:2px dashed rgba(255,255,255,.18);padding:18px 14px;display:flex;flex-direction:column;justify-content:space-between;align-items:center;text-align:center;background:rgba(255,255,255,.03)}
+.pass .stub b{font-family:"Unbounded";font-size:1.05rem}
+.pass .stub small{font-size:.68rem;color:var(--mute)}
+.pass::before,.pass::after{content:"";position:absolute;right:161px;width:18px;height:18px;border-radius:50%;background:var(--bg)}
+.pass::before{top:-10px}.pass::after{bottom:-10px}
+.barcode{height:34px;width:70px;background:repeating-linear-gradient(90deg,#E8EEFF 0 2px,transparent 2px 4px,#E8EEFF 4px 5px,transparent 5px 8px);opacity:.75}
+.hotels{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:16px;margin-top:18px}
+.hotel{text-align:left;border-radius:24px;overflow:hidden;background:var(--panel);border:1.5px solid var(--line);transition:border-color .3s,transform .4s,box-shadow .4s;display:flex;flex-direction:column}
+.hotel:hover{transform:translateY(-5px)}
+.hotel.on{border-color:var(--sun);box-shadow:0 0 0 1px var(--sun),0 24px 50px -22px rgba(255,181,71,.6)}
+.hotel .media{height:180px}
+.hotel .rooms{position:absolute;left:12px;bottom:12px;display:flex;gap:6px}
+.hotel .rooms i{width:8px;height:8px;border-radius:50%;background:rgba(255,255,255,.5);cursor:pointer}
+.hotel .rooms i.on{background:#fff}
+.hotel .badge{position:absolute;top:12px;left:12px;font-size:.72rem;font-weight:800;padding:5px 10px;border-radius:999px;background:var(--sun);color:#1B1100}
+.hotel .body{padding:16px 18px 18px;display:flex;flex-direction:column;gap:8px;flex:1}
+.hotel .row{display:flex;justify-content:space-between;align-items:baseline;gap:10px}
+.hotel h4{font-family:"Unbounded";font-weight:600;font-size:1.05rem}
+.stars{color:var(--sun);letter-spacing:2px;font-size:.8rem}
+.score{font-weight:800;font-size:.8rem;padding:3px 8px;border-radius:8px;background:rgba(61,220,151,.15);color:var(--ok)}
+.am{display:flex;flex-wrap:wrap;gap:6px}
+.am span{font-size:.72rem;padding:4px 9px;border-radius:999px;background:rgba(255,255,255,.07)}
+.hotel .price{margin-top:auto;display:flex;justify-content:space-between;align-items:baseline;padding-top:10px;border-top:1px solid var(--line)}
+.hotel .price b{font-family:"Unbounded";font-size:1.15rem}
+.hotel .price small{color:var(--mute);font-size:.74rem}
+
+/* итог */
+.sum{margin:46px 0 120px;display:grid;grid-template-columns:1.3fr 1fr;gap:18px;align-items:stretch}
+.sum .card{padding:26px;border-radius:26px;background:var(--panel);border:1px solid var(--line)}
+.sum ul{list-style:none;display:grid;gap:10px;margin-top:14px}
+.sum li{display:flex;justify-content:space-between;gap:16px;font-size:.92rem}
+.sum li span{color:var(--mute)}
+.sum .total{display:flex;flex-direction:column;justify-content:space-between;gap:14px;background:linear-gradient(140deg,#16224B,#0B1027)}
+.sum .total b{font-family:"Unbounded";font-size:clamp(1.8rem,4vw,2.6rem);line-height:1}
+.promo{font-size:.8rem;color:var(--ok);font-weight:700}
+.dream{position:relative;overflow:hidden;width:100%;padding:20px;border-radius:18px;font-family:"Unbounded";font-weight:800;font-size:1rem;color:#1B1100;background:linear-gradient(90deg,var(--sun),#FF8A3D,var(--sun));background-size:200% 100%;transition:background-position .6s,transform .3s,box-shadow .3s}
+.dream:hover{background-position:100% 0;transform:translateY(-2px) scale(1.01);box-shadow:0 18px 40px -12px rgba(255,160,60,.7)}
+.dream::after{content:"";position:absolute;top:0;bottom:0;width:40%;left:-60%;background:linear-gradient(90deg,transparent,rgba(255,255,255,.6),transparent);transform:skewX(-20deg)}
+.dream:hover::after{animation:shine 1s}
+@keyframes shine{to{left:130%}}
+.dream:disabled{filter:grayscale(.8);opacity:.6;cursor:not-allowed}
+.need{font-size:.8rem;color:var(--mute);text-align:center}
+
+/* модалка */
+.modal{position:fixed;inset:0;z-index:50;display:grid;place-items:center;padding:20px;background:rgba(2,4,12,.7);backdrop-filter:blur(8px);opacity:0;visibility:hidden;transition:opacity .4s,visibility 0s .4s}
+.modal.on{opacity:1;visibility:visible;transition:opacity .4s}
+.box{width:min(480px,100%);max-height:90vh;overflow:auto;padding:28px;border-radius:28px;background:#0C1330;border:1px solid var(--line);transform:translateY(20px) scale(.96);transition:transform .5s cubic-bezier(.2,.8,.2,1)}
+.modal.on .box{transform:none}
+.box h3{font-family:"Unbounded";font-size:1.3rem}
+.box p{color:var(--mute);font-size:.9rem;margin-top:6px}
+.box form{display:grid;gap:12px;margin-top:18px}
+.box label{display:grid;gap:6px;font-size:.8rem;color:var(--mute);font-weight:700}
+.box input{font:inherit;color:var(--txt);background:rgba(255,255,255,.06);border:1px solid var(--line);border-radius:14px;padding:13px 14px}
+.box input:focus{outline:none;border-color:var(--cyan)}
+.box .err{color:#FF8A8A;font-size:.82rem;min-height:1em}
+.x{position:absolute;top:16px;right:16px;width:36px;height:36px;border-radius:50%;background:rgba(255,255,255,.08)}
+.okstamp{margin:6px auto 14px;width:120px;height:120px;border-radius:50%;border:4px double var(--ok);color:var(--ok);display:grid;place-items:center;font-family:"Unbounded";font-weight:800;font-size:.8rem;text-align:center;transform:rotate(-14deg) scale(2);opacity:0;animation:stampIn .6s .1s cubic-bezier(.3,1.6,.5,1) forwards}
+@keyframes stampIn{to{transform:rotate(-14deg) scale(1);opacity:1}}
+
+/* паспорт */
+.passport{position:fixed;top:78px;right:28px;z-index:40;width:min(360px,calc(100vw - 32px));padding:22px;border-radius:24px;background:linear-gradient(160deg,#3A1B2E,#1D0F1A);border:1px solid rgba(255,190,220,.25);box-shadow:0 30px 60px -20px rgba(0,0,0,.8);transform-origin:top right;transform:scale(.8);opacity:0;visibility:hidden;transition:all .4s cubic-bezier(.2,.8,.2,1)}
+.passport.on{transform:none;opacity:1;visibility:visible}
+.passport h4{font-family:"Unbounded";font-size:1rem}
+.passport p{font-size:.8rem;color:#D9B8C8;margin-top:4px}
+.stamps{display:grid;grid-template-columns:repeat(4,1fr);gap:8px;margin-top:16px}
+.stamps div{aspect-ratio:1;border-radius:50%;border:2px dashed rgba(255,255,255,.18);display:grid;place-items:center;font-size:.55rem;font-weight:800;text-align:center;color:rgba(255,255,255,.25);line-height:1.1;padding:4px}
+.stamps div.on{border:2.5px double var(--c);color:var(--c);transform:rotate(var(--r));animation:stampIn2 .5s cubic-bezier(.3,1.6,.5,1)}
+@keyframes stampIn2{from{transform:rotate(var(--r)) scale(1.8);opacity:0}}
+.toast{position:fixed;left:50%;bottom:26px;z-index:60;transform:translate(-50%,calc(100% + 60px));padding:14px 20px;border-radius:18px;background:#0C1330;border:1px solid var(--ok);box-shadow:0 20px 40px -12px rgba(0,0,0,.8);font-weight:700;transition:transform .5s cubic-bezier(.2,.8,.2,1);max-width:calc(100vw - 32px)}
+.toast.on{transform:translate(-50%,0)}
+.note{font-size:.74rem;color:var(--mute);margin-top:10px}
+.loader{position:fixed;inset:0;z-index:70;display:grid;place-items:center;background:var(--bg);transition:opacity .8s,visibility 0s .8s}
+.loader.off{opacity:0;visibility:hidden}
+.loader i{width:56px;height:56px;border-radius:50%;border:2px solid rgba(79,227,255,.2);border-top-color:var(--cyan);animation:spinh 1s linear infinite}
+
+@media (max-width:900px){
+  .top{padding:14px 16px}.logo small{display:none}.chipbtn span.t{display:none}
+  .intro{left:16px;right:16px;bottom:auto;top:84px;max-width:none}
+  .intro p{display:none}
+  .dock{left:16px;right:16px;bottom:16px;max-width:none;justify-content:center}
+  .wrap{padding:0 16px}
+  .back{padding-top:70px}
+  .quest{top:66px}
+  .hero{height:52vh;border-radius:22px}.hero .cap{left:20px;right:20px;bottom:20px}
+  .gallery{right:16px;top:16px}.gallery .media{width:70px;height:50px}
+  .facts,.info{grid-template-columns:repeat(2,1fr)}
+  .cmap{grid-template-columns:1fr}.mapbox{min-height:280px}
+  .visa{grid-template-columns:1fr;text-align:left}.visa .term{text-align:left}.stamp{position:absolute;right:16px;top:16px;width:70px;height:70px;font-size:.5rem}
+  .sum{grid-template-columns:1fr}
+  .pass{grid-template-columns:1fr 100px}.pass::before,.pass::after{right:91px}.pass .main{grid-template-columns:1fr;padding:16px}
+}
+@media (prefers-reduced-motion:reduce){*,*::before,*::after{animation:none!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="loader" id="loader"><i></i></div>
+<canvas id="globe" aria-label="Вращающаяся планета с отмеченными странами"></canvas>
+
+<header class="top">
+  <a class="logo" href="#/" aria-label="Орбита, на главную"><i></i><span><b>ОРБИТА</b><small>туры по всему миру</small></span></a>
+  <div class="tools">
+    <button class="chipbtn" id="pbtn" aria-expanded="false"><span class="ring" id="pring"></span><span class="t">Паспорт путешественника</span></button>
+    <a class="chipbtn" href="tel:+79000000000"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg><span class="t">+7 900 000-00-00</span></a>
+  </div>
+</header>
+
+<aside class="passport" id="passport" aria-label="Паспорт путешественника">
+  <h4>Паспорт путешественника</h4>
+  <p id="pinfo">Открывайте страны на планете и собирайте штампы. Соберите все 8 и получите скидку 5% на тур.</p>
+  <div class="stamps" id="stamps"></div>
+</aside>
+
+<div class="intro">
+  <h1>Куда полетим <span>этой осенью?</span></h1>
+  <p>Покрутите планету и нажмите на светящуюся точку. Покажем визы для граждан РФ, перелёты и отели, а итоговую цену посчитаем сразу.</p>
+  <span class="hint"><i></i>Тяните, чтобы вращать</span>
+</div>
+<nav class="dock" id="dock" aria-label="Страны"></nav>
+<div class="tip" id="tip" role="tooltip"></div>
+
+<main>
+  <section class="view" id="vCountry" aria-live="polite"></section>
+  <section class="view" id="vCity" aria-live="polite"></section>
+</main>
+
+<div class="modal" id="modal" role="dialog" aria-modal="true" aria-labelledby="mt"><div class="box" style="position:relative"></div></div>
+<div class="toast" id="toast" role="status"></div>
+
+<script>
+/* =================== ДАННЫЕ =================== */
+// Фото: положите файлы в папку img рядом с этим файлом (например img/turkey.jpg, img/istanbul.jpg).
+// Пока файла нет, вместо фото показывается фирменный градиент.
+const COUNTRIES=[
+ {id:'turkey',iso:'792',name:'Турция',ll:[35,39],c:['#E8505B','#F9B16E'],tag:'Море, базары и Босфор',from:48900,
+  visa:{ok:true,title:'Без визы',term:'до 60 дней',text:'По загранпаспорту, в сумме до 60 дней за полгода. Паспорт должен действовать ещё 150 дней.'},
+  facts:{cur:'Турецкая лира',lang:'Турецкий',time:'Как в Москве',season:'Май — октябрь'},
+  cities:[{id:'istanbul',name:'Стамбул',ll:[28.98,41.01],t:[15,9],sea:null,fl:'3 ч 40 мин',air:'IST',desc:'Город на двух континентах: мечети, рынки и закаты на Босфоре.'},
+          {id:'antalya',name:'Анталья',ll:[30.7,36.9],t:[19,9],fl:'4 ч 05 мин',air:'AYT',desc:'Старый город Калеичи, водопады и пляжи «всё включено».'},
+          {id:'cappadocia',name:'Каппадокия',ll:[34.83,38.64],t:[11,11],fl:'3 ч 30 мин',air:'NAV',desc:'Рассвет на воздушном шаре над каменными «грибами».'}]},
+ {id:'uae',iso:'784',name:'ОАЭ',ll:[54,24],c:['#C9973E','#F3D9A4'],tag:'Небоскрёбы и пустыня',from:62400,
+  visa:{ok:true,title:'Без визы',term:'до 90 дней',text:'Штамп ставят бесплатно в аэропорту. Нужен загранпаспорт, действующий 6 месяцев.'},
+  facts:{cur:'Дирхам',lang:'Арабский, английский',time:'+1 час к Москве',season:'Октябрь — апрель'},
+  cities:[{id:'dubai',name:'Дубай',ll:[55.27,25.2],t:[28,7],fl:'5 ч 15 мин',air:'DXB',desc:'Бурдж-Халифа, поющие фонтаны и пляжи Джумейры.'},
+          {id:'abudhabi',name:'Абу-Даби',ll:[54.38,24.45],t:[28,7],fl:'5 ч 20 мин',air:'AUH',desc:'Белоснежная мечеть шейха Зайда и остров Яс.'}]},
+ {id:'egypt',iso:'818',name:'Египет',ll:[30.8,26.8],c:['#D98A3D','#4FC3D9'],tag:'Красное море круглый год',from:41200,
+  visa:{ok:false,title:'Виза по прилёте',term:'25 $',text:'Марку покупают в аэропорту за 25 $, срок до 30 дней. В Шарм-эль-Шейхе можно бесплатно, если не выезжать за пределы курортов Синая.'},
+  facts:{cur:'Египетский фунт',lang:'Арабский',time:'Как в Москве',season:'Круглый год'},
+  cities:[{id:'sharm',name:'Шарм-эль-Шейх',ll:[34.33,27.92],t:[26,7],fl:'4 ч 30 мин',air:'SSH',desc:'Рифы Рас-Мохаммеда и бирюзовые бухты для снорклинга.'},
+          {id:'hurghada',name:'Хургада',ll:[33.81,27.26],t:[25,7],fl:'4 ч 40 мин',air:'HRG',desc:'Длинные песчаные пляжи, дайвинг и поездки в Луксор.'},
+          {id:'cairo',name:'Каир',ll:[31.24,30.04],t:[22,8],fl:'4 ч 20 мин',air:'CAI',desc:'Пирамиды Гизы и сокровища Тутанхамона.'}]},
+ {id:'thailand',iso:'764',name:'Таиланд',ll:[101,15],c:['#2BB38A','#F7D35C'],tag:'Острова и тайская кухня',from:79800,
+  visa:{ok:true,title:'Без визы',term:'до 30 дней',text:'Отметка ставится бесплатно по прилёте. Нужен обратный билет и паспорт сроком от 6 месяцев.'},
+  facts:{cur:'Тайский бат',lang:'Тайский',time:'+4 часа к Москве',season:'Ноябрь — апрель'},
+  cities:[{id:'phuket',name:'Пхукет',ll:[98.39,7.88],t:[28,1],fl:'9 ч 40 мин',air:'HKT',desc:'Пляжи Ката и Карон, острова Пхи-Пхи на лодке.'},
+          {id:'bangkok',name:'Бангкок',ll:[100.5,13.76],t:[29,2],fl:'9 ч 05 мин',air:'BKK',desc:'Храмы, плавучие рынки и уличная еда до утра.'},
+          {id:'samui',name:'Самуи',ll:[100.01,9.51],t:[28,1],fl:'11 ч 30 мин',air:'USM',desc:'Тихие бухты, кокосовые рощи и йога на рассвете.'}]},
+ {id:'vietnam',iso:'704',name:'Вьетнам',ll:[108.3,14.1],c:['#E04B3B','#F4C24A'],tag:'Бухты, кофе и фо-бо',from:72300,
+  visa:{ok:true,title:'Без визы',term:'до 45 дней',text:'Для граждан РФ безвизовый въезд до 45 дней. Для более долгих поездок оформляют электронную визу.'},
+  facts:{cur:'Донг',lang:'Вьетнамский',time:'+4 часа к Москве',season:'Февраль — август'},
+  cities:[{id:'nhatrang',name:'Нячанг',ll:[109.19,12.24],t:[27,2],fl:'9 ч 30 мин',air:'CXR',desc:'Городской пляж на 6 км, грязевые ванны и острова.'},
+          {id:'phuquoc',name:'Фукуок',ll:[103.96,10.23],t:[28,1],fl:'10 ч 10 мин',air:'PQC',desc:'Белый песок Бай-Сао и самая длинная канатная дорога над морем.'},
+          {id:'hanoi',name:'Ханой',ll:[105.85,21.03],t:[24,6],fl:'8 ч 50 мин',air:'HAN',desc:'Старый квартал и круиз по бухте Халонг.'}]},
+ {id:'srilanka',iso:'144',name:'Шри-Ланка',ll:[80.8,7.9],c:['#1FA59B','#F2A541'],tag:'Чай, слоны и серфинг',from:83500,
+  visa:{ok:false,title:'Электронная виза ETA',term:'30 дней',text:'Оформляется онлайн до поездки, занимает 1–2 дня. Мы поможем заполнить анкету бесплатно.'},
+  facts:{cur:'Шри-ланкийская рупия',lang:'Сингальский, английский',time:'+2,5 часа к Москве',season:'Декабрь — апрель'},
+  cities:[{id:'colombo',name:'Коломбо',ll:[79.86,6.93],t:[28,1],fl:'8 ч 50 мин',air:'CMB',desc:'Колониальный форт и океанская набережная Галле-Фейс.'},
+          {id:'bentota',name:'Бентота',ll:[80,6.42],t:[28,1],fl:'8 ч 50 мин',air:'CMB',desc:'Пляжи, черепашья ферма и аюрведические курорты.'},
+          {id:'kandy',name:'Канди',ll:[80.63,7.29],t:[24,1],fl:'8 ч 50 мин',air:'CMB',desc:'Храм Зуба Будды и чайные плантации в горах.'}]},
+ {id:'georgia',iso:'268',name:'Грузия',ll:[43.4,42.3],c:['#B03A5B','#F2B880'],tag:'Горы, вино и хинкали',from:29900,
+  visa:{ok:true,title:'Без визы',term:'до 1 года',text:'Въезд по загранпаспорту. Нужна медицинская страховка на время поездки.'},
+  facts:{cur:'Лари',lang:'Грузинский',time:'+1 час к Москве',season:'Май — октябрь'},
+  cities:[{id:'tbilisi',name:'Тбилиси',ll:[44.79,41.72],t:[13,12],fl:'2 ч 50 мин',air:'TBS',desc:'Серные бани, балконы Старого города и крепость Нарикала.'},
+          {id:'batumi',name:'Батуми',ll:[41.64,41.64],t:[15,9],fl:'3 ч 00 мин',air:'BUS',desc:'Бульвар у моря, ботанический сад и аджарские хачапури.'}]},
+ {id:'cuba',iso:'192',name:'Куба',ll:[-79.5,21.5],c:['#2F7FD6','#F2C14E'],tag:'Ром, сальса и ретро-авто',from:118000,
+  visa:{ok:true,title:'Без визы',term:'до 90 дней',text:'Для въезда нужны загранпаспорт, страховка и электронная анкета D’Viajeros.'},
+  facts:{cur:'Кубинский песо',lang:'Испанский',time:'−7 часов к Москве',season:'Ноябрь — апрель'},
+  cities:[{id:'havana',name:'Гавана',ll:[-82.37,23.11],t:[25,3],fl:'13 ч 10 мин',air:'HAV',desc:'Малекон, Старая Гавана и кабриолеты 1950-х.'},
+          {id:'varadero',name:'Варадеро',ll:[-81.25,23.15],t:[25,3],fl:'13 ч 30 мин',air:'VRA',desc:'20 километров белого песка и коралловые рифы.'}]}
+];
+const MONTHS=['Янв','Фев','Мар','Апр','Май','Июн','Июл','Авг','Сен','Окт','Ноя','Дек'];
+const fmt=n=>Math.round(n).toLocaleString('ru-RU').replace(/\u00a0/g,' ')+' ₽';
+const $=s=>document.querySelector(s), $$=s=>[...document.querySelectorAll(s)];
+const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
+function media(key,c,cls='',extra=''){ // фото из img/ или градиент
+  return `<div class="media ${cls}" data-img="${key}" style="--fb:linear-gradient(150deg,${c[0]},${c[1]});${extra}"><span class="sun" style="width:38%;aspect-ratio:1;right:12%;top:14%;background:radial-gradient(circle,rgba(255,255,255,.75),rgba(255,255,255,0) 65%)"></span></div>`}
+function loadMedia(root=document){ root.querySelectorAll('.media[data-img]:not([data-tried])').forEach(el=>{el.dataset.tried=1;const src='img/'+el.dataset.img+'.jpg';const im=new Image();im.onload=()=>{el.style.backgroundImage=`url(${src})`;el.dataset.has=1};im.src=src})}
+
+/* =================== ПЛАНЕТА =================== */
+const cv=$('#globe'), ctx=cv.getContext('2d');
+let W,H,DPR,R0, cLon=60, cLat=18, R=1, zoom=1, dots=[], stars=[], land=null, hoverC=null;
+let vLon=0.06, dragging=false, lastX=0,lastY=0, idle=0, anim=null;
+const rad=Math.PI/180;
+function resize(){DPR=Math.min(devicePixelRatio||1,2);W=innerWidth;H=innerHeight;cv.width=W*DPR;cv.height=H*DPR;ctx.setTransform(DPR,0,0,DPR,0,0);R0=Math.min(W,H)*(W<700?.38:.36);
+  stars=Array.from({length:Math.round(W*H/2600)},()=>({x:Math.random()*W,y:Math.random()*H,r:Math.random()*1.2+.2,t:Math.random()*6}))}
+addEventListener('resize',resize); resize();
+function proj(lon,lat){ // ортографическая проекция
+  const l=(lon-cLon)*rad, p=lat*rad, p0=cLat*rad;
+  const cosc=Math.sin(p0)*Math.sin(p)+Math.cos(p0)*Math.cos(p)*Math.cos(l);
+  const x=Math.cos(p)*Math.sin(l), y=Math.cos(p0)*Math.sin(p)-Math.sin(p0)*Math.cos(p)*Math.cos(l);
+  return [x,-y,cosc]}
+const cx=()=>W/2+(W>900?W*.08:0), cy=()=>H/2+(W<700?H*.06:0);
+
+// --- контуры стран (topojson world-atlas с jsDelivr) ---
+function decode(topo){const t=topo.transform,arcs=topo.arcs.map(a=>{let x=0,y=0;return a.map(([dx,dy])=>{x+=dx;y+=dy;return[x*t.scale[0]+t.translate[0],y*t.scale[1]+t.translate[1]]})});
+  const ring=ids=>{let out=[];ids.forEach((i,k)=>{let a=i<0?arcs[~i].slice().reverse():arcs[i];out=out.concat(k?a.slice(1):a)});return out};
+  return topo.objects.countries.geometries.map(g=>{const polys=g.type==='Polygon'?[g.arcs]:g.type==='MultiPolygon'?g.arcs:[];
+    const rings=polys.map(p=>p.map(ring));let b=[180,90,-180,-90];rings.flat(1).forEach(r=>r.forEach(([x,y])=>{b[0]=Math.min(b[0],x);b[1]=Math.min(b[1],y);b[2]=Math.max(b[2],x);b[3]=Math.max(b[3],y)}));
+    return{id:g.id,name:g.properties&&g.properties.name,polys:rings,b}})}
+function inRing(x,y,r){let c=false;for(let i=0,j=r.length-1;i<r.length;j=i++){const[xi,yi]=r[i],[xj,yj]=r[j];if(((yi>y)!=(yj>y))&&(x<(xj-xi)*(y-yi)/(yj-yi)+xi))c=!c}return c}
+function inCountry(x,y,c){if(x<c.b[0]||x>c.b[2]||y<c.b[1]||y>c.b[3])return false;return c.polys.some(p=>inRing(x,y,p[0])&&!p.slice(1).some(h=>inRing(x,y,h)))}
+function buildDots(){const N=W<700?11000:17000, g=Math.PI*(3-Math.sqrt(5)), iso={};COUNTRIES.forEach((c,i)=>iso[c.iso]=i);
+  dots=[];for(let i=0;i<N;i++){const y=1-2*(i+.5)/N, r=Math.sqrt(1-y*y), th=g*i, lat=Math.asin(y)/rad, lon=((Math.atan2(Math.sin(th)*r,Math.cos(th)*r)/rad)+540)%360-180;
+    let hit=-2;for(const c of land){if(inCountry(lon,lat,c)){hit=iso[c.id]??-1;break}} if(hit>-2)dots.push({lon,lat,c:hit})}}
+async function loadLand(){try{const r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');land=decode(await r.json());buildDots()}catch(e){land=null}
+  $('#loader').classList.add('off')}
+
+function draw(t){
+  ctx.clearRect(0,0,W,H);
+  // звёзды
+  for(const s of stars){ctx.globalAlpha=.35+.35*Math.sin(t/900+s.t);ctx.fillStyle='#cfe0ff';ctx.fillRect(s.x,s.y,s.r,s.r)} ctx.globalAlpha=1;
+  const X=cx(),Y=cy();R=R0*zoom;
+  // свечение атмосферы
+  let g=ctx.createRadialGradient(X,Y,R*.85,X,Y,R*1.35);g.addColorStop(0,'rgba(79,227,255,.28)');g.addColorStop(.4,'rgba(139,124,255,.12)');g.addColorStop(1,'rgba(4,6,15,0)');
+  ctx.fillStyle=g;ctx.beginPath();ctx.arc(X,Y,R*1.35,0,7);ctx.fill();
+  g=ctx.createRadialGradient(X-R*.35,Y-R*.4,R*.1,X,Y,R);g.addColorStop(0,'#14234F');g.addColorStop(1,'#050A1C');ctx.fillStyle=g;ctx.beginPath();ctx.arc(X,Y,R,0,7);ctx.fill();
+  // сетка
+  ctx.strokeStyle='rgba(120,160,255,.08)';ctx.lineWidth=1;
+  for(let la=-60;la<=60;la+=30){ctx.beginPath();let on=false;for(let lo=-180;lo<=180;lo+=4){const[x,y,z]=proj(lo,la);if(z>0){on?ctx.lineTo(X+x*R,Y+y*R):ctx.moveTo(X+x*R,Y+y*R);on=true}else on=false}ctx.stroke()}
+  for(let lo=-180;lo<180;lo+=30){ctx.beginPath();let on=false;for(let la=-90;la<=90;la+=4){const[x,y,z]=proj(lo,la);if(z>0){on?ctx.lineTo(X+x*R,Y+y*R):ctx.moveTo(X+x*R,Y+y*R);on=true}else on=false}ctx.stroke()}
+  // точки суши
+  const ds=Math.max(1.1,R/260);
+  for(const d of dots){const[x,y,z]=proj(d.lon,d.lat);if(z<=0.02)continue;
+    if(d.c>=0){ctx.fillStyle=d.c===hoverC?'rgba(255,200,90,'+(.55+z*.45)+')':'rgba(79,227,255,'+(.35+z*.6)+')'}else ctx.fillStyle='rgba(170,190,255,'+(.1+z*.42)+')';
+    ctx.fillRect(X+x*R-ds/2,Y+y*R-ds/2,ds,ds)}
+  if(!dots.length){ctx.strokeStyle='rgba(79,227,255,.25)';ctx.beginPath();ctx.arc(X,Y,R,0,7);ctx.stroke()}
+  // блик
+  g=ctx.createRadialGradient(X-R*.45,Y-R*.5,0,X-R*.45,Y-R*.5,R*.9);g.addColorStop(0,'rgba(255,255,255,.08)');g.addColorStop(1,'rgba(255,255,255,0)');ctx.fillStyle=g;ctx.beginPath();ctx.arc(X,Y,R,0,7);ctx.fill();
+  // пины
+  pins=[];COUNTRIES.forEach((c,i)=>{const[x,y,z]=proj(c.ll[0],c.ll[1]);if(z<.08)return;const px=X+x*R,py=Y+y*R,a=Math.min(1,z*1.6),hot=hoverC===i;
+    const pr=(hot?9:6)*(zoom>1.5?1.3:1), pulse=(t/1400+i*.37)%1;
+    ctx.strokeStyle=`rgba(255,181,71,${(1-pulse)*.7*a})`;ctx.lineWidth=1.5;ctx.beginPath();ctx.arc(px,py,pr+pulse*22,0,7);ctx.stroke();
+    let pg=ctx.createRadialGradient(px,py,0,px,py,pr*3.2);pg.addColorStop(0,`rgba(255,200,110,${.9*a})`);pg.addColorStop(1,'rgba(255,160,60,0)');ctx.fillStyle=pg;ctx.beginPath();ctx.arc(px,py,pr*3.2,0,7);ctx.fill();
+    ctx.fillStyle=`rgba(255,246,225,${a})`;ctx.beginPath();ctx.arc(px,py,pr*.55,0,7);ctx.fill();
+    if(W>700&&!document.body.classList.contains('deep')){ctx.font='700 12px Manrope, sans-serif';ctx.fillStyle=`rgba(232,238,255,${a*.85})`;ctx.fillText(c.name,px+pr+6,py+4)}
+    pins.push({i,x:px,y:py})});
+}
+let pins=[], last=performance.now();
+function loop(t){const dt=Math.min(50,t-last);last=t;
+  if(!dragging&&!anim){idle+=dt;cLon-=vLon*dt/16;vLon+=(0.06-vLon)*.02}
+  if(anim)anim(t);
+  cLat=Math.max(-60,Math.min(60,cLat));draw(t);
+  if(hoverC!==null&&!anim)placeTip();
+  requestAnimationFrame(loop)}
+requestAnimationFrame(loop);
+
+// вращение мышью / пальцем с инерцией
+cv.addEventListener('pointerdown',e=>{dragging=true;cv.classList.add('drag');lastX=e.clientX;lastY=e.clientY;cv.setPointerCapture(e.pointerId);downAt=[e.clientX,e.clientY]});
+let downAt=[0,0];
+cv.addEventListener('pointermove',e=>{
+  if(dragging){const k=90/R;const dx=e.clientX-lastX,dy=e.clientY-lastY;cLon-=dx*k;cLat+=dy*k;vLon=-dx*k/1.2;lastX=e.clientX;lastY=e.clientY}
+  const p=hit(e.clientX,e.clientY);setHover(p?p.i:null)});
+cv.addEventListener('pointerup',e=>{dragging=false;cv.classList.remove('drag');if(Math.hypot(e.clientX-downAt[0],e.clientY-downAt[1])<6){const p=hit(e.clientX,e.clientY);if(p)go('#/'+COUNTRIES[p.i].id)}});
+cv.addEventListener('pointerleave',()=>{if(!dragging)setHover(null)});
+function hit(x,y){let best=null,bd=W<700?26:20;for(const p of pins){const d=Math.hypot(p.x-x,p.y-y);if(d<bd){bd=d;best=p}}return best}
+const tip=$('#tip');
+function setHover(i){if(i===hoverC)return;hoverC=i;cv.style.cursor=i!==null?'pointer':'';$$('.dock button').forEach((b,j)=>b.classList.toggle('hot',j===i));
+  if(i===null){tip.classList.remove('on');return}
+  const c=COUNTRIES[i];tip.innerHTML=media(c.id,c.c,'')+`<div class="t"><b>${c.name}</b><p>${c.tag} · от ${fmt(c.from)}</p><span class="v ${c.visa.ok?'':'w'}">${c.visa.title}${c.visa.ok?', '+c.visa.term:''}</span></div>`;
+  loadMedia(tip);placeTip();tip.classList.add('on')}
+function placeTip(){const p=pins.find(p=>p.i===hoverC);if(!p){tip.classList.remove('on');return}tip.style.left=Math.max(125,Math.min(W-125,p.x))+'px';tip.style.top=Math.max(230,p.y)+'px'}
+
+// плавный полёт камеры
+const ease=x=>x<.5?4*x*x*x:1-Math.pow(-2*x+2,3)/2;
+function fly(toLon,toLat,toZoom,ms=1500){return new Promise(res=>{const a=[cLon,cLat,zoom];let d=((toLon-a[0]+540)%360)-180;const t0=performance.now();
+  if(reduce){cLon=toLon;cLat=toLat;zoom=toZoom;return res()}
+  anim=t=>{const k=Math.min(1,(t-t0)/ms),e=ease(k);cLon=a[0]+d*e;cLat=a[1]+(toLat-a[1])*e;zoom=a[2]+(toZoom-a[2])*e;if(k>=1){anim=null;res()}}})}
+
+/* =================== ПАСПОРТ И ГЕЙМИФИКАЦИЯ =================== */
+let seen=new Set(); try{seen=new Set(JSON.parse(localStorage.getItem('orbita-seen')||'[]'))}catch(e){}
+const PROMO='ORBITA5';
+function renderPassport(){const st=$('#stamps');st.innerHTML=COUNTRIES.map((c,i)=>`<div class="${seen.has(c.id)?'on':''}" style="--c:${c.c[0]};--r:${(i%2?1:-1)*(6+i*3)}deg">${seen.has(c.id)?c.name.toUpperCase():'?'}</div>`).join('');
+  const p=Math.round(seen.size/COUNTRIES.length*100);$('#pring').style.setProperty('--p',p);
+  $('#pinfo').textContent=seen.size>=COUNTRIES.length?`Все 8 стран открыты! Ваш промокод ${PROMO}: −5% на любой тур, уже применён.`:`Открыто ${seen.size} из ${COUNTRIES.length}. Соберите все штампы и получите скидку 5% на тур.`;
+  $$('.dock button').forEach((b,i)=>b.classList.toggle('seen',seen.has(COUNTRIES[i].id)))}
+function stamp(id){if(seen.has(id))return;seen.add(id);try{localStorage.setItem('orbita-seen',JSON.stringify([...seen]))}catch(e){}renderPassport();
+  toast(seen.size>=COUNTRIES.length?'🎉 Все страны открыты! Скидка 5% применена ко всем турам':`Новый штамп в паспорте: ${COUNTRIES.find(c=>c.id===id).name} (${seen.size} из ${COUNTRIES.length})`)}
+const promoOn=()=>seen.size>=COUNTRIES.length;
+let tt;function toast(m){const t=$('#toast');t.textContent=m;t.classList.add('on');clearTimeout(tt);tt=setTimeout(()=>t.classList.remove('on'),3200)}
+$('#pbtn').addEventListener('click',e=>{const p=$('#passport'),on=!p.classList.contains('on');p.classList.toggle('on',on);$('#pbtn').setAttribute('aria-expanded',on)});
+document.addEventListener('click',e=>{if(!e.target.closest('#passport,#pbtn'))$('#passport').classList.remove('on')});
+
+/* =================== ЭКРАН СТРАНЫ =================== */
+const dock=$('#dock');dock.innerHTML=COUNTRIES.map((c,i)=>`<button data-i="${i}">${c.name}</button>`).join('');
+dock.addEventListener('click',e=>{const b=e.target.closest('button');if(b)go('#/'+COUNTRIES[+b.dataset.i].id)});
+dock.addEventListener('mouseover',e=>{const b=e.target.closest('button');if(b){const c=COUNTRIES[+b.dataset.i];fly(c.ll[0],c.ll[1]*.6,1,900).then(()=>setHover(+b.dataset.i))}});
+
+function countryMap(c){
+  const L=land&&land.find(x=>x.id===c.iso); let [x0,y0,x1,y1]=L?L.b:[180,90,-180,-90];
+  c.cities.forEach(ct=>{x0=Math.min(x0,ct.ll[0]);x1=Math.max(x1,ct.ll[0]);y0=Math.min(y0,ct.ll[1]);y1=Math.max(y1,ct.ll[1])});
+  if(L&&c.id==='turkey'){} const pad=Math.max(x1-x0,y1-y0)*.18+.6;x0-=pad;x1+=pad;y0-=pad;y1+=pad;
+  const k=Math.cos((y0+y1)/2*rad),w=(x1-x0)*k,h=(y1-y0),VW=600,VH=Math.max(280,Math.min(520,VW*h/w)),s=Math.min(VW/w,VH/h);
+  const P=([lo,la])=>[((lo-x0)*k*s+(VW-w*s)/2).toFixed(1),((y1-la)*s+(VH-h*s)/2).toFixed(1)];
+  const path=L?L.polys.map(p=>p.map(r=>'M'+r.map(P).join('L')+'Z').join('')).join(''):'';
+  let grid='';for(let i=0;i<12;i++)grid+=`<line x1="${i*VW/11}" y1="0" x2="${i*VW/11}" y2="${VH}"/><line x1="0" y1="${i*VH/11}" x2="${VW}" y2="${i*VH/11}"/>`;
+  const pins=c.cities.map(ct=>{const[x,y]=P(ct.ll);return `<g class="cpin" tabindex="0" role="link" aria-label="${ct.name}" data-city="${ct.id}"><circle class="h" cx="${x}" cy="${y}" r="7"/><circle class="p" cx="${x}" cy="${y}" r="7"/><text x="${+x+13}" y="${+y+5}">${ct.name}</text></g>`}).join('');
+  return `<svg viewBox="0 0 ${VW} ${VH}" preserveAspectRatio="xMidYMid meet"><g class="grid">${grid}</g>${path?`<path class="land" d="${path}"/>`:''}${pins}</svg>`}
+
+function renderCountry(c){
+  const v=$('#vCountry');
+  v.innerHTML=`<div class="wrap">
+   <div class="back"><button class="chipbtn" data-go="#/">← К планете</button><span class="crumbs">Планета / ${c.name}</span></div>
+   <div class="hero">${media(c.id,c.c)}<div class="shade"></div>
+     <div class="gallery">${[1,2,3].map(n=>media(c.id+'-'+n,[c.c[1],c.c[0]])).join('')}</div>
+     <div class="cap lines"><p class="crumbs">${c.tag}</p><h2>${c.name}</h2><p>Туры от ${fmt(c.from)} на человека с перелётом из Москвы. Выберите город на карте ниже.</p></div></div>
+   <div class="facts">
+     <div class="fact"><small>Виза для граждан РФ</small><b class="${c.visa.ok?'visa-ok':'visa-w'}">${c.visa.title}${c.visa.ok?', '+c.visa.term:''}</b></div>
+     <div class="fact"><small>Лучший сезон</small><b>${c.facts.season}</b></div>
+     <div class="fact"><small>Валюта</small><b>${c.facts.cur}</b></div>
+     <div class="fact"><small>Разница во времени</small><b>${c.facts.time}</b></div></div>
+   <section class="blk"><h3>Куда именно?</h3><p class="sub">Нажмите на город на карте или в списке. Покажем погоду по месяцам, перелёты и лучшие отели.</p>
+     <div class="cmap"><div class="mapbox">${countryMap(c)}</div>
+       <div class="cities">${c.cities.map(ct=>`<button class="ccard" data-go="#/${c.id}/${ct.id}">${media(ct.id,[c.c[1],c.c[0]])}<span><b>${ct.name}</b><p>${ct.desc}</p><p>Перелёт ${ct.fl}</p></span><span class="go">→</span></button>`).join('')}</div></div></section>
+   <p class="note" style="margin:40px 0 80px">Сведения о визах приведены для примера. Перед поездкой сверьте актуальные правила въезда на сайте консульства или у наших менеджеров.</p></div>`;
+  v.querySelectorAll('.cpin').forEach(g=>{const f=()=>go(`#/${c.id}/${g.dataset.city}`);g.addEventListener('click',f);g.addEventListener('keydown',e=>{if(e.key==='Enter')f()})});
+  loadMedia(v)}
+
+/* =================== ЭКРАН ГОРОДА И ПОДБОР ТУРА =================== */
+const AIRL=[['Аэрофлот','SU'],['S7 Airlines','S7'],['Уральские авиалинии','U6'],['Red Wings','WZ'],['Azur Air','ZF']];
+function flightsFor(ct,ci){const base=Math.round((COUNTRIES[ci].from*.42)/100)*100;const dur=ct.fl;
+  return [{a:AIRL[ci%5],dep:'08:25',dir:'Прямой',dur,bag:'23 кг + ручная кладь 10 кг',price:base,seats:7},
+          {a:AIRL[(ci+2)%5],dep:'13:40',dir:'Прямой',dur,bag:'20 кг + ручная кладь 5 кг',price:Math.round(base*.88/100)*100,seats:4},
+          {a:AIRL[(ci+3)%5],dep:'23:55',dir:'1 пересадка',dur:'+3 ч',bag:'Только ручная кладь 10 кг',price:Math.round(base*.68/100)*100,seats:12}]}
+const HN=[['Azure Bay Resort',5,9.4,['Свой пляж','Всё включено','СПА','Детский клуб']],['Old Town Boutique',4,9.1,['Завтрак','Терраса на крыше','Центр']],['Palm Garden Hotel',4,8.6,['Бассейн','Завтрак','Wi-Fi']],['Sea Breeze Inn',3,8.2,['5 мин до моря','Кухня в номере']]];
+function hotelsFor(ct,ci){const k=COUNTRIES[ci].from/50000;return HN.slice(0,ct.id.length%2?4:3).map((h,i)=>({name:h[0],st:h[1],sc:h[2],am:h[3],price:Math.round(k*[14800,9200,7400,4300][i]/100)*100,tag:i===0?'Лучший выбор':i===2?'Хит продаж':''}))}
+
+let S={}; // выбор пользователя
+function renderCity(c,ct){
+  const ci=COUNTRIES.indexOf(c), fl=flightsFor(ct,ci), ho=hotelsFor(ct,ci);
+  const temps=MONTHS.map((m,i)=>Math.round(ct.t[0]-ct.t[1]*Math.cos((i+.5)/12*2*Math.PI)*(ct.ll[1]<0?-1:1)));
+  const mx=Math.max(...temps),mn=Math.min(...temps,0);
+  S={c,ct,month:null,nights:7,pax:2,fl:null,ho:null,fls:fl,hos:ho};
+  const now=new Date().getMonth();
+  const v=$('#vCity');
+  v.innerHTML=`<div class="wrap">
+   <div class="back"><button class="chipbtn" data-go="#/${c.id}">← ${c.name}</button><span class="crumbs">Планета / ${c.name} / ${ct.name}</span></div>
+   <div class="hero">${media(ct.id,[c.c[1],c.c[0]])}<div class="shade"></div>
+     <div class="gallery">${[1,2,3].map(n=>media(ct.id+'-'+n,c.c)).join('')}</div>
+     <div class="cap lines"><p class="crumbs">${c.name}</p><h2>${ct.name}</h2><p>${ct.desc}</p></div></div>
+   <div class="visa ${c.visa.ok?'ok':'w'}"><div class="stamp">${c.visa.ok?'VISA<br>FREE':'VISA<br>REQUIRED'}</div>
+     <div><small class="crumbs">Визовый режим для граждан РФ</small><div class="big">${c.visa.title}</div><p>${c.visa.text}</p></div>
+     <div class="term"><b>${c.visa.term}</b><small>${c.visa.ok?'срок пребывания':'стоимость или срок'}</small></div></div>
+   <div class="info">
+     <div class="fact"><small>Перелёт из Москвы</small><b>${ct.fl}</b></div><div class="fact"><small>Аэропорт</small><b>${ct.air}</b></div>
+     <div class="fact"><small>Язык</small><b>${c.facts.lang}</b></div><div class="fact"><small>Время</small><b>${c.facts.time}</b></div></div>
+   <div class="clim"><b>Температура воздуха по месяцам, °C</b><p class="crumbs">Подсвечены самые комфортные месяцы для поездки</p>
+     <div class="bars">${temps.map((t,i)=>{const best=t>=22&&t<=31;return `<div class="bar${best?' best':''}" data-h="${Math.max(8,(t-mn)/(mx-mn||1)*100)}" style="--c:${t>=30?'#FF8A3D':t>=22?'#FFB547':t>=15?'#4FE3FF':'#8B7CFF'}"><span>${t}°</span></div>`}).join('')}</div>
+     <div class="mo">${MONTHS.map(m=>`<span>${m}</span>`).join('')}</div></div>
+
+   <div class="quest" id="quest"><span class="done">✓ Страна</span><span class="done">✓ Город</span><span id="q1" class="now">Даты</span><span id="q2">Перелёт</span><span id="q3">Отель</span><span id="q4">Бронь</span></div>
+
+   <section class="blk" id="sDates"><h3>Когда и надолго?</h3><p class="sub">Выберите месяц вылета, число ночей и путешественников.</p>
+     <div class="opts" id="months">${MONTHS.map((m,i)=>{const mi=(now+1+i)%12;return `<button class="pill" data-m="${mi}">${m}${(temps[mi]>=22&&temps[mi]<=31)?' ☀':''}</button>`}).slice(0,8).join('')}</div>
+     <div class="opts"><span class="stepper"><button data-n="-1" aria-label="Меньше ночей">−</button><b id="nights">7 ночей</b><button data-n="1" aria-label="Больше ночей">+</button></span>
+       <span class="stepper"><button data-p="-1" aria-label="Меньше людей">−</button><b id="pax">2 взрослых</b><button data-p="1" aria-label="Больше людей">+</button></span></div></section>
+
+   <section class="blk" id="sFlights"><h3>Перелёт</h3><p class="sub">Москва → ${ct.name} и обратно. Цена за человека в обе стороны.</p>
+     <div class="flights">${fl.map((f,i)=>`<button class="pass" data-f="${i}"><div class="main"><div class="air"><span>${f.a[0]}</span><span>${f.a[1]} ${100+i*137+ci*11}</span></div>
+       <div class="route"><span><b>MOW</b><small>${f.dep}</small></span><div class="path"><i>✈</i><em>${f.dir} · ${f.dur}</em></div><span style="text-align:right"><b>${ct.air}</b><small>туда и обратно</small></span></div>
+       <div class="meta"><span>Багаж</span><span>Класс</span><span>Мест</span><b>${f.bag.split(' + ')[0]}</b><b>Эконом</b><b>${f.seats}</b></div></div>
+       <div class="stub"><small>за человека</small><b>${fmt(f.price)}</b><span class="barcode"></span></div></button>`).join('')}</div></section>
+
+   <section class="blk" id="sHotels"><h3>Отель</h3><p class="sub">Проверенные отели с реальными отзывами туристов. Цена за номер за ночь.</p>
+     <div class="hotels">${ho.map((h,i)=>`<button class="hotel" data-h="${i}"><div class="media" data-img="${ct.id}-hotel-${i+1}" style="--fb:linear-gradient(${140+i*40}deg,${c.c[0]},${c.c[1]})">${h.tag?`<span class="badge">${h.tag}</span>`:''}<span class="rooms">${[1,2,3].map(n=>`<i class="${n===1?'on':''}" data-r="${n}"></i>`).join('')}</span></div>
+       <div class="body"><div class="row"><h4>${h.name}</h4><span class="score">${h.sc.toFixed(1)}</span></div><span class="stars">${'★'.repeat(h.st)}</span>
+       <div class="am">${h.am.map(a=>`<span>${a}</span>`).join('')}</div><div class="price"><small>за ночь</small><b>${fmt(h.price)}</b></div></div></button>`).join('')}</div></section>
+
+   <div class="sum" id="sum"><div class="card"><h3 class="disp" style="font-size:1.2rem">Ваш тур</h3><ul id="sumList"></ul>
+       <p class="note">В стоимость входят перелёт, проживание, трансфер из аэропорта и медицинская страховка. Без скрытых доплат.</p></div>
+     <div class="card total"><div><small class="crumbs">Итого за всех</small><div><b id="total">—</b></div><p class="promo" id="promo"></p></div>
+       <div><button class="dream" id="dream" disabled>Забронировать тур мечты</button><p class="need" id="need">Выберите даты, перелёт и отель</p></div></div></div></div>`;
+  loadMedia(v);
+  // анимация столбиков погоды
+  requestAnimationFrame(()=>setTimeout(()=>v.querySelectorAll('.bar').forEach(b=>b.style.height=b.dataset.h+'%'),400));
+  v.querySelector('#months').addEventListener('click',e=>{const b=e.target.closest('.pill');if(!b)return;v.querySelectorAll('#months .pill').forEach(x=>x.classList.toggle('on',x===b));S.month=+b.dataset.m;upd(true,'sFlights')});
+  v.querySelectorAll('[data-n]').forEach(b=>b.addEventListener('click',()=>{S.nights=Math.max(3,Math.min(21,S.nights+ +b.dataset.n));upd()}));
+  v.querySelectorAll('[data-p]').forEach(b=>b.addEventListener('click',()=>{S.pax=Math.max(1,Math.min(6,S.pax+ +b.dataset.p));upd()}));
+  v.querySelectorAll('.pass').forEach(b=>b.addEventListener('click',()=>{v.querySelectorAll('.pass').forEach(x=>x.classList.toggle('on',x===b));S.fl=+b.dataset.f;upd(true,'sHotels')}));
+  v.querySelectorAll('.hotel').forEach(b=>b.addEventListener('click',e=>{const r=e.target.closest('.rooms i');if(r){e.stopPropagation();const m=b.querySelector('.media');b.querySelectorAll('.rooms i').forEach(x=>x.classList.toggle('on',x===r));
+      m.dataset.img=`${ct.id}-hotel-${+b.dataset.h+1}${r.dataset.r>1?'-'+r.dataset.r:''}`;m.removeAttribute('data-tried');m.removeAttribute('data-has');m.style.backgroundImage='';m.style.setProperty('--fb',`linear-gradient(${120+r.dataset.r*50}deg,${c.c[0]},${c.c[1]})`);loadMedia(b);return}
+    v.querySelectorAll('.hotel').forEach(x=>x.classList.toggle('on',x===b));S.ho=+b.dataset.h;upd(true,'sum')}));
+  v.querySelector('#dream').addEventListener('click',openBooking);
+  upd()}
+function nw(n,a,b,c){n=Math.abs(n)%100;const n1=n%10;if(n>10&&n<20)return c;if(n1>1&&n1<5)return b;if(n1==1)return a;return c}
+function upd(scroll,to){const v=$('#vCity');
+  v.querySelector('#nights').textContent=S.nights+' '+nw(S.nights,'ночь','ночи','ночей');
+  v.querySelector('#pax').textContent=S.pax+' '+nw(S.pax,'взрослый','взрослых','взрослых');
+  const st=[S.month!==null,S.fl!==null,S.ho!==null];['q1','q2','q3'].forEach((q,i)=>{const el=v.querySelector('#'+q);el.className=st[i]?'done':(st.slice(0,i).every(Boolean)?'now':'');el.textContent=(st[i]?'✓ ':'')+el.textContent.replace('✓ ','')});
+  const all=st.every(Boolean);v.querySelector('#q4').className=all?'now':'';
+  const items=[['Направление',`${S.ct.name}, ${S.c.name}`],['Вылет',S.month!==null?MONTHS[S.month]+', '+S.nights+' '+nw(S.nights,'ночь','ночи','ночей'):'не выбран'],['Путешественники',S.pax+' '+nw(S.pax,'взрослый','взрослых','взрослых')],
+    ['Перелёт',S.fl!==null?`${S.fls[S.fl].a[0]}, ${fmt(S.fls[S.fl].price*S.pax)}`:'не выбран'],['Трансфер и страховка',fmt(3500*S.pax)],['Отель',S.ho!==null?`${S.hos[S.ho].name}, ${fmt(S.hos[S.ho].price*S.nights*Math.ceil(S.pax/2))}`:'не выбран']];
+  v.querySelector('#sumList').innerHTML=items.map(([a,b])=>`<li><span>${a}</span><b>${b}</b></li>`).join('');
+  let total=null;if(S.fl!==null&&S.ho!==null){total=S.fls[S.fl].price*S.pax+S.hos[S.ho].price*S.nights*Math.ceil(S.pax/2)+3500*S.pax;if(promoOn())total*=.95}
+  const tEl=v.querySelector('#total');if(total){countTo(tEl,total)}else tEl.textContent='—';S.total=total;
+  v.querySelector('#promo').textContent=promoOn()?`Промокод ${PROMO} применён: −5%`:`Соберите все 8 штампов в паспорте и получите −5%`;
+  const d=v.querySelector('#dream');d.disabled=!all;v.querySelector('#need').textContent=all?'Менеджер перезвонит за 15 минут и зафиксирует цену':'Выберите '+['даты','перелёт','отель'].filter((x,i)=>!st[i]).join(', ');
+  if(scroll&&to){setTimeout(()=>v.querySelector('#'+to).scrollIntoView({behavior:reduce?'auto':'smooth',block:'start'}),350)}}
+let shown=0;function countTo(el,to){const from=shown,t0=performance.now();shown=to;(function f(t){const k=Math.min(1,(t-t0)/700),e=1-Math.pow(1-k,3);el.textContent=fmt(from+(to-from)*e);if(k<1)requestAnimationFrame(f)})(t0)}
+
+function openBooking(){const m=$('#modal'),b=m.querySelector('.box');
+  b.innerHTML=`<button class="x" aria-label="Закрыть">✕</button><h3 id="mt">Бронируем тур мечты</h3><p>${S.ct.name}, ${MONTHS[S.month]}, ${S.nights} ${nw(S.nights,'ночь','ночи','ночей')}, ${S.hos[S.ho].name}. Итого ${fmt(S.total)}.</p>
+  <form id="bf" novalidate><label>Имя<input name="n" autocomplete="name" placeholder="Анна"></label><label>Телефон<input name="p" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></label>
+  <label>Удобно связаться<input name="w" placeholder="Telegram, WhatsApp или звонок"></label><div class="err" id="berr"></div><button class="dream" type="submit">Отправить заявку</button>
+  <p class="note">Бронь бесплатная и ни к чему не обязывает. Предоплата 30% только после подтверждения отеля.</p></form>`;
+  m.classList.add('on');setTimeout(()=>b.querySelector('input').focus(),300);
+  b.querySelector('.x').onclick=closeM;
+  b.querySelector('#bf').addEventListener('submit',e=>{e.preventDefault();const f=e.target;if(!f.n.value.trim())return b.querySelector('#berr').textContent='Укажите имя, чтобы менеджер знал, как к вам обращаться.';
+    if(f.p.value.replace(/\D/g,'').length<10)return b.querySelector('#berr').textContent='Укажите телефон: на него придёт подтверждение брони.';
+    b.innerHTML=`<button class="x" aria-label="Закрыть">✕</button><div class="okstamp">ЗАЯВКА<br>ПРИНЯТА</div><h3 style="text-align:center">${f.n.value.trim()}, тур забронирован!</h3>
+    <p style="text-align:center">Менеджер перезвонит в течение 15 минут, проверит места в отеле и пришлёт документы. Номер заявки ORB-${Math.floor(Math.random()*90000+10000)}.</p>`;b.querySelector('.x').onclick=closeM})}
+function closeM(){$('#modal').classList.remove('on')}
+$('#modal').addEventListener('click',e=>{if(e.target.id==='modal')closeM()});addEventListener('keydown',e=>{if(e.key==='Escape'){closeM();$('#passport').classList.remove('on')}});
+
+/* =================== НАВИГАЦИЯ ПО ЭКРАНАМ =================== */
+document.addEventListener('click',e=>{const g=e.target.closest('[data-go]');if(g){e.preventDefault();go(g.dataset.go)}});
+function go(h){if(location.hash===h)route();else location.hash=h}
+let curC=null;
+async function route(){const [_,cid,city]=(location.hash||'#/').split('/');const c=COUNTRIES.find(x=>x.id===cid);
+  setHover(null);
+  if(!c){document.body.classList.remove('deep');$$('.view').forEach(v=>v.classList.remove('on'));document.body.classList.remove('zooming');curC=null;await fly(cLon,18,1,1100);return}
+  const ct=city&&c.cities.find(x=>x.id===city);
+  if(curC!==c.id||!document.body.classList.contains('deep')){document.body.classList.add('zooming');$$('.view').forEach(v=>v.classList.remove('on'));
+    await fly(c.ll[0],c.ll[1],ct?4.2:3.2,1500);document.body.classList.add('deep');stamp(c.id)}
+  curC=c.id;
+  if(ct){renderCity(c,ct);$('#vCountry').classList.remove('on');const v=$('#vCity');v.scrollTop=0;v.classList.add('on');fly(ct.ll[0],ct.ll[1],4.2,900)}
+  else{renderCountry(c);$('#vCity').classList.remove('on');const v=$('#vCountry');v.scrollTop=0;v.classList.add('on');fly(c.ll[0],c.ll[1],3.2,900)}
+  document.title=(ct?ct.name+', ':'')+c.name+' — Орбита'}
+addEventListener('hashchange',route);
+renderPassport();
+loadLand().then(()=>{if(location.hash.length>2)route()});
+setTimeout(()=>$('#loader').classList.add('off'),4000);
+</script>
+</body>
+</html>
