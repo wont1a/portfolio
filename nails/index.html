@@ -131,7 +131,8 @@ h2 em{font-style:normal;color:var(--blush)}
 .drop line,.drop path{stroke:#C69C96;stroke-dasharray:140;stroke-dashoffset:140;transition:stroke-dashoffset 1.4s cubic-bezier(.6,0,.2,1)}
 .drop path{transition-delay:1.2s}
 .manifest.in .drop line,.manifest.in .drop path{stroke-dashoffset:0}
-.mtext{position:relative;max-width:900px;margin:0 auto;text-align:center;font-family:"Cormorant Garamond",serif;font-weight:500;
+.mwrap{position:relative;max-width:964px;margin:0 auto;padding:0 32px}
+.mtext{position:relative;text-align:center;font-family:"Cormorant Garamond",serif;font-weight:500;
   font-size:clamp(1.8rem,3.8vw,3.1rem);line-height:1.18;letter-spacing:-.005em}
 .mtext .w{color:#D4BDB7;transition:color .35s}
 .mtext .w.on{color:var(--ink)}
@@ -139,8 +140,10 @@ h2 em{font-style:normal;color:var(--blush)}
   padding:7px 13px;border-radius:999px;box-shadow:0 10px 26px -12px rgba(90,40,35,.45);opacity:0;transform:scale(.6);transition:opacity .6s,transform .7s cubic-bezier(.3,1.6,.5,1)}
 .chip i{width:9px;height:9px;border-radius:50%}
 .manifest.in .chip{opacity:1;transform:none}
-.chip>span{display:inline-flex;align-items:center;gap:7px;animation:float 6s ease-in-out infinite}
-@keyframes float{50%{transform:translateY(-9px)}}
+.chip>span{display:inline-flex;align-items:center;gap:7px}
+.manifest.in .chip{animation:float 6s ease-in-out infinite}
+.chip:nth-of-type(2n){animation-delay:-2s!important}.chip:nth-of-type(3n){animation-delay:-4s!important}
+@keyframes float{50%{translate:0 -9px}}
 
 /* ---------- услуги ---------- */
 .services{background:var(--paper);color:var(--ink);padding:0 0 120px}
@@ -213,6 +216,10 @@ footer{background:var(--esp);padding:30px 0 40px;text-align:center;font-size:.8r
 
 /* ---------- адаптив ---------- */
 @media (max-width:1080px){
+  .mwrap{display:flex;flex-wrap:wrap;justify-content:center;gap:10px 8px}
+  .mwrap{padding:0 20px}
+  .mtext{flex-basis:100%;margin-bottom:22px}
+  .chip{position:relative;left:auto!important;right:auto!important;top:auto!important;bottom:auto!important;font-size:.78rem}
   .sgrid{grid-template-columns:repeat(2,1fr)} .shead{grid-column:1/-1;margin-bottom:10px}
 }
 @media (max-width:860px){
@@ -237,7 +244,6 @@ footer{background:var(--esp);padding:30px 0 40px;text-align:center;font-size:.8r
   .bart{height:340px;order:-1}
   form{grid-template-columns:1fr}
   .contacts{grid-template-columns:1fr;margin-top:60px}
-  .chip{font-size:.7rem}
   footer{padding-bottom:100px}
 }
 @media (max-width:520px){ .frame span{display:none} .sgrid{grid-template-columns:1fr} .svc{min-height:360px} .sinfo p{max-height:none;opacity:1;margin-top:8px} .pt{display:none} .book{padding:9px 14px;font-size:.8rem} }
@@ -344,7 +350,7 @@ footer{background:var(--esp);padding:30px 0 40px;text-align:center;font-size:.8r
 
 <section class="manifest" id="manifest">
   <svg class="drop" viewBox="0 0 14 110" aria-hidden="true"><line x1="7" y1="0" x2="7" y2="104" stroke-width="1.2"/><path d="M1 98l6 7 6-7" fill="none" stroke-width="1.2"/></svg>
-  <div class="mtext" id="mtext">В Velvet маникюр держится три недели и выглядит идеально каждый день. Инструменты проходят три этапа стерилизации, материалы мы берём только проверенные, а мастера работают от пяти лет. Вам остаётся одно: выбрать цвет и отдохнуть.
+  <div class="mwrap"><div class="mtext" id="mtext">В Velvet маникюр держится три недели и выглядит идеально каждый день. Инструменты проходят три этапа стерилизации, материалы мы берём только проверенные, а мастера работают от пяти лет. Вам остаётся одно: выбрать цвет и отдохнуть.</div>
     <span class="chip" style="left:-4%;top:-14%;transition-delay:.1s"><span><i style="background:#E7A1A9"></i>Аккуратно</span></span>
     <span class="chip" style="right:2%;top:-20%;transition-delay:.25s"><span style="animation-delay:-2s"><i style="background:#9CC9A4"></i>Стерильно</span></span>
     <span class="chip" style="left:-9%;top:58%;transition-delay:.4s"><span style="animation-delay:-4s"><i style="background:#D9B48F"></i>Стойко</span></span>
@@ -439,7 +445,7 @@ function spy(){hdr.classList.toggle('stuck',scrollY>30); if(Date.now()<lock)retu
   if(innerHeight+scrollY>=document.documentElement.scrollHeight-4)k=secs.length-1; setAct(k)}
 
 // слова манифеста
-const mt=$('#mtext'), chips=[...mt.querySelectorAll('.chip')];
+const mt=$('#mtext');
 const txt=mt.firstChild.textContent.trim(); mt.firstChild.remove();
 const words=txt.split(' ').map(w=>{const s=document.createElement('span');s.className='w';s.textContent=w+' ';return s});
 words.reverse().forEach(w=>mt.prepend(w)); words.reverse();
