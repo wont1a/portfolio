@@ -289,7 +289,7 @@ section.blk{margin-top:56px}
   <a class="logo" href="#/" aria-label="Орбита, на главную"><i></i><span><b>ОРБИТА</b><small>туры по всему миру</small></span></a>
   <div class="tools">
     <button class="chipbtn" id="pbtn" aria-expanded="false"><span class="ring" id="pring"></span><span class="t">Паспорт путешественника</span></button>
-    <a class="chipbtn" href="tel:+79000000000"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><path d="M5 3h4l2 5-2.5 1.5a11 11 0 0 0 6 6L16 13l5 2v4a2 2 0 0 1-2 2A16 16 0 0 1 3 5a2 2 0 0 1 2-2Z"/></svg><span class="t">+7 900 000-00-00</span></a>
+    <a class="chipbtn" href="https://t.me/" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor"><path d="M21.4 4.2 2.9 11.4c-1.3.5-1.2 1.2-.2 1.5l4.7 1.5 1.8 5.6c.2.6.4.8.9.8.4 0 .6-.2.9-.5l2.3-2.2 4.8 3.5c.9.5 1.5.2 1.7-.8L23 5.6c.3-1.3-.5-1.9-1.6-1.4ZM8.6 14l9.6-6.1c.5-.3.9-.1.5.2l-8 7.3-.3 3.3L8.6 14Z"/></svg><span class="t">Подобрать тур в Telegram</span></a>
   </div>
 </header>
 
@@ -300,7 +300,8 @@ section.blk{margin-top:56px}
 </aside>
 
 <div class="intro">
-  <h1>Куда полетим <span>этой осенью?</span></h1>
+  <h1>Куда полетим <span id="season">этой осенью?</span></h1>
+  <script>(function(){var m=new Date().getMonth();document.getElementById('season').textContent=['этой зимой?','этой зимой?','этой весной?','этой весной?','этой весной?','этим летом?','этим летом?','этим летом?','этой осенью?','этой осенью?','этой осенью?','этой зимой?'][m];})();</script>
   <p>Покрутите планету и нажмите на светящуюся точку. Покажем визы для граждан РФ, перелёты и отели, а итоговую цену посчитаем сразу.</p>
   <span class="hint"><i></i>Тяните, чтобы вращать</span>
 </div>
@@ -480,7 +481,7 @@ function inCountry(x,y,c){if(x<c.b[0]||x>c.b[2]||y<c.b[1]||y>c.b[3])return false
 function buildDots(){const N=W<700?11000:17000, g=Math.PI*(3-Math.sqrt(5)), iso={};COUNTRIES.forEach((c,i)=>iso[c.iso]=i);
   dots=[];for(let i=0;i<N;i++){const y=1-2*(i+.5)/N, r=Math.sqrt(1-y*y), th=g*i, lat=Math.asin(y)/rad, lon=((Math.atan2(Math.sin(th)*r,Math.cos(th)*r)/rad)+540)%360-180;
     let hit=-2;for(const c of land){if(inCountry(lon,lat,c)){hit=iso[c.id]??-1;break}} if(hit>-2)dots.push({lon,lat,c:hit})}}
-async function loadLand(){try{const r=await fetch('https://cdn.jsdelivr.net/npm/world-atlas@2/countries-110m.json');land=decode(await r.json());buildDots()}catch(e){land=null}
+async function loadLand(){try{const r=await fetch('countries-110m.json');land=decode(await r.json());buildDots()}catch(e){land=null}
   $('#loader').classList.add('off')}
 
 function draw(t){
@@ -688,7 +689,7 @@ let shown=0;function countTo(el,to){const from=shown,t0=performance.now();shown=
 
 function openBooking(){const m=$('#modal'),b=m.querySelector('.box');
   b.innerHTML=`<button class="x" aria-label="Закрыть">✕</button><h3 id="mt">Бронируем тур мечты</h3><p>${S.ct.name}, ${MONTHS[S.month]}, ${S.nights} ${nw(S.nights,'ночь','ночи','ночей')}, ${S.hos[S.ho].name}. Итого ${fmt(S.total)}.</p>
-  <form id="bf" novalidate><label>Имя<input name="n" autocomplete="name" placeholder="Анна"></label><label>Телефон<input name="p" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></label>
+  <form id="bf" novalidate><label>Имя<input name="n" autocomplete="name" placeholder="Анна"></label><label>Телефон<input name="p" type="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__"></label>
   <label>Удобно связаться<input name="w" placeholder="Telegram, WhatsApp или звонок"></label><div class="err" id="berr"></div><button class="dream" type="submit">Отправить заявку</button>
   <p class="note">Бронь бесплатная и ни к чему не обязывает. Предоплата 30% только после подтверждения отеля.</p></form>`;
   m.classList.add('on');setTimeout(()=>b.querySelector('input').focus(),300);

@@ -3,8 +3,10 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
-<title>Velvet — студия маникюра и педикюра</title>
-<meta name="description" content="Маникюр, педикюр, наращивание и дизайн ногтей. Онлайн-запись.">
+<title>Velvet — студия маникюра и педикюра у Патриарших, Москва</title>
+<meta name="description" content="Velvet Nail Studio у Патриарших: маникюр, педикюр, наращивание и дизайн. Покрытие держится до 3 недель, гарантия 7 дней. Первый визит −20%, онлайн-запись за минуту.">
+<meta property="og:title" content="Velvet — ногти, которые вдохновляют">
+<meta property="og:image" content="https://wont1a.github.io/portfolio/nails/img/hero.jpg">
 <link rel="preload" as="image" href="img/hero.jpg" fetchpriority="high">
 <link rel="preconnect" href="https://fonts.googleapis.com"><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 
@@ -300,6 +302,16 @@ details[open] .pl::after,details[open] .qa i::after,.qa[open] i::after{transform
 .mono{background:radial-gradient(circle at 35% 30%,#8E5F58,#2A1E1C)}
 .cert .cs{position:absolute;inset:0;background:linear-gradient(135deg,#E8C3BB 0%,#C9908A 45%,#8E5A55 100%)}
 .hero .ph img{filter:none}
+
+/* первый визит: плашка после первого экрана */
+.first{position:fixed;z-index:45;left:50%;bottom:18px;transform:translate(-50%,170%);display:flex;align-items:center;gap:18px;padding:10px 10px 10px 22px;width:max-content;max-width:calc(100% - 24px);
+  background:rgba(23,17,17,.9);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);border:1px solid rgba(212,163,155,.28);box-shadow:0 24px 50px -20px #000;transition:transform .7s cubic-bezier(.16,1,.3,1)}
+.first.show{transform:translate(-50%,0)}
+.first p{font-size:.8rem;line-height:1.35;color:var(--mute)}
+.first p b{display:block;font-family:"Cormorant Garamond",serif;font-size:1.25rem;font-weight:500;color:var(--txt)}
+.first p i{font-style:normal;color:var(--blush);font-variant-numeric:tabular-nums}
+.first .btn{padding:13px 18px;flex:none}
+@media (max-width:560px){.first{gap:10px;padding:8px 8px 8px 14px}.first p b{font-size:1.05rem}.first .btn{padding:11px 12px;font-size:.58rem;letter-spacing:.1em}}
 </style>
 </head>
 <body>
@@ -336,7 +348,7 @@ details[open] .pl::after,details[open] .qa i::after,.qa[open] i::after{transform
     <h2>Красота. Забота.<br><span class="r">Уверенность.</span></h2>
     <p>Мы верим, что важна каждая деталь. Мягкие кресла, ароматный чай и мастер, который слышит, какой результат вы хотите. Час, который вы проводите только для себя.</p>
     <span class="sign script">Побалуйте себя ♡</span>
-    <div class="stats"><div><b data-count="4.9" data-dec="1">0</b><span>Яндекс Карты</span></div><div><b data-count="1200" data-suf="+">0</b><span>Постоянных клиенток</span></div><div><b data-count="21" data-suf=" день">0</b><span>Держится покрытие</span></div></div>
+    <div class="stats"><div><b data-count="4.9" data-dec="1">0</b><span>Средняя оценка</span></div><div><b data-count="1200" data-suf="+">0</b><span>Постоянных клиенток</span></div><div><b data-count="21" data-suf=" день">0</b><span>Держится покрытие</span></div></div>
   </div>
   <div class="ph" id="aph" data-img="salon" data-alt="Интерьер студии">
     <div class="cert"><div class="cs"></div><div class="ct"><span class="lotus"><svg viewBox="0 0 32 24" fill="none" stroke="currentColor" stroke-width="1.2" stroke-linejoin="round"><path d="M16 21c-3-3-4-7-4-10s1.6-6 4-8c2.4 2 4 5 4 8s-1 7-4 10Z"/><path d="M16 21c-4-1-9-4-10-10 4-.5 7 1 9 3.5M16 21c4-1 9-4 10-10-4-.5-7 1-9 3.5"/><path d="M16 21C10 21 4 19 1 15c3-1.5 6-1.4 8.5-.3M16 21c6 0 12-2 15-6-3-1.5-6-1.4-8.5-.3"/></svg></span><b>VELVET</b><small>Подарочный сертификат</small><em>от 2 000 ₽</em></div></div>
@@ -389,7 +401,7 @@ details[open] .pl::after,details[open] .qa i::after,.qa[open] i::after{transform
     <div class="rules"><div class="rule rv"><h3>Гарантия 7 дней</h3><p>Если покрытие отслоилось или сломался ноготь, исправим бесплатно в течение недели.</p></div><div class="rule rv"><h3>Опоздание</h3><p>Ждём до 15 минут. Если опаздываете сильнее, напишите: постараемся сохранить запись.</p></div><div class="rule rv"><h3>Перенос и отмена</h3><p>Бесплатно, если предупредить за 3 часа. Предоплата не нужна.</p></div><div class="rule rv"><h3>Оплата</h3><p>Карта, наличные или СБП. Чек на почту или в Telegram.</p></div><div class="rule rv"><h3>Дети</h3><p>С 12 лет, до 16 лет в присутствии взрослого.</p></div><div class="rule rv"><h3>Аллергия и беременность</h3><p>Используем гипоаллергенные материалы. Сообщите при записи, и мастер подберёт состав.</p></div></div>
   </div>
 </section>
-<section class="reviews"><div class="wrap"><div class="rhead rv"><span class="kick caps">Отзывы</span><h2>Нам <span class="r">доверяют</span></h2><p>4,9 из 5 на Яндекс Картах, больше 300 отзывов.</p></div><div class="rgrid"><figure class="rev rv"><div class="stars" aria-label="5 из 5">★★★★★</div><blockquote>Хожу третий месяц. Покрытие стабильно держится три недели, ни одного скола. Очень уютно, всегда предлагают чай.</blockquote><figcaption><b>Марина</b><span>Маникюр + гель-лак</span></figcaption></figure><figure class="rev rv"><div class="stars" aria-label="5 из 5">★★★★★</div><blockquote>Пришла со своим ногтем, сломанным под корень. Ушла с идеальным миндалём. Алина объяснила, как ухаживать.</blockquote><figcaption><b>Екатерина</b><span>Наращивание у Алины</span></figcaption></figure><figure class="rev rv"><div class="stars" aria-label="5 из 5">★★★★★</div><blockquote>Записалась онлайн за минуту, пришло напоминание за день. Массаж стоп отдельная любовь.</blockquote><figcaption><b>Ольга</b><span>SPA-педикюр</span></figcaption></figure></div></div></section>
+<section class="reviews"><div class="wrap"><div class="rhead rv"><span class="kick caps">Отзывы</span><h2>Нам <span class="r">доверяют</span></h2><p>4,9 из 5 — средняя оценка клиенток, больше 300 отзывов.</p></div><div class="rgrid"><figure class="rev rv"><div class="stars" aria-label="5 из 5">★★★★★</div><blockquote>Хожу третий месяц. Покрытие стабильно держится три недели, ни одного скола. Очень уютно, всегда предлагают чай.</blockquote><figcaption><b>Марина</b><span>Маникюр + гель-лак</span></figcaption></figure><figure class="rev rv"><div class="stars" aria-label="5 из 5">★★★★★</div><blockquote>Пришла со своим ногтем, сломанным под корень. Ушла с идеальным миндалём. Алина объяснила, как ухаживать.</blockquote><figcaption><b>Екатерина</b><span>Наращивание у Алины</span></figcaption></figure><figure class="rev rv"><div class="stars" aria-label="5 из 5">★★★★★</div><blockquote>Записалась онлайн за минуту, пришло напоминание за день. Массаж стоп отдельная любовь.</blockquote><figcaption><b>Ольга</b><span>SPA-педикюр</span></figcaption></figure></div></div></section>
 <section class="faq" id="faq"><div class="wrap fgrid"><div class="rv"><span class="kick caps">Частые вопросы</span><h2>Ответим <span class="r">заранее</span></h2><p class="fp">Не нашли ответ? Напишите в Telegram, отвечаем в течение 15 минут.</p></div><div><details class="qa rv"><summary>Сколько держится покрытие?<i aria-hidden="true"></i></summary><p>В среднем 3 недели. Если появился скол раньше 7 дней, исправим бесплатно.</p></details><details class="qa rv"><summary>Можно ли прийти со снятием чужого покрытия?<i aria-hidden="true"></i></summary><p>Да. Снятие стоит 300 ₽, а при записи на маникюр с покрытием бесплатно.</p></details><details class="qa rv"><summary>Делаете маникюр беременным?<i aria-hidden="true"></i></summary><p>Да, используем материалы без резкого запаха и сокращаем время процедуры. Предупредите мастера при записи.</p></details><details class="qa rv"><summary>Как подготовиться к визиту?<i aria-hidden="true"></i></summary><p>Ничего специально делать не нужно. Если хотите сложный дизайн, сохраните пару фото примеров.</p></details><details class="qa rv"><summary>Как часто нужна коррекция наращивания?<i aria-hidden="true"></i></summary><p>Раз в 3–4 недели. Коррекция стоит 2 800 ₽.</p></details><details class="qa rv"><summary>Можно ли выбрать цвет заранее?<i aria-hidden="true"></i></summary><p>Да, у нас больше 120 оттенков. Выберите цвет на первом экране, и он попадёт в вашу заявку.</p></details><details class="qa rv"><summary>Есть ли подарочные сертификаты?<i aria-hidden="true"></i></summary><p>Да, от 2 000 ₽ на любую сумму или услугу. Электронные или в конверте, действуют 6 месяцев.</p></details></div></div></section>
 <section class="book" id="book">
   <div class="bg" data-img="book"></div>
@@ -400,7 +412,7 @@ details[open] .pl::after,details[open] .qa i::after,.qa[open] i::after{transform
       <p class="lead">Выберите услугу и удобное время. Мы перезвоним, чтобы подтвердить запись.</p>
       <form id="f" novalidate>
         <label>Имя<input name="name" autocomplete="given-name" placeholder="Анна"></label>
-        <label>Телефон<input name="phone" type="tel" autocomplete="tel" placeholder="+7 900 000-00-00"></label>
+        <label>Телефон<input name="phone" type="tel" autocomplete="tel" placeholder="+7 (___) ___-__-__"></label>
         <label>Услуга<select name="svc"><option>Маникюр + гель-лак</option><option>Маникюр без покрытия</option><option>Наращивание</option><option>Педикюр + гель-лак</option><option>SPA-педикюр</option><option>Маникюр + педикюр</option></select></label>
         <label>Дата<input name="date" type="date"></label>
         <label>Мастер<select name="master"><option>Любой свободный</option><option>Алина</option><option>Вероника</option><option>Дарья</option></select></label>
@@ -412,14 +424,15 @@ details[open] .pl::after,details[open] .qa i::after,.qa[open] i::after{transform
       <div class="done" id="done" role="status"><span class="script">Вы записаны!</span><p id="sum"></p></div>
     </div>
     <div class="contacts">
-      <div><h3>Адрес</h3><p>ул. Примерная, 21, второй этаж<br>5 минут пешком от метро «Центральная»<br>вход со двора, бесплатная парковка</p></div>
+      <div><h3>Адрес</h3><p>Москва, ул. Малая Бронная, 15, 2 этаж<br>Патриаршие пруды, 7 минут от м. «Маяковская»<br>вход со двора, парковка для клиенток</p></div>
       <div><h3>Часы работы</h3><p>Ежедневно 9:00–21:00<br>последняя запись в 19:30</p></div>
-      <div><h3>Связаться</h3><p><a href="tel:+79000000000">+7 900 000-00-00</a><br><a href="https://t.me/">Написать в Telegram</a></p></div>
+      <div><h3>Связаться</h3><p>Telegram: @velvet_nails_msk<br><a href="https://t.me/" target="_blank" rel="noopener">Написать в Telegram</a></p></div>
     </div>
   </div>
 </section>
 </main>
-<footer>Velvet Nail Studio · 2026 · Демонстрационный проект</footer>
+<div class="first" id="first" aria-hidden="true"><p><b>Первый визит −20%</b>Свободные окна сегодня: <i id="slotsToday">—</i></p><a class="btn" href="#book" tabindex="-1">Записаться</a></div>
+<footer>© 2026 Velvet Nail Studio · Москва, Патриаршие пруды</footer>
 
 <script>
 const reduce=matchMedia('(prefers-reduced-motion: reduce)').matches;
@@ -490,6 +503,16 @@ f.addEventListener('submit',e=>{e.preventDefault(); const v=n=>f.elements[n].val
   function scan(r){ if(r.matches&&r.matches('[data-img]')) queue(r); if(r.querySelectorAll) r.querySelectorAll('[data-img]').forEach(queue) }
   scan(document);
   new MutationObserver(function(ms){ms.forEach(function(m){m.addedNodes.forEach(function(n){if(n.nodeType===1)scan(n)})})}).observe(document.body,{childList:true,subtree:true});
+})();
+</script>
+<script>
+(function(){
+  var el=document.getElementById('first'), book=document.getElementById('book'), hero=document.querySelector('.hero')||document.body.firstElementChild, inBook=false, past=false;
+  function upd(){ var show=past&&!inBook; el.classList.toggle('show',show); el.setAttribute('aria-hidden',String(!show)); el.querySelector('a').tabIndex=show?0:-1; }
+  addEventListener('scroll',function(){ past=scrollY>innerHeight*.8; upd(); },{passive:true});
+  if('IntersectionObserver' in window) new IntersectionObserver(function(es){ inBook=es[0].isIntersecting; upd(); },{threshold:.1}).observe(book);
+  var h=new Date().getHours(), all=['10:00','12:00','14:30','17:00','19:30'], left=all.filter(function(t){ return +t.slice(0,2)>h; }).slice(0,3);
+  document.getElementById('slotsToday').textContent=left.length?left.join(' · '):'завтра с 10:00';
 })();
 </script>
 </body>
